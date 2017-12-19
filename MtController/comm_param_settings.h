@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStringListModel>
 #include "ms_handler.h"
+#include <QStandardItemModel>
 namespace Ui {
 class comm_param_settings;
 }
@@ -102,6 +103,20 @@ public:
 
 private slots:
     void combox_select_event(int a);
+
+//事件列表添加事件
+private slots:
+    void com_node_para_button18_event();
+    void com_link_para_button25_event();
+    void node_breakdown_button26_event();
+    void link_breakdown_button27_event();
+    void rout_attack_button28_event();
+    void data_tamper_button29_event();
+
+public:
+    //列表序号
+    int n =0;
+    QStandardItemModel  *model_t;
 };
 
 #endif // COMM_PARAM_SETTINGS_H
