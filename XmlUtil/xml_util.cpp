@@ -6,6 +6,12 @@
 
 XmlUtil::XmlUtil()
 {
+
+}
+
+XmlUtil::~XmlUtil()
+{
+
 }
 
 QDomDocument* XmlUtil::generate_conn_xml(const char* dev_name, uint32_t dev_ip, uint16_t dev_port, int ss_id, int ps_id, long reg_type, long msg_type, const char* err_msg)
@@ -1709,5 +1715,78 @@ void XmlUtil::generate_xml_power_appl_data(const DblVec& data, const UnionSimDat
     var->_var_type = eData_string;
     var->_var_value = d.toBase64().toStdString();
     vec.push_back(var);
+}
+
+QByteArray XmlUtil::_comm_sim_conf_data;
+void XmlUtil::add_CommSimEventConf_data(const char* data, int len)
+{
+    QByteArray d = QByteArray::fromRawData(data, len);
+    _comm_sim_conf_data.append(d);
+}
+
+void XmlUtil::delete_CommSimEventConf_data(const char* data, int len)
+{
+    QByteArray d = QByteArray::fromRawData(data, len);
+    int index = _comm_sim_conf_data.indexOf(d);
+    if(index < 0){
+        return;
+    }
+
+    _comm_sim_conf_data.remove(index, len);
+}
+
+bool XmlUtil::parse_CommSimConfParam_xml(const DataXmlVec& vec, DblVec& time, PGBaseVec& data)
+{
+    if(vec.empty()){
+        return false;
+    }
+
+    VariableMsgDataBody* var_event_data = (VariableMsgDataBody*)vec[0];
+    QByteArray d_base64 = QByteArray::fromRawData(var_event_data->_var_value.c_str(), var_event_data->_var_value.length());
+    QByteArray d = QByteArray::fromBase64(d_base64);
+
+
+
+
+
+
+    return true;
+}
+
+QDomDocument* XmlUtil::generate_CommSimEventConf_xml(int ss_id, int ps_id)
+{
+    QByteArray d = _comm_sim_conf_data.toBase64();
+
+    VariableMsgDataBody* var_event_data = new VariableMsgDataBody();
+    var_event_data->_var_name = "CommSimEventConfData";
+    var_event_data->_var_type = eData_string;
+    var_event_data->_var_value = d.toStdString();
+
+    ProcedureMessageBody* proc_body = new ProcedureMessageBody();
+    proc_body->_appl_msg_body = nullptr;
+    proc_body->_msg_name = "CommSimEventData";
+    proc_body->_proc_type = eSubProcedure_cfg_communication_data;
+    proc_body->_msg_type = eMessage_notify;
+    proc_body->_data_vector.push_back(var_event_data);
+
+    SessionMessageBody* sess_body = new SessionMessageBody();
+    sess_body->_msg_type = ePG_comm_sim_event_data;
+    sess_body->_id_i2u = ss_id;
+    sess_body->_id_u2i = ps_id;
+    sess_body->_procedure_msg_body = proc_body;
+
+    RootMessageBody root;
+    root._session_msg_body = sess_body;
+    QDomDocument* doc = root.Attr2Document();
+
+    for(int i=0; i<proc_body->_data_vector.size(); ++i){
+        delete proc_body->_data_vector[i];
+    }
+
+    if(proc_body) delete proc_body;
+    if(sess_body) delete sess_body;
+    _comm_sim_conf_data.clear();
+
+    return doc;
 }
 

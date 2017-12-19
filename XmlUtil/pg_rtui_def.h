@@ -1,6 +1,7 @@
 #ifndef PG_RTUI_DEF_H
 #define PG_RTUI_DEF_H
 
+#include <vector>
 #include <inttypes.h>
 
 #pragma pack(push)
@@ -49,8 +50,11 @@ typedef enum E_PG_RTUI_Type{
     ePG_RTUI_hr_change_port_status = 3,
     ePG_RTUI_hr_recover_port_status = 4,
 
+    //仿真数据.
     ePG_sim_interoper_data = 100,
-    ePG_comm_sim_cmd_data = 200,
+    ePG_comm_sim_cmd_data = 110,
+
+    ePG_comm_sim_event_data = 120,
 }EPGRTUIType;
 
 //
@@ -185,5 +189,7 @@ uint32_t  comm_sim_handle_delay;
 };
 
 #pragma pack(pop)
+
+typedef std::vector<PG_RTUI_Base*> PGBaseVec;
 
 #endif // PG_RTUI_DEF_H

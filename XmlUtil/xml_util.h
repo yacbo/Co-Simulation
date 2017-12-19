@@ -3,10 +3,12 @@
 
 #include "xml_message.h"
 #include "pg_rtui_def.h"
+
 class XMLUTILSHARED_EXPORT XmlUtil
 {
 public:
     XmlUtil();
+    virtual ~XmlUtil();
 
 public:
      //生成登录或登出xml, 请求/应答/错误
@@ -125,8 +127,16 @@ public:
     static void parse_xml_power_appl_data(const DataXmlVec& vec, DblVec& data, UnionSimDatVec& us_data);
     static void generate_xml_power_appl_data(const DblVec& data, const UnionSimDatVec& us_data, DataXmlVec& vec);
 
+    //通信仿真事件配置
+    static void add_CommSimEventConf_data(const char* data, int len);
+    static void delete_CommSimEventConf_data(const char* data, int len);
+    static bool parse_CommSimConfParam_xml(const DataXmlVec& vec, DblVec& time, PGBaseVec& data);
+    static QDomDocument* generate_CommSimEventConf_xml(int ss_id, int ps_id);
+
 public:
     static void generate_xml_file(const std::string& fileName, QDomDocument* doc);
 
+private:
+    static QByteArray _comm_sim_conf_data;
 };
 #endif // XML_UTIL_H
