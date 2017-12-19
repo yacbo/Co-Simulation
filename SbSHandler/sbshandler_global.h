@@ -1,0 +1,12 @@
+#ifndef SBSHANDLER_GLOBAL_H
+#define SBSHANDLER_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(SBSHANDLER_LIBRARY)
+#  define SBSHANDLERSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define SBSHANDLERSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // SBSHANDLER_GLOBAL_H

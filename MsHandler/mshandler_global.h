@@ -1,0 +1,12 @@
+#ifndef MSHANDLER_GLOBAL_H
+#define MSHANDLER_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(MSHANDLER_LIBRARY)
+#  define MSHANDLERSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define MSHANDLERSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // MSHANDLER_GLOBAL_H
