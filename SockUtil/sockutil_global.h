@@ -1,0 +1,12 @@
+#ifndef SOCKUTIL_GLOBAL_H
+#define SOCKUTIL_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(SOCKUTIL_LIBRARY)
+#  define SOCKUTILSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define SOCKUTILSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // SOCKUTIL_GLOBAL_H

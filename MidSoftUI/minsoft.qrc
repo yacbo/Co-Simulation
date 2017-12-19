@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>power_32.png</file>
+        <file>power_64.png</file>
+        <file>bac.jpg</file>
+    </qresource>
+</RCC>
