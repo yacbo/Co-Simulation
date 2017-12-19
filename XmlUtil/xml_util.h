@@ -130,7 +130,7 @@ public:
     //通信仿真事件配置
     static void add_CommSimEventConf_data(const char* data, int len);
     static void delete_CommSimEventConf_data(const char* data, int len);
-    static bool parse_CommSimConfParam_xml(const DataXmlVec& vec, DblVec& time, PGBaseVec& data);
+    static bool parse_CommSimConfParam_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time);
     static QDomDocument* generate_CommSimEventConf_xml(int ss_id, int ps_id);
 
 public:

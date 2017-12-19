@@ -1735,7 +1735,7 @@ void XmlUtil::delete_CommSimEventConf_data(const char* data, int len)
     _comm_sim_conf_data.remove(index, len);
 }
 
-bool XmlUtil::parse_CommSimConfParam_xml(const DataXmlVec& vec, DblVec& time, PGBaseVec& data)
+bool XmlUtil::parse_CommSimConfParam_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time)
 {
     if(vec.empty()){
         return false;
@@ -1745,10 +1745,19 @@ bool XmlUtil::parse_CommSimConfParam_xml(const DataXmlVec& vec, DblVec& time, PG
     QByteArray d_base64 = QByteArray::fromRawData(var_event_data->_var_value.c_str(), var_event_data->_var_value.length());
     QByteArray d = QByteArray::fromBase64(d_base64);
 
+    int index = 0;
+    const int len_size = sizeof(uint16_t);
+    const int time_size = sizeof(double);
+    const int offset_len = sizeof(LocalAddr) + sizeof(uint16_t);
 
-
-
-
+    while(index < d.length()){
+        int d_len = d.mid(index + offset_len, len_size).toInt();
+        QByteArray d_data = d.mid(index, d_len);
+        data.push_back(d_data);
+        QByteArray d_time = d.mid(index + d_len, time_size);
+        time.push_back(d_time.toDouble());
+        index += d_len + time_size;
+    }
 
     return true;
 }

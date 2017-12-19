@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <inttypes.h>
+#include <QByteArray>
 
 #pragma pack(push)
 #pragma pack(1)
@@ -190,6 +191,7 @@ uint32_t  comm_sim_handle_delay;
 
 #pragma pack(pop)
 
+typedef std::vector<QByteArray> ByteArrVec;
 typedef std::vector<PG_RTUI_Base*> PGBaseVec;
 
 #endif // PG_RTUI_DEF_H
