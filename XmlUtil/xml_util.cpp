@@ -1430,6 +1430,36 @@ QDomDocument* XmlUtil::generate_CommSimConfParam_xml(int ss_id, int ps_id, const
     return doc;
 }
 
+QDomDocument* XmlUtil::generate_sim_time_notify_xml(int ss_id, int ps_id, double sim_time)
+{
+    VariableMsgDataBody* var_time = new VariableMsgDataBody();
+    var_time->_var_name = "sim time";
+    var_time->_var_type = eData_double;
+    var_time->_var_value = std::to_string(sim_time);
+
+    ProcedureMessageBody* proc_body = new ProcedureMessageBody();
+    proc_body->_appl_msg_body = nullptr;
+    proc_body->_msg_name = "sim time notify";
+    proc_body->_proc_type = eSubProcedure_sim_time_notify_data;
+    proc_body->_msg_type = eMessage_notify;
+    proc_body->_data_vector.push_back(var_time);
+
+    SessionMessageBody* sess_body = new SessionMessageBody();
+    sess_body->_id_i2u = ss_id;
+    sess_body->_id_u2i = ps_id;
+    sess_body->_procedure_msg_body = proc_body;
+
+    RootMessageBody root;
+    root._session_msg_body = sess_body;
+    QDomDocument* doc = root.Attr2Document();
+
+    if(var_time) delete var_time;
+    if(proc_body) delete proc_body;
+    if(sess_body) delete sess_body;
+
+    return doc;
+}
+
 void XmlUtil::generate_xml_file(const std::string& fileName, QDomDocument* doc)
 {
     QFile file(QString::fromStdString(fileName));        //写xml文件
@@ -1735,7 +1765,7 @@ void XmlUtil::delete_CommSimEventConf_data(const char* data, int len)
     _comm_sim_conf_data.remove(index, len);
 }
 
-bool XmlUtil::parse_CommSimConfParam_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time)
+bool XmlUtil::parse_CommSimEventConf_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time)
 {
     if(vec.empty()){
         return false;
@@ -1764,6 +1794,10 @@ bool XmlUtil::parse_CommSimConfParam_xml(const DataXmlVec& vec, ByteArrVec& data
 
 QDomDocument* XmlUtil::generate_CommSimEventConf_xml(int ss_id, int ps_id)
 {
+    if(_comm_sim_conf_data.isEmpty()){
+        return nullptr;
+    }
+
     QByteArray d = _comm_sim_conf_data.toBase64();
 
     VariableMsgDataBody* var_event_data = new VariableMsgDataBody();

@@ -2,6 +2,7 @@
 #define PG_RTUI_DEF_H
 
 #include <vector>
+#include <queue>
 #include <inttypes.h>
 #include <QByteArray>
 
@@ -191,6 +192,7 @@ uint32_t  comm_sim_handle_delay;
 
 #pragma pack(pop)
 
+typedef std::queue<QByteArray> ByteArrQue;
 typedef std::vector<QByteArray> ByteArrVec;
 typedef std::vector<PG_RTUI_Base*> PGBaseVec;
 

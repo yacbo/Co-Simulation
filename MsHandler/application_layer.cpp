@@ -187,6 +187,25 @@ bool application_layer::unregister(const char* dev_name, int ss_id, const char* 
     return true;
 }
 
+//comm sim event config
+bool application_layer::config_comm_sim_event()
+{
+    int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
+    QString info = QString("application_layer:config_comm_sim_event, snd comm sim event to SBS.");
+    notify_ui_msg(info);
+
+    QDomDocument* doc = XmlUtil::generate_CommSimEventConf_xml(ss_id, 10000);
+    if(!doc){
+        info = QString("application_layer:config_comm_sim_event, generate_CommSimEventConf_xml failed.");
+        notify_ui_msg(info);
+        return false;
+    }
+
+    emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+
+    return true;
+}
+
 //comm parameter config
 bool application_layer::config_comm_param(const PG_RTUI_Base* param)
 {

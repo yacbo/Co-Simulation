@@ -105,6 +105,7 @@ typedef enum E_SubProcedureType {
     eSubProcedure_cfg_power_data         = eProcedure_custom + 3,                        //电力仿真配置数据, 259
     eSubProcedure_cfg_power_appl_data = eProcedure_custom + 4,                       //电力应用配置数据, 260
     eSubProcedure_cfg_sim_param_data = eProcedure_custom + 5,                        //仿真参数配置数据，如仿真时长，通信方式（TCP/UDP）等, 261
+    eSubProcedure_sim_time_notify_data = eProcedure_custom + 6,                       //电力仿真时间数据, 262
     eSubProcedure_sim_cmd = eProcedure_custom + 100,                                       //仿真控制命令，包括初始化，开始、暂停、结束仿真等, 356
 }ESubProcedureType;
 
