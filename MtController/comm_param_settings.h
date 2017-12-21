@@ -5,6 +5,7 @@
 #include <QStringListModel>
 #include "ms_handler.h"
 #include <QStandardItemModel>
+#include <vector>
 namespace Ui {
 class comm_param_settings;
 }
@@ -117,6 +118,14 @@ public:
     //列表序号
     int n =0;
     QStandardItemModel  *model_t;
+
+//删除事件和发送事件
+private slots:
+    void send_data_button17_event();
+    void delete_data_button30_event();
+//存放数据的集合
+private:
+    vector<QByteArray> vec;
 };
 
 #endif // COMM_PARAM_SETTINGS_H

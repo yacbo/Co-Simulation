@@ -45,10 +45,10 @@ void MidSoftUI::init()
     ui->lineEdit_3->setText(local_ip);
     ui->lineEdit_4->setText("9998");
 
+    ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     model = new QStandardItemModel();
     model->setColumnCount(2);  //设为两列.
-
     model->setHeaderData(0,Qt::Horizontal,"时间");
     model->setHeaderData(1,Qt::Horizontal,"信息");
     ui->tableView->setModel(model);

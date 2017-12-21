@@ -40,6 +40,7 @@ void SbsSoftUI::init()
     //停止服务按钮对应事件.
     connect(ui->pushButton_2, &QPushButton::clicked, this, &SbsSoftUI::exit_service, Qt::UniqueConnection);
 
+    ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     _login_model = new QStandardItemModel();
     _login_model->setColumnCount(3);  //设置3列.
@@ -50,6 +51,7 @@ void SbsSoftUI::init()
     //ui->tableView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     _login_num = 0;
 
+    ui->tableView_2->horizontalHeader()->setStretchLastSection(true); //就是这个地方
     ui->tableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     _log_model = new QStandardItemModel();
     _log_model->setColumnCount(2);  //设置3列.

@@ -169,11 +169,16 @@ void comm_param_settings::init()
    connect(ui->pushButton_27,&QRadioButton::clicked,this,&comm_param_settings::link_breakdown_button27_event);
    connect(ui->pushButton_28,&QRadioButton::clicked,this,&comm_param_settings::rout_attack_button28_event);
    connect(ui->pushButton_29,&QRadioButton::clicked,this,&comm_param_settings::data_tamper_button29_event);
+
+   connect(ui->pushButton_17,&QRadioButton::clicked,this,&comm_param_settings::send_data_button17_event);
+   connect(ui->pushButton_30,&QRadioButton::clicked,this,&comm_param_settings::delete_data_button30_event);
    //table事件列表
+   ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+   ui->tableView->setSelectionBehavior ( QAbstractItemView::SelectRows); //设置选择行为，以行为单位
+   ui->tableView->setSelectionMode ( QAbstractItemView::SingleSelection); //设置选择模式，选择单行
    model_t = new QStandardItemModel();
    model_t->setColumnCount(2);  //设为两列.
-
    model_t->setHeaderData(0,Qt::Horizontal,"事件时间(S)");
    model_t->setHeaderData(1,Qt::Horizontal,"事件类型");
    ui->tableView->setModel(model_t);
@@ -862,24 +867,27 @@ void comm_param_settings::com_node_para_button18_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_Msg_SetInterface* data = new PG_RTUI_Msg_SetInterface();
-
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_msg_setinterface; //type
-    data->length = sizeof(PG_RTUI_Msg_SetInterface);//length大小
-    data->nodeId = ui->lineEdit->text().toInt();
-    data->interfaceIndex =ui->comboBox->currentText().toInt();
-    data->bandwidth = ui->lineEdit_2->text().toLongLong();
-    data->txPower = ui->lineEdit_3->text().toDouble();
-    data->rxSensitivity = ui->lineEdit_4->text().toDouble();
-    data->mode = ui->lineEdit_21->text().toStdString()=="1"?true:false;
+    PG_RTUI_Msg_SetInterface data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_msg_setinterface; //type
+    data.length = sizeof(PG_RTUI_Msg_SetInterface);//length大小
+    data.nodeId = ui->lineEdit->text().toInt();
+    data.interfaceIndex =ui->comboBox->currentText().toInt();
+    data.bandwidth = ui->lineEdit_2->text().toLongLong();
+    data.txPower = ui->lineEdit_3->text().toDouble();
+    data.rxSensitivity = ui->lineEdit_4->text().toDouble();
+    data.mode = ui->lineEdit_21->text().toStdString()=="1"?true:false;
     double time = ui->lineEdit_24->text().toDouble();
     const int length = sizeof(PG_RTUI_Msg_SetInterface)+sizeof(double);
     char d[length]={0};
-    memcpy(d,data,data->length);
-    memcpy(d+data->length,&time,sizeof(double));
+    memcpy(d,&data,data.length);
+    memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+    model_t->setItem(n,1,new QStandardItem("节点参数事件"));
+    n++;
+    vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件 链路参数
 void comm_param_settings::com_link_para_button25_event()
@@ -895,25 +903,29 @@ void comm_param_settings::com_link_para_button25_event()
         return;
     }
 
-    PG_RTUI_Msg_SetLink* data = new PG_RTUI_Msg_SetLink();
+    PG_RTUI_Msg_SetLink data;
 
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_msg_setlink; //type
-    data->length = sizeof(PG_RTUI_Msg_SetLink);//length大小
-    data->nodeSrcId = ui->lineEdit_5->text().toInt();//uint16_t
-    data->nodeDstId = ui->lineEdit_6->text().toInt();//uint16_t
-    data->switchNum = ui->lineEdit_7->text().toInt();// int32_t
-    data->switchLoss = ui->lineEdit_8->text().toDouble();//double
-    data->connectorNum = ui->lineEdit_9->text().toInt();//int32_t
-    data->connectorLoss = ui->lineEdit_10->text().toDouble();// double
-    data->lossCoefficient = ui->lineEdit_11->text().toDouble();//double
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_msg_setlink; //type
+    data.length = sizeof(PG_RTUI_Msg_SetLink);//length大小
+    data.nodeSrcId = ui->lineEdit_5->text().toInt();//uint16_t
+    data.nodeDstId = ui->lineEdit_6->text().toInt();//uint16_t
+    data.switchNum = ui->lineEdit_7->text().toInt();// int32_t
+    data.switchLoss = ui->lineEdit_8->text().toDouble();//double
+    data.connectorNum = ui->lineEdit_9->text().toInt();//int32_t
+    data.connectorLoss = ui->lineEdit_10->text().toDouble();// double
+    data.lossCoefficient = ui->lineEdit_11->text().toDouble();//double
     double time = ui->lineEdit_25->text().toDouble();
     const int length = sizeof(PG_RTUI_Msg_SetLink)+sizeof(double);
     char d[length]={0};
-    memcpy(d,data,data->length);
-    memcpy(d+data->length,&time,sizeof(double));
+    memcpy(d,&data,data.length);
+    memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+    model_t->setItem(n,1,new QStandardItem("链路参数事件"));
+    n++;
+    vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件 节点故障
 void comm_param_settings::node_breakdown_button26_event()
@@ -928,29 +940,33 @@ void comm_param_settings::node_breakdown_button26_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangeNodeStatus* data = new PG_RTUI_ChangeNodeStatus();
+    PG_RTUI_ChangeNodeStatus data;
 
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt16_t型
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt16_t型
     if(ui->radioButton_2->isChecked())   //非半实物
     {
-        data->type = ePG_RTUI_change_node_status; //type 23
+        data.type = ePG_RTUI_change_node_status; //type 23
     }
     if(ui->radioButton->isChecked())   //半实物
     {
-        data->type = ePG_RTUI_hr_change_node_status; //type 5
+        data.type = ePG_RTUI_hr_change_node_status; //type 5
     }
-    data->length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
+    data.length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
 
-    data->nodeId = ui->lineEdit_13->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_14->text().toFloat();
-    data->change_delay_time = ui->lineEdit_15->text().toFloat();
+    data.nodeId = ui->lineEdit_13->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_14->text().toFloat();
+    data.change_delay_time = ui->lineEdit_15->text().toFloat();
     double time = ui->lineEdit_26->text().toDouble();
     const int length = sizeof(PG_RTUI_ChangeNodeStatus)+sizeof(double);
     char d[length]={0};
-    memcpy(d,data,data->length);
-    memcpy(d+data->length,&time,sizeof(double));
+    memcpy(d,&data,data.length);
+    memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+    model_t->setItem(n,1,new QStandardItem("节点故障事件"));
+    n++;
+    vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件  链路故障
 void comm_param_settings::link_breakdown_button27_event()
@@ -965,30 +981,34 @@ void comm_param_settings::link_breakdown_button27_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangePortStatus* data =  new PG_RTUI_ChangePortStatus();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
+    PG_RTUI_ChangePortStatus data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
     if(ui->radioButton_4->isChecked())   //非半实物
     {
-        data->type = ePG_RTUI_change_port_status; //type
+        data.type = ePG_RTUI_change_port_status; //type
     }
     if(ui->radioButton_3->isChecked())   //半实物
     {
-        data->type = ePG_RTUI_hr_change_port_status; //type
+        data.type = ePG_RTUI_hr_change_port_status; //type
     }
-    data->length = sizeof(PG_RTUI_ChangePortStatus);//length大小
+    data.length = sizeof(PG_RTUI_ChangePortStatus);//length大小
 
-    data->nodeId1 = ui->lineEdit_16->text().toInt();
-    data->nodeId2 = ui->lineEdit_17->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_18->text().toFloat();
-    data->change_delay_time = ui->lineEdit_19->text().toFloat();
+    data.nodeId1 = ui->lineEdit_16->text().toInt();
+    data.nodeId2 = ui->lineEdit_17->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_18->text().toFloat();
+    data.change_delay_time = ui->lineEdit_19->text().toFloat();
 
-    double time = ui->lineEdit_26->text().toDouble();
+    double time = ui->lineEdit_27->text().toDouble();
     const int length = sizeof(PG_RTUI_ChangePortStatus)+sizeof(double);
     char d[length]={0};
-    memcpy(d,data,data->length);
-    memcpy(d+data->length,&time,sizeof(double));
+    memcpy(d,&data,data.length);
+    memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+    model_t->setItem(n,1,new QStandardItem("链路故障事件"));
+    n++;
+    vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件 路由攻击
 void comm_param_settings::rout_attack_button28_event()
@@ -1000,26 +1020,30 @@ void comm_param_settings::rout_attack_button28_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_StaticRoute* data =  new PG_RTUI_StaticRoute();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_add_staticroute; //type
-    data->length = sizeof(PG_RTUI_StaticRoute);//length大小
-    data->nodeId=ui->lineEdit_48->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_49->text().toFloat();
-    data->cost =ui->lineEdit_53->text().toInt();
+    PG_RTUI_StaticRoute data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_add_staticroute; //type
+    data.length = sizeof(PG_RTUI_StaticRoute);//length大小
+    data.nodeId=ui->lineEdit_48->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_49->text().toFloat();
+    data.cost =ui->lineEdit_53->text().toInt();
     string stu1 =ui->lineEdit_50->text().toStdString();
     string stu2 =ui->lineEdit_51->text().toStdString();
     string stu3 =ui->lineEdit_52->text().toStdString();
-    strcpy(data->dst_ip,stu1.data());
-    strcpy(data->nxt_hop,stu2.data());
-    strcpy(data->out_itf_ip,stu3.data());
-    double time = ui->lineEdit_26->text().toDouble();
+    strcpy(data.dst_ip,stu1.data());
+    strcpy(data.nxt_hop,stu2.data());
+    strcpy(data.out_itf_ip,stu3.data());
+    double time = ui->lineEdit_28->text().toDouble();
     const int length = sizeof(PG_RTUI_StaticRoute)+sizeof(double);
     char d[length]={0};
-    memcpy(d,data,data->length);
-    memcpy(d+data->length,&time,sizeof(double));
+    memcpy(d,&data,data.length);
+    memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+    model_t->setItem(n,1,new QStandardItem("路由攻击事件"));
+    n++;
+    vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件 数据篡改
 void comm_param_settings::data_tamper_button29_event()
@@ -1031,26 +1055,67 @@ void comm_param_settings::data_tamper_button29_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    //第一个结构体
-    PG_RTUI_SetDataTamperSimTime* data =  new PG_RTUI_SetDataTamperSimTime();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_set_data_tamper_sim_time; //type
-    data->length = sizeof(PG_RTUI_SetDataTamperSimTime);//length大小
 
-    data->nodeId = ui->lineEdit_45->text().toInt();
-    data->powernodeId =ui->lineEdit_20->text().toInt();
-    data->datatype =ui->comboBox_4->currentIndex()+1;
-    data->dataPlace =ui->lineEdit_22->text().toInt();
+    PG_RTUI_SetDataTamperSimTime data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_set_data_tamper_sim_time; //type
+    data.length = sizeof(PG_RTUI_SetDataTamperSimTime);//length大小
+
+    data.nodeId = ui->lineEdit_45->text().toInt();
+    data.powernodeId =ui->lineEdit_20->text().toInt();
+    data.datatype =ui->comboBox_4->currentIndex()+1;
+    data.dataPlace =ui->lineEdit_22->text().toInt();
     string stu1 = ui->lineEdit_23->text().toStdString();
-    strcpy(data->dataDev,stu1.data());
-    data->preset_time = ui->lineEdit_46->text().toFloat();
-    data->tamper_time= ui->lineEdit_47->text().toFloat();
+    strcpy(data.dataDev,stu1.data());
+    data.preset_time = ui->lineEdit_46->text().toFloat();
+    data.tamper_time= ui->lineEdit_47->text().toFloat();
 
-    double time = ui->lineEdit_26->text().toDouble();
+    double time = ui->lineEdit_29->text().toDouble();
     const int length = sizeof(PG_RTUI_SetDataTamperSimTime)+sizeof(double);
     char d[length]={0};
-    memcpy(d,data,data->length);
-    memcpy(d+data->length,&time,sizeof(double));
+    memcpy(d,&data,data.length);
+    memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+    model_t->setItem(n,1,new QStandardItem("数据篡改事件"));
+    n++;
+    vec.push_back(QByteArray::fromRawData(d,length));
+}
+
+//发送数据
+void comm_param_settings::send_data_button17_event()
+{
+    //发送数据
+    //config_comm_sim_event();
+    //清除tableView数据
+    auto iter = vec.begin();
+    for ( ;iter!=vec.end();)
+    {
+        iter = vec.erase(iter);
+    }
+    //清空tablevie列表
+    while(n>=0)
+    {
+        model_t->removeRow(n);
+        n--;
+    }
+    n=0;
+}
+
+//删除数据
+void comm_param_settings::delete_data_button30_event()
+{
+    QModelIndex i = ui->tableView->selectionModel()->currentIndex();
+    if(i.row()<0)
+    {
+        QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("没有行被选中!"));
+        return;
+    }
+    model_t->removeRow(i.row());
+    n--;
+    //调用删除数据接口
+    XmlUtil::delete_CommSimEventConf_data(vec.at(i.row()).data(),vec.at(i.row()).count());
+    //删除集合中数据
+    vec.erase(vec.begin() + i.row());
 }

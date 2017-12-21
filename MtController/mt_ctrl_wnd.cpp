@@ -70,6 +70,7 @@ void MainWindow::init()
    ui->lineEdit_9->setText("9999");
 
    //初始化tableView
+   ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    model = new QStandardItemModel();
    model->setColumnCount(2);  //设为两列.
