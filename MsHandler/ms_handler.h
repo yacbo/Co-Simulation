@@ -34,6 +34,9 @@ public:
     bool test_send_xml(const QString& dst_ip, int port, const char* packet, int len);
 
 public:
+    //comm sim event config
+    bool config_comm_sim_event();
+
     //comm parameter config, PG_RTUI
     bool config_comm_param(const PG_RTUI_Base* param);
 

@@ -38,6 +38,9 @@ public:
     bool unregister(const char* dev_name, int ss_id, const char* sbs_ip);
 
 public:
+    //comm sim event config
+    bool config_comm_sim_event();
+
     //comm parameter config PG_RTUI
     bool config_comm_param(const PG_RTUI_Base* param);
 

@@ -3,9 +3,12 @@
 
 #include <QMap>
 #include <QObject>
+#include <QTimer>
+#include <QMutex>
 #include "data_queue.h"
 #include "xml_message.h"
 #include "network_layer.h"
+#include "pg_rtui_def.h"
 
 class session_layer : public QObject
 {
@@ -21,6 +24,7 @@ signals:
     void progress_log_signal(QString log);
 
 public slots:
+    void check_sim_time_event_slots();                  //定时检查通信事件
     void rcv_lower_slots(QDomElement* elem);      //接收下层数据
 
 public:
@@ -46,9 +50,17 @@ private:
 private:
     StrSet _unack_set;                 //未应答集合
     bool check_ack_status(SessionMessageBody* sess_msg);
+    StrSet _upper_cond_set;
     bool deliver_to_upper(SessionMessageBody* sess_msg);
 
-    StrSet _upper_cond_set;
+    double _cur_sim_time;
+    DblVec _event_time_vec;
+    ByteArrVec _event_data_vec;
+    void insert_event_data(const DblVec& time, const ByteArrVec& data);
+
+    QMutex _mtx;
+    QTimer* _event_timer;
+    void trans_event_data(QByteArray& data);
 
 private:
     typedef data_queue<QDomElement*> SessionMsgQue;

@@ -72,6 +72,11 @@ const IntMap& MsHandler::get_dev_id_map()
     return _appl_layer_ptr->get_dev_id_map();
 }
 
+bool MsHandler::config_comm_sim_event()
+{
+
+}
+
 //comm parameter config PG_RTUI
 bool MsHandler::config_comm_param(const PG_RTUI_Base* param)
 {

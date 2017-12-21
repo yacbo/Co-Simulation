@@ -5,12 +5,20 @@
 #include "log_util.h"
 #include "pg_rtui_def.h"
 
+#define EPS 1e-7
+
 session_layer::session_layer()
 {
     _quit = false;
     _cur_id = 1;
     _local_id = 10000;
+    _cur_sim_time = 0.0;
     _sess_msg_ptr = new SessionMessageBody();
+
+    _event_timer = new QTimer();
+    connect(_event_timer, &QTimer::timeout, this, &session_layer::check_sim_time_event_slots);
+    _event_timer->setInterval(1000);
+    _event_timer->start();
 
     _upper_cond_set.insert("login");
     _upper_cond_set.insert("logout");
@@ -20,6 +28,11 @@ session_layer::session_layer()
 
 session_layer::~session_layer()
 {
+    if(_event_timer){
+        _event_timer->stop();
+        delete _event_timer;
+    }
+
     if(_sess_msg_ptr){
         delete _sess_msg_ptr;
     }
@@ -208,7 +221,6 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
 
 QDomDocument* session_layer::handle_cfg_comm_param(SessionMessageBody* sess_msg)
 {
-    bool ret = true;
     int ss_id = sess_msg->_id_i2u;
     int ps_id = sess_msg->_id_u2i;
 
@@ -216,126 +228,165 @@ QDomDocument* session_layer::handle_cfg_comm_param(SessionMessageBody* sess_msg)
     qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
-    //const DataXmlVec& vec = sess_msg->_procedure_msg_body->_data_vector;
+    if(sess_msg->_msg_type ==  ePG_comm_sim_event_data){
+        DblVec time; ByteArrVec data;
+        if(XmlUtil::parse_CommSimEventConf_xml(sess_msg->_procedure_msg_body->_data_vector, data, time)){
+            insert_event_data(time, data);
+        }
+        return nullptr;
+    }
+    else if(sess_msg->_procedure_msg_body->_proc_type == eSubProcedure_sim_time_notify_data){
+        VariableMsgDataBody* var = (VariableMsgDataBody*)sess_msg->_procedure_msg_body->_data_vector[0];
+        _cur_sim_time = std::stod(var->_var_value);
+        return nullptr;
+    }
 
     RootMessageBody root;
     root._session_msg_body = sess_msg;
     QDomDocument* doc = root.Attr2Document();
-
-//    QDomDocument* doc = nullptr;
-//    switch(sess_msg->_msg_type){
-//    case ePG_RTUI_msg_getinterfacenum:{
-//        PG_RTUI_Msg_GetInterfaceNum data;
-//        ret = XmlUtil::parse_PG_RTUI_Msg_GetInterfaceNum_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Msg_GetInterfaceNum_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_ack_getinterfacenum: {
-//        PG_RTUI_Ack_GetInterfaceNum data;
-//        ret = XmlUtil::parse_PG_RTUI_Ack_GetInterfaceNum_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Ack_GetInterfaceNum_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_msg_getinterface:{
-//        PG_RTUI_Msg_GetInterface data;
-//        ret = XmlUtil::parse_PG_RTUI_Msg_GetInterface_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Msg_GetInterface_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_ack_getinterface:{
-//        PG_RTUI_Ack_GetInterface data;
-//        ret = XmlUtil::parse_PG_RTUI_Ack_GetInterface_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Ack_GetInterface_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_msg_setinterface:{
-//        PG_RTUI_Msg_SetInterface data;
-//        ret = XmlUtil::parse_PG_RTUI_Msg_SetInterface_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Msg_SetInterface_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_msg_getlink:{
-//        PG_RTUI_Msg_GetLink data;
-//        ret = XmlUtil::parse_PG_RTUI_Msg_GetLink_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_GetLink_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_ack_getlink:{
-//        PG_RTUI_Ack_GetLink data;
-//        ret = XmlUtil::parse_PG_RTUI_Ack_GetLink_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Ack_GetLink_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_msg_setlink: {
-//        PG_RTUI_Msg_SetLink data;
-//        ret = XmlUtil::parse_PG_RTUI_Msg_SetLink_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_Msg_SetLink_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_change_node_status:
-//    case ePG_RTUI_recover_node_status:{
-//        PG_RTUI_ChangeNodeStatus data;
-//        ret = XmlUtil::parse_PG_RTUI_ChangeNodeStatus_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_ChangeNodeStatus_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_change_port_status:
-//    case ePG_RTUI_recover_port_status:{
-//        PG_RTUI_ChangePortStatus data;
-//        ret = XmlUtil::parse_PG_RTUI_ChangePortStatus_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_ChangePortStatus_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_static_route:{
-//        PG_RTUI_StaticRoute data;
-//        ret = XmlUtil::parse_PG_RTUI_StaticRoute_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_StaticRoute_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_add_cbr: {
-//        PG_RTUI_AddCBR data;
-//        ret = XmlUtil::parse_PG_RTUI_AddCBR_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_AddCBR_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_set_data_tamper_sim_time: {
-//        PG_RTUI_SetDataTamperSimTime data;
-//        ret = XmlUtil::parse_PG_RTUI_SetDataTamperSimTime_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_SetDataTamperSimulationTime_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_set_data_tamper_last_time: {
-//        PG_RTUI_SetDataTamperLastTime data;
-//        ret = XmlUtil::parse_PG_RTUI_SetDataTamperLastTime_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_SetDataTamperLastTime_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_stop_data_tamper: {
-//        PG_RTUI_StopDataTamper data;
-//        ret = XmlUtil::parse_PG_RTUI_StopDataTamper_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_StopDataTamper_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_RTUI_add_staticroute:
-//    case ePG_RTUI_remove_staticroute:{
-//        PG_RTUI_StaticRoute data;
-//        ret = XmlUtil::parse_PG_RTUI_StaticRoute_xml(vec, data);
-//        doc = XmlUtil::generate_PG_RTUI_StaticRoute_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_comm_sim_cmd_data:{
-//        CommConfParam data;
-//        ret = XmlUtil::parse_CommSimConfParam_xml(vec, data);
-//        doc = XmlUtil::generate_CommSimConfParam_xml(ss_id, ps_id, &data);
-//        break;
-//    }
-//    case ePG_sim_interoper_data: {
-//        break;
-//    }
-//    default: break;
-//    }
-
     return doc;
+}
+
+void session_layer::insert_event_data(const DblVec& time, const ByteArrVec& data)
+{
+    _event_time_vec.insert(_event_time_vec.end(), time.begin(), time.end());
+    _event_data_vec.insert(_event_data_vec.end(), data.begin(), data.end());
+
+    //对事件按时间升序排列
+    _mtx.lock();
+    int nsize = _event_time_vec.size();
+    for(int i=0; i<nsize - 1; ++i){
+        for(int j=1; j<nsize; ++j){
+            if(_event_time_vec[j] - _event_time_vec[i] > EPS){
+                std::swap(_event_time_vec[j], _event_time_vec[i]);
+                std::swap(_event_data_vec[j], _event_data_vec[i]);
+            }
+        }
+    }
+    _mtx.unlock();
+}
+
+void session_layer::check_sim_time_event_slots()
+{
+    int index = -1;
+    for(int i=0; i<_event_time_vec.size(); ++i){
+        double diff = _event_time_vec[i] - _cur_sim_time;
+        if(diff > -EPS && diff < 1.0){
+            index = i;
+            break;
+        }
+    }
+
+    _mtx.lock();
+    for(int i=0; i<index; ++i){
+
+    }
+    _mtx.unlock();
+}
+
+void session_layer::trans_event_data(QByteArray& data)
+{
+    if(data.length() == 0){
+        return;
+    }
+
+    char param[1024] = {0};
+    memcpy(param, data.data(), data.length());
+    int ss_id = 10000;
+    int ps_id = _session_type_id_tbl[eSimDev_communication];
+
+    const int offset_type = sizeof(LocalAddr);
+    uint16_t type = data.mid(offset_type, sizeof(uint16_t)).toUShort();
+
+    QDomDocument* doc = nullptr;
+    switch(type){
+    case ePG_RTUI_msg_getinterfacenum:{
+        const PG_RTUI_Msg_GetInterfaceNum* pg = (PG_RTUI_Msg_GetInterfaceNum*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_GetInterfaceNum_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_ack_getinterfacenum:{
+        const PG_RTUI_Ack_GetInterfaceNum* pg = (PG_RTUI_Ack_GetInterfaceNum*)param;
+        doc = XmlUtil::generate_PG_RTUI_Ack_GetInterfaceNum_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_getinterface:{
+        const PG_RTUI_Msg_GetInterface* pg = (PG_RTUI_Msg_GetInterface*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_GetInterface_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_ack_getinterface:{
+        const PG_RTUI_Ack_GetInterface* pg = (PG_RTUI_Ack_GetInterface*)param;
+        doc = XmlUtil::generate_PG_RTUI_Ack_GetInterface_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_setinterface:{
+        const PG_RTUI_Msg_SetInterface* pg = (PG_RTUI_Msg_SetInterface*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_SetInterface_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_getlink:{
+        const PG_RTUI_Msg_GetLink* pg = (PG_RTUI_Msg_GetLink*)param;
+        doc = XmlUtil::generate_PG_RTUI_GetLink_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_ack_getlink:{
+        const PG_RTUI_Ack_GetLink* pg = (PG_RTUI_Ack_GetLink*)param;
+        doc = XmlUtil::generate_PG_RTUI_Ack_GetLink_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_setlink:{
+        const PG_RTUI_Msg_SetLink* pg = (PG_RTUI_Msg_SetLink*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_SetLink_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_recover_node_status:
+    case ePG_RTUI_change_node_status:{
+        const PG_RTUI_ChangeNodeStatus* pg = (PG_RTUI_ChangeNodeStatus*)param;
+        doc = XmlUtil::generate_PG_RTUI_ChangeNodeStatus_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_recover_port_status:
+    case ePG_RTUI_change_port_status:{
+        const PG_RTUI_ChangePortStatus* pg = (PG_RTUI_ChangePortStatus*)param;
+        doc = XmlUtil::generate_PG_RTUI_ChangePortStatus_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_static_route:{
+        const PG_RTUI_StaticRoute* pg = (PG_RTUI_StaticRoute*)param;
+        doc = XmlUtil::generate_PG_RTUI_StaticRoute_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_add_cbr:{
+        const PG_RTUI_AddCBR* pg = (PG_RTUI_AddCBR*)param;
+        doc = XmlUtil::generate_PG_RTUI_AddCBR_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_set_data_tamper_sim_time:{
+        const PG_RTUI_SetDataTamperSimTime* pg = (PG_RTUI_SetDataTamperSimTime*)param;
+        doc = XmlUtil::generate_PG_RTUI_SetDataTamperSimulationTime_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_set_data_tamper_last_time:{
+        const PG_RTUI_SetDataTamperLastTime* pg = (PG_RTUI_SetDataTamperLastTime*)param;
+        doc = XmlUtil::generate_PG_RTUI_SetDataTamperLastTime_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_stop_data_tamper:{
+        const PG_RTUI_StopDataTamper* pg = (PG_RTUI_StopDataTamper*)param;
+        doc = XmlUtil::generate_PG_RTUI_StopDataTamper_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_add_staticroute:
+    case ePG_RTUI_remove_staticroute:{
+            const PG_RTUI_StaticRoute* pg = (PG_RTUI_StaticRoute*)param;
+            doc = XmlUtil::generate_PG_RTUI_StaticRoute_xml(ss_id, ps_id, pg);
+            break;
+        }
+    default: break;
+    }
+
+    //return doc;
 }
 
 bool session_layer::check_ack_status(SessionMessageBody* sess_msg)

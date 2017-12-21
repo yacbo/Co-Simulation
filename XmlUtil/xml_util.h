@@ -130,10 +130,14 @@ public:
     //通信仿真事件配置
     static void add_CommSimEventConf_data(const char* data, int len);
     static void delete_CommSimEventConf_data(const char* data, int len);
-    static bool parse_CommSimConfParam_xml(const DataXmlVec& vec, DblVec& time, PGBaseVec& data);
+    static bool parse_CommSimEventConf_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time);
     static QDomDocument* generate_CommSimEventConf_xml(int ss_id, int ps_id);
 
 public:
+    //电力仿真时间通知
+    static QDomDocument* generate_sim_time_notify_xml(int ss_id, int ps_id, double sim_time);
+
+    //保存xml
     static void generate_xml_file(const std::string& fileName, QDomDocument* doc);
 
 private:
