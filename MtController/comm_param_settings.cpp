@@ -196,28 +196,28 @@ void comm_param_settings::business_config_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_AddCBR *data = new PG_RTUI_AddCBR();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_add_cbr; //type
-    data->length = sizeof(PG_RTUI_AddCBR);//lengrh大小
+    PG_RTUI_AddCBR data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_add_cbr; //type
+    data.length = sizeof(PG_RTUI_AddCBR);//lengrh大小
 
-    data->srcId = ui->lineEdit_35->text().toLong();
-    data->dstId = ui->lineEdit_36->text().toLong();
-    data->itemsToSend = ui->lineEdit_37->text().toLong();
-    data->itemSize = ui->lineEdit_42->text().toLong();
+    data.srcId = ui->lineEdit_35->text().toLong();
+    data.dstId = ui->lineEdit_36->text().toLong();
+    data.itemsToSend = ui->lineEdit_37->text().toLong();
+    data.itemSize = ui->lineEdit_42->text().toLong();
 
     //char startTime[20]
     std::string lineEdit44Str = ui->lineEdit_44->text().toStdString();
-    strcpy(data->startTime,lineEdit44Str.data());
+    strcpy(data.startTime,lineEdit44Str.data());
     //char interval[20]
     std::string lineEdit43Str = ui->lineEdit_43->text().toStdString();
-    strcpy(data->interval,lineEdit43Str.data());
+    strcpy(data.interval,lineEdit43Str.data());
     //char endTimeStr[20]
     std::string lineEdit41Str = ui->lineEdit_41->text().toStdString();
-    strcpy(data->endTime,lineEdit41Str.data());
+    strcpy(data.endTime,lineEdit41Str.data());
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 }
 void comm_param_settings::business_config_cancel_event(){
     ui->lineEdit_35->setText("");
@@ -267,20 +267,20 @@ void comm_param_settings::business_channel_confirm_event()
                 stu.push_back(token);
             }
             //根据数组中数据给创建的结构体赋值
-            PG_RTUI_StaticRoute *data = new PG_RTUI_StaticRoute();
-            data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-            data->clientAddr.port = 65500;//port  uInt32_t型
-            data->type = ePG_RTUI_static_route; //type
-            data->length = sizeof(PG_RTUI_StaticRoute);//lengrh大小
+            PG_RTUI_StaticRoute data;
+            data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+            data.clientAddr.port = 65500;//port  uInt32_t型
+            data.type = ePG_RTUI_static_route; //type
+            data.length = sizeof(PG_RTUI_StaticRoute);//lengrh大小
 
-            data->pdsi_delay_time = 0;
-            data->nodeId = std::stoi(stu[0]);
-            strcpy(data->dst_ip,stu[1].data());
-            strcpy(data->nxt_hop,stu[2].data());
-            strcpy(data->out_itf_ip,stu[3].data());
-            data->cost = std::stoi(stu[4]);
+            data.pdsi_delay_time = 0;
+            data.nodeId = std::stoi(stu[0]);
+            strcpy(data.dst_ip,stu[1].data());
+            strcpy(data.nxt_hop,stu[2].data());
+            strcpy(data.out_itf_ip,stu[3].data());
+            data.cost = std::stoi(stu[4]);
             //发送数据给qualnet通信软件
-            _msHandler->config_comm_param(data);
+            _msHandler->config_comm_param(&data);
         }
         //2.将文本数据显示在list缓存
         current_cloud_id_list.push_back(QString::fromStdString(strline));
@@ -302,16 +302,16 @@ void comm_param_settings::comm_note_para_read_event()
             return;
         }
 
-        PG_RTUI_Msg_GetInterfaceNum *data1 = new PG_RTUI_Msg_GetInterfaceNum();
-        data1->clientAddr.ip_addr =_ip;//ip uInt32_t型
-        data1->clientAddr.port = 65500;//port  uint16_t型
-        data1->type = ePG_RTUI_msg_getinterfacenum; //uint16_t
-        data1->length = sizeof(PG_RTUI_Msg_GetInterfaceNum);//uint16_t length大小
+        PG_RTUI_Msg_GetInterfaceNum data1;
+        data1.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data1.clientAddr.port = 65500;//port  uint16_t型
+        data1.type = ePG_RTUI_msg_getinterfacenum; //uint16_t
+        data1.length = sizeof(PG_RTUI_Msg_GetInterfaceNum);//uint16_t length大小
 
-        data1->nodeId = ui->lineEdit->text().toInt();  //uint16_t
+        data1.nodeId = ui->lineEdit->text().toInt();  //uint16_t
 
         //发送数据给qualnet通信软件
-        _msHandler->config_comm_param(data1);
+        _msHandler->config_comm_param(&data1);
     }
 }
 
@@ -327,21 +327,21 @@ void comm_param_settings::comm_note_para_config_event()
             QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
             return;
         }
-        PG_RTUI_Msg_SetInterface* data = new PG_RTUI_Msg_SetInterface();
+        PG_RTUI_Msg_SetInterface data;
 
-        data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-        data->clientAddr.port = 65500;//port  uInt32_t型
-        data->type = ePG_RTUI_msg_setinterface; //type
-        data->length = sizeof(PG_RTUI_Msg_SetInterface);//length大小
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        data.type = ePG_RTUI_msg_setinterface; //type
+        data.length = sizeof(PG_RTUI_Msg_SetInterface);//length大小
 
-        data->nodeId = ui->lineEdit->text().toInt();
-        data->interfaceIndex =ui->comboBox->currentText().toInt();
-        data->bandwidth = ui->lineEdit_2->text().toLongLong();
-        data->txPower = ui->lineEdit_3->text().toDouble();
-        data->rxSensitivity = ui->lineEdit_4->text().toDouble();
-        data->mode = ui->lineEdit_21->text().toStdString()=="1"?true:false;
+        data.nodeId = ui->lineEdit->text().toInt();
+        data.interfaceIndex =ui->comboBox->currentText().toInt();
+        data.bandwidth = ui->lineEdit_2->text().toLongLong();
+        data.txPower = ui->lineEdit_3->text().toDouble();
+        data.rxSensitivity = ui->lineEdit_4->text().toDouble();
+        data.mode = ui->lineEdit_21->text().toStdString()=="1"?true:false;
         //发送数据给qualnet通信软件
-        _msHandler->config_comm_param(data);
+        _msHandler->config_comm_param(&data);
     }
 }
 
@@ -366,16 +366,16 @@ void comm_param_settings::comm_link_para_read_event()
             QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
             return;
         }
-        PG_RTUI_Msg_GetLink *data1 = new PG_RTUI_Msg_GetLink();
+        PG_RTUI_Msg_GetLink data1;
 
-        data1->clientAddr.ip_addr =_ip;//ip uInt32_t型
-        data1->clientAddr.port = 65500;//port  uInt32_t型
-        data1->type = ePG_RTUI_msg_getlink; //type
-        data1->length = sizeof(PG_RTUI_Msg_GetLink);//length大小
-        data1->nodeSrcId = ui->lineEdit_5->text().toInt();
-        data1->nodeDstId = ui->lineEdit_6->text().toInt();
+        data1.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data1.clientAddr.port = 65500;//port  uInt32_t型
+        data1.type = ePG_RTUI_msg_getlink; //type
+        data1.length = sizeof(PG_RTUI_Msg_GetLink);//length大小
+        data1.nodeSrcId = ui->lineEdit_5->text().toInt();
+        data1.nodeDstId = ui->lineEdit_6->text().toInt();
         //发送数据给qualnet通信软件
-        _msHandler->config_comm_param(data1);
+        _msHandler->config_comm_param(&data1);
     }
 
 }
@@ -394,24 +394,24 @@ void comm_param_settings::comm_link_para_config_event()
             return;
         }
 
-        PG_RTUI_Msg_SetLink* data = new PG_RTUI_Msg_SetLink();
+        PG_RTUI_Msg_SetLink data;
 
-        data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-        data->clientAddr.port = 65500;//port  uInt32_t型
-        data->type = ePG_RTUI_msg_setlink; //type
-        data->length = sizeof(PG_RTUI_Msg_SetLink);//length大小
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        data.type = ePG_RTUI_msg_setlink; //type
+        data.length = sizeof(PG_RTUI_Msg_SetLink);//length大小
 
-        data->nodeSrcId = ui->lineEdit_5->text().toInt();//uint16_t
-        data->nodeDstId = ui->lineEdit_6->text().toInt();//uint16_t
-        data->switchNum = ui->lineEdit_7->text().toInt();// int32_t
-        data->switchLoss = ui->lineEdit_8->text().toDouble();//double
-        data->connectorNum = ui->lineEdit_9->text().toInt();//int32_t
-        data->connectorLoss = ui->lineEdit_10->text().toDouble();// double
-        data->lossCoefficient = ui->lineEdit_11->text().toDouble();//double
+        data.nodeSrcId = ui->lineEdit_5->text().toInt();//uint16_t
+        data.nodeDstId = ui->lineEdit_6->text().toInt();//uint16_t
+        data.switchNum = ui->lineEdit_7->text().toInt();// int32_t
+        data.switchLoss = ui->lineEdit_8->text().toDouble();//double
+        data.connectorNum = ui->lineEdit_9->text().toInt();//int32_t
+        data.connectorLoss = ui->lineEdit_10->text().toDouble();// double
+        data.lossCoefficient = ui->lineEdit_11->text().toDouble();//double
         //data->ber = ui->lineEdit_12->text().toDouble();//double
         //data->time = 10;//uint64_t
         //发送数据给qualnet通信软件
-        _msHandler->config_comm_param(data);
+        _msHandler->config_comm_param(&data);
     }
 
 }
@@ -440,25 +440,25 @@ void comm_param_settings::note_breakdown_confirm_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangeNodeStatus* data = new PG_RTUI_ChangeNodeStatus();
+    PG_RTUI_ChangeNodeStatus data;
 
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt16_t型
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt16_t型
     if(ui->radioButton_2->isChecked())   //非半实物
     {
-        data->type = ePG_RTUI_change_node_status; //type 23
+        data.type = ePG_RTUI_change_node_status; //type 23
     }
     if(ui->radioButton->isChecked())   //半实物
     {
-        data->type = ePG_RTUI_hr_change_node_status; //type 5
+        data.type = ePG_RTUI_hr_change_node_status; //type 5
     }
-    data->length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
+    data.length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
 
-    data->nodeId = ui->lineEdit_13->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_14->text().toFloat();
-    data->change_delay_time = ui->lineEdit_15->text().toFloat();
+    data.nodeId = ui->lineEdit_13->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_14->text().toFloat();
+    data.change_delay_time = ui->lineEdit_15->text().toFloat();
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 
 }
 void comm_param_settings::note_breakdown_cancel_event()
@@ -480,25 +480,25 @@ void comm_param_settings::note_breakdown_recovery_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangeNodeStatus* data = new PG_RTUI_ChangeNodeStatus();
+    PG_RTUI_ChangeNodeStatus data;
 
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
     if(ui->radioButton_2->isChecked())   //非半实物
     {
-        data->type = ePG_RTUI_recover_node_status; //type 24
+        data.type = ePG_RTUI_recover_node_status; //type 24
     }
     if(ui->radioButton->isChecked())   //半实物
     {
-        data->type = ePG_RTUI_hr_recover_node_status; //type 6
+        data.type = ePG_RTUI_hr_recover_node_status; //type 6
     }
-    data->length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
+    data.length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
 
-    data->nodeId = ui->lineEdit_13->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_14->text().toFloat();
-    data->change_delay_time = ui->lineEdit_15->text().toFloat();
+    data.nodeId = ui->lineEdit_13->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_14->text().toFloat();
+    data.change_delay_time = ui->lineEdit_15->text().toFloat();
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 }
 
 /**********************链路故障管理.**********************/
@@ -514,25 +514,25 @@ void comm_param_settings::link_breakdown_confirm_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangePortStatus* data =  new PG_RTUI_ChangePortStatus();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
+    PG_RTUI_ChangePortStatus data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
     if(ui->radioButton_4->isChecked())   //非半实物
     {
-        data->type = ePG_RTUI_change_port_status; //type
+        data.type = ePG_RTUI_change_port_status; //type
     }
     if(ui->radioButton_3->isChecked())   //半实物
     {
-        data->type = ePG_RTUI_hr_change_port_status; //type
+        data.type = ePG_RTUI_hr_change_port_status; //type
     }
-    data->length = sizeof(PG_RTUI_ChangePortStatus);//length大小
+    data.length = sizeof(PG_RTUI_ChangePortStatus);//length大小
 
-    data->nodeId1 = ui->lineEdit_16->text().toInt();
-    data->nodeId2 = ui->lineEdit_17->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_18->text().toFloat();
-    data->change_delay_time = ui->lineEdit_19->text().toFloat();
+    data.nodeId1 = ui->lineEdit_16->text().toInt();
+    data.nodeId2 = ui->lineEdit_17->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_18->text().toFloat();
+    data.change_delay_time = ui->lineEdit_19->text().toFloat();
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 }
 void comm_param_settings::link_breakdown_cancel_event()
 {
@@ -553,25 +553,25 @@ void comm_param_settings::link_breakdown_recovery_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangePortStatus* data =  new PG_RTUI_ChangePortStatus();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
+    PG_RTUI_ChangePortStatus data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
     if(ui->radioButton_4->isChecked())   //非半实物
     {
-        data->type = ePG_RTUI_recover_port_status; //type
+        data.type = ePG_RTUI_recover_port_status; //type
     }
     if(ui->radioButton_3->isChecked())   //半实物
     {
-        data->type = ePG_RTUI_hr_recover_port_status; //type
+        data.type = ePG_RTUI_hr_recover_port_status; //type
     }
-    data->length = sizeof(PG_RTUI_ChangePortStatus);//length大小
+    data.length = sizeof(PG_RTUI_ChangePortStatus);//length大小
 
-    data->nodeId1 = ui->lineEdit_16->text().toInt();
-    data->nodeId2 = ui->lineEdit_17->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_18->text().toFloat();
-    data->change_delay_time = ui->lineEdit_19->text().toFloat();
+    data.nodeId1 = ui->lineEdit_16->text().toInt();
+    data.nodeId2 = ui->lineEdit_17->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_18->text().toFloat();
+    data.change_delay_time = ui->lineEdit_19->text().toFloat();
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 }
 
 
@@ -585,22 +585,22 @@ void comm_param_settings::rout_attack_confirm_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_StaticRoute* data =  new PG_RTUI_StaticRoute();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_add_staticroute; //type
-    data->length = sizeof(PG_RTUI_StaticRoute);//length大小
-    data->nodeId=ui->lineEdit_48->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_49->text().toFloat();
-    data->cost =ui->lineEdit_53->text().toInt();
+    PG_RTUI_StaticRoute data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_add_staticroute; //type
+    data.length = sizeof(PG_RTUI_StaticRoute);//length大小
+    data.nodeId=ui->lineEdit_48->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_49->text().toFloat();
+    data.cost =ui->lineEdit_53->text().toInt();
     string stu1 =ui->lineEdit_50->text().toStdString();
     string stu2 =ui->lineEdit_51->text().toStdString();
     string stu3 =ui->lineEdit_52->text().toStdString();
-    strcpy(data->dst_ip,stu1.data());
-    strcpy(data->nxt_hop,stu2.data());
-    strcpy(data->out_itf_ip,stu3.data());
+    strcpy(data.dst_ip,stu1.data());
+    strcpy(data.nxt_hop,stu2.data());
+    strcpy(data.out_itf_ip,stu3.data());
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 }
 void comm_param_settings::rout_attack_cancel_event(){
     ui->lineEdit_48->setText("");
@@ -618,22 +618,22 @@ void comm_param_settings::rout_attack_recovery_event(){
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_StaticRoute* data =  new PG_RTUI_StaticRoute();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_remove_staticroute; //type
-    data->length = sizeof(PG_RTUI_StaticRoute);//length大小
-    data->nodeId=ui->lineEdit_48->text().toInt();
-    data->pdsi_delay_time = ui->lineEdit_49->text().toFloat();
-    data->cost =ui->lineEdit_53->text().toInt();
+    PG_RTUI_StaticRoute data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_remove_staticroute; //type
+    data.length = sizeof(PG_RTUI_StaticRoute);//length大小
+    data.nodeId=ui->lineEdit_48->text().toInt();
+    data.pdsi_delay_time = ui->lineEdit_49->text().toFloat();
+    data.cost =ui->lineEdit_53->text().toInt();
     string stu1 =ui->lineEdit_50->text().toStdString();
     string stu2 =ui->lineEdit_51->text().toStdString();
     string stu3 =ui->lineEdit_52->text().toStdString();
-    strcpy(data->dst_ip,stu1.data());
-    strcpy(data->nxt_hop,stu2.data());
-    strcpy(data->out_itf_ip,stu3.data());
+    strcpy(data.dst_ip,stu1.data());
+    strcpy(data.nxt_hop,stu2.data());
+    strcpy(data.out_itf_ip,stu3.data());
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 
 
 }
@@ -649,40 +649,40 @@ void comm_param_settings::data_tamper_confirm_event()
         return;
     }
     //第一个结构体
-    PG_RTUI_SetDataTamperSimTime* data =  new PG_RTUI_SetDataTamperSimTime();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_set_data_tamper_sim_time; //type
-    data->length = sizeof(PG_RTUI_SetDataTamperSimTime);//length大小
+    PG_RTUI_SetDataTamperSimTime data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_set_data_tamper_sim_time; //type
+    data.length = sizeof(PG_RTUI_SetDataTamperSimTime);//length大小
 
-    data->nodeId = ui->lineEdit_45->text().toInt();
-    data->powernodeId =ui->lineEdit_20->text().toInt();
-    data->datatype =ui->comboBox_4->currentIndex()+1;
-    data->dataPlace =ui->lineEdit_22->text().toInt();
+    data.nodeId = ui->lineEdit_45->text().toInt();
+    data.powernodeId =ui->lineEdit_20->text().toInt();
+    data.datatype =ui->comboBox_4->currentIndex()+1;
+    data.dataPlace =ui->lineEdit_22->text().toInt();
     string stu1 = ui->lineEdit_23->text().toStdString();
-    strcpy(data->dataDev,stu1.data());
-    data->preset_time = ui->lineEdit_46->text().toFloat();
-    data->tamper_time= ui->lineEdit_47->text().toFloat();
+    strcpy(data.dataDev,stu1.data());
+    data.preset_time = ui->lineEdit_46->text().toFloat();
+    data.tamper_time= ui->lineEdit_47->text().toFloat();
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 
     //第二个结构体
-    PG_RTUI_SetDataTamperLastTime* data1= new PG_RTUI_SetDataTamperLastTime();
-    data1->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data1->clientAddr.port = 65500;//port  uInt32_t型
-    data1->type = ePG_RTUI_set_data_tamper_last_time; //type
-    data1->length = sizeof(PG_RTUI_SetDataTamperLastTime);//length大小
+    PG_RTUI_SetDataTamperLastTime data1;
+    data1.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data1.clientAddr.port = 65500;//port  uInt32_t型
+    data1.type = ePG_RTUI_set_data_tamper_last_time; //type
+    data1.length = sizeof(PG_RTUI_SetDataTamperLastTime);//length大小
 
-    data1->nodeId = ui->lineEdit_45->text().toInt();
-    data1->powernodeId =ui->lineEdit_20->text().toInt();
-    data1->datatype =ui->comboBox_4->currentIndex()+1;
-    data1->dataPlace =ui->lineEdit_22->text().toInt();
+    data1.nodeId = ui->lineEdit_45->text().toInt();
+    data1.powernodeId =ui->lineEdit_20->text().toInt();
+    data1.datatype =ui->comboBox_4->currentIndex()+1;
+    data1.dataPlace =ui->lineEdit_22->text().toInt();
     string stu2 = ui->lineEdit_23->text().toStdString();
-    strcpy(data1->dataDev,stu2.data());
-    data1->preset_time = ui->lineEdit_46->text().toFloat();
-    data1->tamper_time= ui->lineEdit_47->text().toFloat();
+    strcpy(data1.dataDev,stu2.data());
+    data1.preset_time = ui->lineEdit_46->text().toFloat();
+    data1.tamper_time= ui->lineEdit_47->text().toFloat();
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data1);
+    _msHandler->config_comm_param(&data1);
 
 }
 void comm_param_settings::data_tamper_cancel_event()
@@ -696,13 +696,13 @@ void comm_param_settings::data_tamper_cancel_event()
 }
 void comm_param_settings::data_tamper_recovery_event()
 {
-    PG_RTUI_StopDataTamper* data =  new PG_RTUI_StopDataTamper();
-    data->clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data->clientAddr.port = 65500;//port  uInt32_t型
-    data->type = ePG_RTUI_stop_data_tamper; //type
-    data->length = sizeof(PG_RTUI_StopDataTamper);//length大小
+    PG_RTUI_StopDataTamper data;
+    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+    data.clientAddr.port = 65500;//port  uInt32_t型
+    data.type = ePG_RTUI_stop_data_tamper; //type
+    data.length = sizeof(PG_RTUI_StopDataTamper);//length大小
     //发送数据给qualnet通信软件
-    _msHandler->config_comm_param(data);
+    _msHandler->config_comm_param(&data);
 }
 
 //checkBox单选事件.
