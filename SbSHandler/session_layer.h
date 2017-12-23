@@ -24,16 +24,15 @@ signals:
     void progress_log_signal(QString log);
 
 public slots:
-    void check_sim_time_event_slots();                  //定时检查通信事件
     void rcv_lower_slots(QDomElement* elem);      //接收下层数据
 
 public:
     void quit();
     void start_rcv_thread();
+    void rcv_lower_thread();
     void register_lower_layer(const network_layer* net_layer_ptr);
 
 private:
-    void rcv_lower_thread();
     bool check_login(SessionMessageBody* sess_msg);
     bool relay_handle(SessionMessageBody* sess_msg);
     void handle_msg(SessionMessageBody* sess_msg);
@@ -48,19 +47,8 @@ private:
     SessionMessageBody* _sess_msg_ptr ;
 
 private:
-    StrSet _unack_set;                 //未应答集合
-    bool check_ack_status(SessionMessageBody* sess_msg);
     StrSet _upper_cond_set;
     bool deliver_to_upper(SessionMessageBody* sess_msg);
-
-    double _cur_sim_time;
-    DblVec _event_time_vec;
-    ByteArrVec _event_data_vec;
-    void insert_event_data(const DblVec& time, const ByteArrVec& data);
-
-    QMutex _mtx;
-    QTimer* _event_timer;
-    void trans_event_data(QByteArray& data);
 
 private:
     typedef data_queue<QDomElement*> SessionMsgQue;

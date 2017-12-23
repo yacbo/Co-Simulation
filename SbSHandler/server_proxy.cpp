@@ -47,7 +47,6 @@ void server_proxy::start_rcv_thread()
 void server_proxy::handle_msg(ApplMessage* msg)
 {
     QString info = QString("server_proxy: handle_msg, proc_type: %1").arg(msg->_proc_msg->_proc_type);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     Q_ASSERT(msg->_proc_msg->_proc_type == eSubProcedure_session_begin);

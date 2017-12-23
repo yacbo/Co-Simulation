@@ -44,7 +44,6 @@ bool network_layer::start_sbs_rt_service(const char* local_ip,  uint16_t listen_
 
     QString tips = ret ? "successfully" : "failed";
     QString info = QString("network_layer: start_sbs_rt_service, start service %1").arg(tips);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     return ret;
@@ -56,7 +55,6 @@ bool network_layer::stop_sbs_service()
 
     QString tips = ret ? "successfully" : "failed";
     QString info = QString("network_layer: start_sbs_rt_service, stop service %1").arg(tips);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     return ret;
@@ -72,7 +70,6 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
     QString info;
     if(!_xml_frm_util_ptr->VerifyCheckSum(data)){
         info = QString("network_layer: rcv_lower_info_callback, VerifyCheckSum failed");
-        qInfo(info.toStdString().c_str());
         emit progress_log_signal(info);
         return;
     }
@@ -87,7 +84,6 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
     _snd_upper_que.push(dst_data);
 
     info = QString("network_layer: rcv_lower_info_callback, rcv data, len: %1").arg(len);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 }
 
@@ -158,7 +154,6 @@ void network_layer::snd_lower_thread()
 
         QString tips = ret ? "successfully" : "failed";
         QString info = QString("network_layer: snd_lower_thread, snd data %1, len: %2").arg(tips).arg(pkt_len);
-        qInfo(info.toStdString().c_str());
         emit progress_log_signal(info);
     }
 }

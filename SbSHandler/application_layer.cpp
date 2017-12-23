@@ -6,16 +6,28 @@
 #include "xml_util.h"
 #include "log_util.h"
 
+#define EPS 1e-7
+
 application_layer::application_layer()
 {
     _quit = false;
     LogUtil::Instance()->SetFileName("SbS");
+
+    _cur_sim_time = 0.0;
+    _event_timer = new QTimer();
+    _event_timer->setInterval(1000);
+    connect(_event_timer, &QTimer::timeout, this, &application_layer::check_sim_time_event_slots);
+    _event_timer->start();
+
     start_rcv_thread();
 }
 
 application_layer::~application_layer()
 {
-
+    if(_event_timer){
+        _event_timer->stop();
+        delete _event_timer;
+    }
 }
 
 void application_layer::quit()
@@ -23,6 +35,7 @@ void application_layer::quit()
     _quit = true;
     _snd_upper_que.set_completed_flag();
     _appl_msg_que.set_completed_flag();
+    _event_timer->stop();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
 }
@@ -59,7 +72,6 @@ void application_layer::quit()
      NetAddrMsgDataBody* net = (NetAddrMsgDataBody*)msg->_proc_msg->_data_vector[0];
 
      QString info = QString("application_layer: handle_login, dev_name: %1, dev_ip: %2, dev_id: %3").arg(net->_device_name.c_str()).arg(net->_device_ip).arg(msg->_i2u);
-     qInfo(info.toStdString().c_str());
      emit progress_log_signal(info);
 
      //confirm
@@ -80,7 +92,6 @@ void application_layer::quit()
      //发送登录确认信息
      emit snd_lower_signal(xml_confirm, dst_ip, dst_port);
      info = QString("application_layer: handle_login, send login confirm info to device: %1").arg(net->_device_name.c_str());
-     qInfo(info.toStdString().c_str());
      emit progress_log_signal(info);
 
      //向UI发送登录信息
@@ -96,7 +107,6 @@ void application_layer::quit()
              emit snd_lower_signal(notify_xml, it_t->_dev_ip.c_str(), it_t->_dev_port);
 
              info = QString("application_layer: handle_login, notify register device type and id to device: %1").arg(dev_name);
-             qInfo(info.toStdString().c_str());
              emit progress_log_signal(info);
          }
      }
@@ -112,7 +122,6 @@ void application_layer::quit()
      SbsDeviceMap::iterator it = _dev_tbl.find(net->_device_name.c_str());
      if(it == _dev_tbl.end()){
          QString info = QString("application_layer: handle_logout, not found device: %1").arg(net->_device_name.c_str());
-         qInfo(info.toStdString().c_str());
          emit progress_log_signal(info);
          return;
      }
@@ -137,7 +146,6 @@ void application_layer::quit()
              emit snd_lower_signal(notify_xml, it->_dev_ip.c_str(), it->_dev_port);
 
              QString info = QString("application_layer: handle_logout, transmmit login msg to controller");
-             qInfo(info.toStdString().c_str());
              emit progress_log_signal(info);
          }
      }
@@ -163,7 +171,6 @@ void application_layer::handle_session(ApplMessage* msg)
     string dev_name = DevNamesSet[dev_type];
 
     QString info = QString("application_layer: handle_session, dev_name: %1, msg_name:%2, proc_type: %3, msg_type: %4").arg(dev_name.c_str()).arg(msg_name.c_str()).arg(proc_type).arg(msg_type);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     SbsDeviceMap::iterator it = _dev_tbl.find(dev_name);
@@ -264,7 +271,6 @@ void application_layer::handle_sim_cmd(ApplMessage* msg)
     long msg_type = msg->_proc_msg->_msg_type;
 
     QString info = QString("application_layer: handle_sim_cmd, cmd: %1").arg(msg_type);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     IntMap::const_iterator it = _dev_type_id_tbl.cbegin();
@@ -285,7 +291,6 @@ void application_layer::handle_sim_cmd(ApplMessage* msg)
 void application_layer::handle_cfg_sim_param(ApplMessage* msg)
 {
     QString info = QString("application_layer: handle_cfg_sim_param");
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     XmlUtil::parse_UnionSimConfParam_xml(msg->_proc_msg->_data_vector, _sim_conf_param);
@@ -316,12 +321,11 @@ server_proxy* application_layer::init_proxy(int i2u, int u2i)
     server_proxy* proxy = new server_proxy();
     if(!proxy){
         QString info = QString("application_layer: init_proxy, fail, dst_id(u2i):%1").arg(u2i);
-        qInfo(info.toStdString().c_str());
+        emit progress_log_signal(info);
         return nullptr;
     }
 
     QString info = QString("application_layer: init_proxy, i2u: %1, u2i: %2").arg(i2u).arg(u2i);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     proxy->register_lower_layer(_net_layer_ptr);
@@ -348,7 +352,6 @@ server_proxy* application_layer::init_proxy(int i2u, int u2i)
 
      QString tips = !bcreate ? "delete server_proxy" : (b_find ? "invoke server_proxy" : "create server_proxy");
      QString info = QString("application_layer: manager_proxy, : %1").arg(tips);
-     qInfo(info.toStdString().c_str());
      emit progress_log_signal(info);
 
      if(b_find){
@@ -393,12 +396,12 @@ void application_layer::handle_msg(ApplMessage* msg)
     }
 
     QString info = QString("application_layer: handle_msg, proc_type: %1").arg(msg->_proc_msg->_proc_type);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     switch(msg->_proc_msg->_proc_type){
     case eSubProcedure_sim_cmd: handle_sim_cmd(msg); break;
     case eSubProcedure_cfg_sim_param_data: handle_cfg_sim_param(msg); break;
+    case eSubProcedure_cfg_communication_data: handle_comm_sim_event(msg); break;
     case eSubProcedure_session_begin:
     case eSubProcedure_appl_request:
     case eSubProcedure_data_send:
@@ -422,5 +425,196 @@ ESimDevType application_layer::query_dev_type(int dev_id)
     }
 
     return dev_type;
+}
+
+void application_layer::handle_comm_sim_event(ApplMessage* msg)
+{
+    int ss_id = msg->_i2u;
+    int ps_id = msg->_u2i;
+
+    QString info = QString("application_layer: handle_comm_sim_event, ss_id: %1, ps_id: %2, data type: %3").arg(ss_id).arg(ps_id).arg(msg->_pg_rtui_type);
+    emit progress_log_signal(info);
+
+    if(msg->_pg_rtui_type ==  ePG_comm_sim_event_data){
+        DblVec time; ByteArrVec data;
+        if(XmlUtil::parse_CommSimEventConf_xml(msg->_proc_msg->_data_vector, data, time)){
+            insert_event_data(time, data);
+        }
+    }
+    else if(msg->_proc_msg->_proc_type == eSubProcedure_sim_time_notify_data){
+        VariableMsgDataBody* var = (VariableMsgDataBody*)msg->_proc_msg->_data_vector[0];
+        _cur_sim_time = std::stod(var->_var_value);
+    }
+}
+
+void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& data)
+{
+    _event_time_vec.insert(_event_time_vec.end(), time.begin(), time.end());
+    _event_data_vec.insert(_event_data_vec.end(), data.begin(), data.end());
+
+    //对事件按时间升序排列
+    _mtx.lock();
+
+    int nsize = _event_time_vec.size();
+    for(int i=0; i<nsize - 1; ++i){
+        for(int j=1; j<nsize; ++j){
+            if(_event_time_vec[j] - _event_time_vec[i] > EPS){
+                std::swap(_event_time_vec[j], _event_time_vec[i]);
+                std::swap(_event_data_vec[j], _event_data_vec[i]);
+            }
+        }
+    }
+
+    _mtx.unlock();
+}
+
+void application_layer::check_sim_time_event_slots()
+{
+    int index = -1;
+    for(int i=0; i<_event_time_vec.size(); ++i){
+        double diff = _event_time_vec[i] - _cur_sim_time;
+        if(diff > -EPS && diff < 1.0){
+            index = i;
+            break;
+        }
+    }
+
+    for(int i=0; i<index; ++i){
+        forward_event_data(_event_data_vec[i]);
+    }
+
+    _mtx.lock();
+
+    DblVec::iterator it_dbl = _event_time_vec.begin();
+    DblVec::iterator it_dbl_end = it_dbl + index + 1;
+    while(it_dbl != it_dbl_end){
+        it_dbl = _event_time_vec.erase(it_dbl);
+    }
+
+    ByteArrVec::iterator it_byte = _event_data_vec.begin();
+    ByteArrVec::iterator it_byte_end = it_byte + index + 1;
+    while(it_byte != it_byte_end){
+        it_byte = _event_data_vec.erase(it_byte);
+    }
+
+    _mtx.unlock();
+}
+
+void application_layer::forward_event_data(QByteArray& data)
+{
+    if(data.length() == 0){
+        return;
+    }
+
+    int ss_id = 10000;
+    int ps_id = _dev_type_id_tbl[eSimDev_communication];
+
+    char param[1024] = {0};
+    memcpy(param, data.data(), data.length());
+
+    const int offset_type = sizeof(LocalAddr);
+    uint16_t event_type = data.mid(offset_type, sizeof(uint16_t)).toUShort();
+
+    QDomDocument* doc = nullptr;
+    switch(event_type){
+    case ePG_RTUI_msg_getinterfacenum:{
+        const PG_RTUI_Msg_GetInterfaceNum* pg = (PG_RTUI_Msg_GetInterfaceNum*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_GetInterfaceNum_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_ack_getinterfacenum:{
+        const PG_RTUI_Ack_GetInterfaceNum* pg = (PG_RTUI_Ack_GetInterfaceNum*)param;
+        doc = XmlUtil::generate_PG_RTUI_Ack_GetInterfaceNum_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_getinterface:{
+        const PG_RTUI_Msg_GetInterface* pg = (PG_RTUI_Msg_GetInterface*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_GetInterface_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_ack_getinterface:{
+        const PG_RTUI_Ack_GetInterface* pg = (PG_RTUI_Ack_GetInterface*)param;
+        doc = XmlUtil::generate_PG_RTUI_Ack_GetInterface_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_setinterface:{
+        const PG_RTUI_Msg_SetInterface* pg = (PG_RTUI_Msg_SetInterface*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_SetInterface_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_getlink:{
+        const PG_RTUI_Msg_GetLink* pg = (PG_RTUI_Msg_GetLink*)param;
+        doc = XmlUtil::generate_PG_RTUI_GetLink_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_ack_getlink:{
+        const PG_RTUI_Ack_GetLink* pg = (PG_RTUI_Ack_GetLink*)param;
+        doc = XmlUtil::generate_PG_RTUI_Ack_GetLink_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_msg_setlink:{
+        const PG_RTUI_Msg_SetLink* pg = (PG_RTUI_Msg_SetLink*)param;
+        doc = XmlUtil::generate_PG_RTUI_Msg_SetLink_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_recover_node_status:
+    case ePG_RTUI_change_node_status:{
+        const PG_RTUI_ChangeNodeStatus* pg = (PG_RTUI_ChangeNodeStatus*)param;
+        doc = XmlUtil::generate_PG_RTUI_ChangeNodeStatus_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_recover_port_status:
+    case ePG_RTUI_change_port_status:{
+        const PG_RTUI_ChangePortStatus* pg = (PG_RTUI_ChangePortStatus*)param;
+        doc = XmlUtil::generate_PG_RTUI_ChangePortStatus_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_static_route:{
+        const PG_RTUI_StaticRoute* pg = (PG_RTUI_StaticRoute*)param;
+        doc = XmlUtil::generate_PG_RTUI_StaticRoute_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_add_cbr:{
+        const PG_RTUI_AddCBR* pg = (PG_RTUI_AddCBR*)param;
+        doc = XmlUtil::generate_PG_RTUI_AddCBR_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_set_data_tamper_sim_time:{
+        const PG_RTUI_SetDataTamperSimTime* pg = (PG_RTUI_SetDataTamperSimTime*)param;
+        doc = XmlUtil::generate_PG_RTUI_SetDataTamperSimulationTime_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_set_data_tamper_last_time:{
+        const PG_RTUI_SetDataTamperLastTime* pg = (PG_RTUI_SetDataTamperLastTime*)param;
+        doc = XmlUtil::generate_PG_RTUI_SetDataTamperLastTime_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_stop_data_tamper:{
+        const PG_RTUI_StopDataTamper* pg = (PG_RTUI_StopDataTamper*)param;
+        doc = XmlUtil::generate_PG_RTUI_StopDataTamper_xml(ss_id, ps_id, pg);
+        break;
+    }
+    case ePG_RTUI_add_staticroute:
+    case ePG_RTUI_remove_staticroute:{
+            const PG_RTUI_StaticRoute* pg = (PG_RTUI_StaticRoute*)param;
+            doc = XmlUtil::generate_PG_RTUI_StaticRoute_xml(ss_id, ps_id, pg);
+            break;
+        }
+    default: break;
+    }
+
+    if(doc){
+        const char* dev_name = DevNamesSet[eSimDev_communication];
+        SbsDeviceMap::const_iterator it = _dev_tbl.find(dev_name);
+        if(it == _dev_tbl.cend()){
+            delete doc;
+            return;
+        }
+
+        emit snd_lower_signal(doc, it->_dev_ip.c_str(), it->_dev_port);
+
+        QString info = QString("application_layer: forward_event_data, event type: %1").arg(event_type);
+        emit progress_log_signal(info);
+    }
 }
 
