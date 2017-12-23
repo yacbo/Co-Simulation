@@ -597,7 +597,12 @@ void application_layer::handle_msg(ApplMessage* msg)
     case eSubProcedure_invoke: handle_interoper(msg); break;
     case eSubProcedure_sim_cmd: emit proxy->ready_rcv_signal(msg); break;
     case eSubProcedure_cfg_sim_param_data: handle_union_sim_param(msg); break;
-    case eSubProcedure_cfg_power_data:  if(_dev_type == eSimDev_power) emit proxy->ready_rcv_signal(msg); break;
+    case eSubProcedure_cfg_power_data:  {
+        if(_dev_type == eSimDev_power || _dev_type == eSimDev_power_appl) {
+            emit proxy->ready_rcv_signal(msg);
+        }
+        break;
+    }
     case eSubProcedure_cfg_communication_data:{
         if(_dev_type == eSimDev_communication) emit proxy->ready_rcv_signal(msg);
         else if(_dev_type == eSimDev_sim_controller) handle_ack_comm_cfg_param(msg);

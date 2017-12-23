@@ -41,7 +41,7 @@ void DecisionAlth::ApplReq_ProcedureRequestSendBefore(const ProcEventParam* para
 
     AlgorithmUtil* util = new AlgorithmUtil();
     ProcEventParam* ev_p = const_cast<ProcEventParam*>(param);
-    ev_p->_handle_success = util->Alth_Calculate_dVg(ev_p->_in_out_info.c_str(), (double*)customData);
+    ev_p->_handle_success = util->Alth_Calculate_dVg(ev_p->_in_out_info.c_str(), ev_p->bus_num,  (double*)customData);
     delete util;
 }
 

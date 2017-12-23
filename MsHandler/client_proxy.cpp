@@ -26,6 +26,7 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
     _power_init_success = false;
     _power_sim_started = false;
     _decision_alth = nullptr;
+    _his_record_mgr = nullptr;
 
     if(type == eSimDev_communication){
         _sock_util_ptr = new SockUtil();
@@ -41,6 +42,9 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
         _expect_msg_type = eSimCmd_start_sim;
         _expect_proc_type = eSubProcedure_sim_cmd;
         _power_handler = new PowerHandler();
+    }
+    else if(type == eSimDev_power_appl){
+        _his_record_mgr = new HisRecordMgr();
     }
 
     _local_ip = SockUtil::query_local_ip();
@@ -65,6 +69,10 @@ client_proxy::~client_proxy()
 
     if(_power_handler){
         delete _power_handler;
+    }
+
+    if(_his_record_mgr){
+        delete _his_record_mgr;
     }
 }
 
@@ -322,22 +330,25 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
     return stream;
 }
 
-void client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec)
+bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec)
 {
-    int num = data.size();
-    double* dvg_ret = new double[num];
-    memset(dvg_ret, 0, sizeof(double) * num);
+    if(data.size() != _power_conf_param.bus_num){
+        return false;
+    }
 
-    QString info = QString("client_proxy: calc_power_appl_data");
-    qInfo(info.toStdString().c_str());
+    double* dvg_ret = new double[_power_conf_param.bus_num];
+    memset(dvg_ret, 0, sizeof(double) * _power_conf_param.bus_num);
+
+    QString info = QString("client_proxy: calc_power_appl_data, items: %1").arg(_power_conf_param.bus_num);
     emit progress_log_signal(info);
 
     ProcEventParam param;
+    param.bus_num = _power_conf_param.bus_num;
     param._in_out_info = stream_power_sim_data(data);
     _decision_alth->ApplReq_ProcedureRequestSendBefore(&param, dvg_ret);
 
     DblVec tmp;
-    for(int i=0; i<num; ++i){
+    for(int i=0; i<_power_conf_param.bus_num; ++i){
         tmp.push_back(dvg_ret[i]);
     }
 
@@ -969,6 +980,11 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
         return;
     }
 
+    if(_dev_type == eSimDev_power_appl){
+        return;
+    }
+
+    //_dev_type == eSimDev_power
     _power_init_success = _power_handler->InitHandler(_power_conf_param.prj_name.c_str(),
                                                                                         _power_conf_param.case_name.c_str(),
                                                                                         _power_conf_param.sim_time,

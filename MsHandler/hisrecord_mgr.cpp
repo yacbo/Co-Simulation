@@ -6,19 +6,19 @@
 #include <iostream>
 #include "hisrecord_mgr.h"
 
-hisrecord_mgr::hisrecord_mgr()
+HisRecordMgr::HisRecordMgr()
     : _rec_name_prefix("./sim-rec/his-rec-")
     , _rec_name_postfix(".rec")
 {
     load_file_list(_file_list_vec);
 }
 
-hisrecord_mgr::~hisrecord_mgr()
+HisRecordMgr::~HisRecordMgr()
 {
 
 }
 
-bool  hisrecord_mgr::load_file_list(StrVec& vec)
+bool  HisRecordMgr::load_file_list(StrVec& vec)
 {
     struct _finddata_t file;
     const char* folder = "./sim-rec";
@@ -43,7 +43,7 @@ bool  hisrecord_mgr::load_file_list(StrVec& vec)
     return true;
 }
 
-bool hisrecord_mgr::load_recodes(UnionSimDatVec& vec, int64_t sim_time)
+bool HisRecordMgr::load_recodes(UnionSimDatVec& vec, int64_t sim_time)
 {
     string file_name;
     if(sim_time > 0){
@@ -88,7 +88,7 @@ bool hisrecord_mgr::load_recodes(UnionSimDatVec& vec, int64_t sim_time)
     return true;
 }
 
-bool hisrecord_mgr::write_recordes(int64_t sim_time, const UnionSimDatVec& vec)
+bool HisRecordMgr::write_recordes(int64_t sim_time, const UnionSimDatVec& vec)
 {
     if(vec.size() <= 0){
         return false;

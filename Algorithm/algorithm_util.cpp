@@ -17,11 +17,8 @@ AlgorithmUtil::~AlgorithmUtil()
 
 }
 
-bool AlgorithmUtil::Alth_Calculate_dVg(const char* sim_data, double* dvg_ret)
+bool AlgorithmUtil::Alth_Calculate_dVg(const char* sim_data,  int bus_num, double* dvg_ret)
 {
-    int nbus = 0;
-    BusInfor businfo[39];
-
     std::string tmp;
     StrVec data_vec;
     std::istringstream istr(sim_data);
@@ -29,12 +26,16 @@ bool AlgorithmUtil::Alth_Calculate_dVg(const char* sim_data, double* dvg_ret)
         data_vec.push_back(tmp);
     }
 
-    nbus = data_vec.size();
-    for (int m = 0; m < 39; ++m){
+    BusInfor* businfo = new BusInfor[bus_num];
+
+    for (int m = 0; m < bus_num; ++m){
         businfo[m].busno = m + 1;
         businfo[m].Volt = (double)atof(data_vec[2 * m].c_str());
         businfo[m].V_ang = (double)atof(data_vec[2 * m + 1].c_str());
     }
 
-    return CalculateDVG(&businfo[0], 39, dvg_ret);
+    bool ret = CalculateDVG(&businfo[0], bus_num, dvg_ret);
+    delete[] businfo;
+
+    return ret;
 }

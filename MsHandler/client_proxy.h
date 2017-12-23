@@ -8,6 +8,7 @@
 #include "powerhandler.h"
 #include "application_layer.h"
 #include "decisionalth.h"
+#include "hisrecord_mgr.h"
 
 class client_proxy : public QObject
 {
@@ -46,7 +47,7 @@ public:
     bool map_power_comm_sim_data(const BusInfor* bus, int num, UnionSimDatVec& ud);
     string stream_power_sim_data(const UnionSimDatVec& data);
 
-    void calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec);
+    bool calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec);
     void reset_power_dginfo(DGInfor* infor, int num);
     void replace_power_sim_data(UnionSimData* data);
 
@@ -98,6 +99,7 @@ private:
     SockUtil* _sock_util_ptr;
     PowerHandler* _power_handler;                               //电力仿真处理器
     DecisionAlth* _decision_alth;
+    HisRecordMgr* _his_record_mgr;
 
     UnionSimDatVec _union_sim_dat_snd_vec;
     UnionSimDatVec _union_sim_dat_rcv_vec;

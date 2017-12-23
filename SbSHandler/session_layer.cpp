@@ -194,9 +194,39 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
     PowerConfParam power_cfg_data;
     if(XmlUtil::parse_PowerSimConfParam_xml(sess_msg->_procedure_msg_body->_data_vector, power_cfg_data)){
         doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &power_cfg_data);
+        forward_power_cfg_param_to_power_appl(power_cfg_data);            //forward to power appl
     }
 
     return doc;
+}
+
+bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& param)
+{
+    IntMap::const_iterator it_id = _session_type_id_tbl.find(eSimDev_power_appl);
+    if(it_id == _session_type_id_tbl.cend()){
+        return false;
+    }
+
+    IntStrMap::const_iterator it_ip = _session_id_ip_tbl.find(it_id->second);
+    if(it_ip == _session_id_ip_tbl.cend()){
+        return false;
+    }
+
+    int ss_id = 10000;
+    int ps_id = it_id->first;
+    QDomDocument* doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &param);
+    if(!doc){
+        return false;
+    }
+
+    QStringList id = QString(it_ip->second.c_str()).split(':');
+    QString ip = id.at(0);
+    QString port = id.at(1);
+    QHostAddress dst(ip.toULong());
+    emit snd_lower_signal(doc, dst.toString(), port.toUShort());
+
+    QString info = QString("session_layer: forward_power_cfg_param_to_power_appl, transmmit power config data, ss_id: %1, ps_id: %2, data type: %3").arg(ss_id).arg(ps_id).arg(eSubProcedure_cfg_power_data);
+    emit progress_log_signal(info);
 }
 
 QDomDocument* session_layer::handle_cfg_comm_param(SessionMessageBody* sess_msg)

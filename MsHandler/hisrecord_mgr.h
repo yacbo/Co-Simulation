@@ -3,11 +3,11 @@
 
 #include "comm_type_def.h"
 
-class hisrecord_mgr
+class HisRecordMgr
 {
 public:
-    hisrecord_mgr();
-    virtual ~hisrecord_mgr();
+    HisRecordMgr();
+    virtual ~HisRecordMgr();
 
 public:
     bool load_recodes(UnionSimDatVec& vec, int64_t sim_time = -1 );

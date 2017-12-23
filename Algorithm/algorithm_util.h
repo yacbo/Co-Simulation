@@ -11,7 +11,7 @@ public:
     virtual ~AlgorithmUtil();
 
 public:
-    bool Alth_Calculate_dVg(const char* sim_data, double* dvg_ret);
+    bool Alth_Calculate_dVg(const char* sim_data, int bus_num,  double* dvg_ret);
 };
 
 #endif // ALGORITHM_H

@@ -16,6 +16,7 @@ public:
     ProcEventParam();
 
 public:
+    int bus_num;
     string _in_out_info;
     DataXmlMsgBase* _data_msg;
     ApplMessageBody* _appl_msg;
