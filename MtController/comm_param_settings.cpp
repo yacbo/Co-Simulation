@@ -13,7 +13,8 @@
 #include <fstream>
 #include <stdlib.h>
 #include<xml_util.h>
-
+#include <iostream>
+#include <sstream>
 
 bool flagSendGetInterface =false;
 
@@ -174,13 +175,15 @@ void comm_param_settings::init()
    connect(ui->pushButton_30,&QRadioButton::clicked,this,&comm_param_settings::delete_data_button30_event);
    //table事件列表
    ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
+   ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    ui->tableView->setSelectionBehavior ( QAbstractItemView::SelectRows); //设置选择行为，以行为单位
    ui->tableView->setSelectionMode ( QAbstractItemView::SingleSelection); //设置选择模式，选择单行
    model_t = new QStandardItemModel();
-   model_t->setColumnCount(2);  //设为两列.
+   model_t->setColumnCount(3);  //设为两列.
    model_t->setHeaderData(0,Qt::Horizontal,"事件时间(S)");
    model_t->setHeaderData(1,Qt::Horizontal,"事件类型");
+   model_t->setHeaderData(2,Qt::Horizontal,"信息");
    ui->tableView->setModel(model_t);
 
 }
@@ -884,8 +887,16 @@ void comm_param_settings::com_node_para_button18_event()
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    std::stringstream ss;
+    ss<<"节点:"<<ui->lineEdit->text().toStdString()
+      <<"\n通信端数:"<<ui->comboBox->currentText().toStdString()
+      <<"\n工作Status:"<<ui->lineEdit_21->text().toStdString()
+      <<"\n工作带宽:"<<ui->lineEdit_2->text().toStdString()
+      <<"\n发射功率:"<<ui->lineEdit_3->text().toStdString()
+      <<"\n接受灵敏:"<<ui->lineEdit_4->text().toStdString();
     model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem("节点参数事件"));
+    model_t->setItem(n,1,new QStandardItem(QString::fromStdString("节点参数事件")));
+    model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
     vec.push_back(QByteArray::fromRawData(d,length));
 }
@@ -922,8 +933,17 @@ void comm_param_settings::com_link_para_button25_event()
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    std::stringstream ss;
+    ss<<"源节点号:"<<ui->lineEdit_5->text().toStdString()
+      <<"\n目的节点:"<<ui->lineEdit_6->text().toStdString()
+      <<"\n转接头数:"<<ui->lineEdit_7->text().toStdString()
+      <<"\n连接器数:"<<ui->lineEdit_8->text().toStdString()
+      <<"\n转接头loss.:"<<ui->lineEdit_9->text().toStdString()
+      <<"\n连接器loss.:"<<ui->lineEdit_10->text().toStdString()
+      <<"\n链路损loss:"<<ui->lineEdit_11->text().toStdString();
     model_t->setItem(n,0,new QStandardItem(QString::number(time)));
     model_t->setItem(n,1,new QStandardItem("链路参数事件"));
+    model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
     vec.push_back(QByteArray::fromRawData(d,length));
 }
@@ -963,9 +983,26 @@ void comm_param_settings::node_breakdown_button26_event()
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
-    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem("节点故障事件"));
-    n++;
+    if(ui->radioButton_2->isChecked())   //非半实物
+    {
+        std::stringstream ss;
+        ss<<"故障节点:"<<ui->lineEdit_13->text().toStdString().data();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("节点故障事件:not half.")));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+    }
+    if(ui->radioButton->isChecked())   //半实物
+    {
+        std::stringstream ss;
+        ss<<"故障节点:"<<ui->lineEdit_13->text().toStdString()
+          <<"\n预设故障时间:"<<ui->lineEdit_14->text().toStdString()
+          <<"\n延迟补偿:"<<ui->lineEdit_15->text().toStdString();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem("节点故障事件:half."));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+    }
     vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件  链路故障
@@ -1005,9 +1042,28 @@ void comm_param_settings::link_breakdown_button27_event()
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
-    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem("链路故障事件"));
-    n++;
+    if(ui->radioButton_4->isChecked())   //非半实物
+    {
+        std::stringstream ss;
+        ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString().data()
+          <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString().data();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("链路故障事件:not half.")));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+    }
+    if(ui->radioButton_3->isChecked())   //半实物
+    {
+        std::stringstream ss;
+        ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString()
+          <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString()
+          <<"\n预设故障时间:"<<ui->lineEdit_18->text().toStdString()
+          <<"\n延迟补偿:"<<ui->lineEdit_19->text().toStdString();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem("链路故障事件:half."));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+    }
     vec.push_back(QByteArray::fromRawData(d,length));
 }
 //事件列表添加事件 路由攻击
@@ -1040,8 +1096,16 @@ void comm_param_settings::rout_attack_button28_event()
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    std::stringstream ss;
+    ss<<"靶标节点:"<<ui->lineEdit_48->text().toStdString()
+      <<"\n预设攻击时间:"<<ui->lineEdit_49->text().toStdString()
+      <<"\n目的地址:"<<ui->lineEdit_50->text().toStdString()
+      <<"\n下一跳地址:"<<ui->lineEdit_51->text().toStdString()
+      <<"\n接口IP地址:"<<ui->lineEdit_52->text().toStdString()
+      <<"\n权值数:"<<ui->lineEdit_53->text().toStdString();
     model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem("路由攻击事件"));
+    model_t->setItem(n,1,new QStandardItem(QString::fromStdString("路由攻击事件")));
+    model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
     vec.push_back(QByteArray::fromRawData(d,length));
 }
@@ -1077,8 +1141,17 @@ void comm_param_settings::data_tamper_button29_event()
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
     XmlUtil::add_CommSimEventConf_data(d,length);
+    std::stringstream ss;
+    ss<<"攻击点号:"<<ui->lineEdit_45->text().toStdString()
+      <<"\n电力节点:"<<ui->lineEdit_20->text().toStdString()
+      <<"\n数据类型:"<<ui->comboBox_4->currentText().toStdString()
+      <<"\n字节开始位置处:"<<ui->lineEdit_22->text().toStdString()
+      <<"\n修改量value:"<<ui->lineEdit_23->text().toStdString()
+      <<"\n预设攻击时间:"<<ui->lineEdit_46->text().toStdString()
+      <<"\n攻击时间:"<<ui->lineEdit_47->text().toStdString();
     model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem("数据篡改事件"));
+    model_t->setItem(n,1,new QStandardItem(QString::fromStdString("数据篡改事件")));
+    model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
     vec.push_back(QByteArray::fromRawData(d,length));
 }
@@ -1087,7 +1160,7 @@ void comm_param_settings::data_tamper_button29_event()
 void comm_param_settings::send_data_button17_event()
 {
     //发送数据
-    //config_comm_sim_event();
+    _msHandler->config_comm_sim_event();
     //清除tableView数据
     auto iter = vec.begin();
     for ( ;iter!=vec.end();)
