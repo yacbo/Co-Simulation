@@ -44,12 +44,12 @@ private:
 
 public:
     bool fetch_power_cfg_param(const DataXmlVec& vec);
-    bool map_power_comm_sim_data(const BusInfor* bus, int num, UnionSimDatVec& ud);
     string stream_power_sim_data(const UnionSimDatVec& data);
+    bool map_power_comm_sim_data(UnionSimDatVec& ud);
 
     bool calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec);
-    void reset_power_dginfo(DGInfor* infor, int num);
     void replace_power_sim_data(UnionSimData* data);
+    void reset_power_input_data();
 
 private:
     //从上层发下来.
@@ -88,8 +88,13 @@ private:
     bool _power_sim_started;
     bool _power_init_success;
     PowerConfParam _power_conf_param;
+
     IntPairMap _bus_comm_id_tbl;
     application_layer* _appl_layer;
+
+private:
+    PowerSimInputData* _input_info;
+    PowerSimResultData* _result_info;
 
 private:
     EProxyState _proxy_status;                                        //客户代理状态

@@ -40,3 +40,10 @@ DEPENDPATH += $$PWD/.
 win32: LIBS += -L$$PWD/./ -ldigapi
 win32: LIBS += -L$$PWD/./ -ldigapivalue
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../bin/release/ -lXmlUtil
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../bin/debug/ -lXmlUtil
+else:unix:!macx: LIBS += -L$$PWD/../bin/ -lXmlUtil
+
+INCLUDEPATH += $$PWD/../XmlUtil
+DEPENDPATH += $$PWD/../XmlUtil
+

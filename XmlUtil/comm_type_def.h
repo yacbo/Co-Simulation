@@ -203,7 +203,10 @@ typedef struct PowerConfParam{
     string case_name;
     double sim_time;
     double sim_period;
-    int32_t bus_num;
+    int32_t input_type;     //输入类型，如DGInfor
+    int32_t result_type;    //结果类型，如BusInfor
+    int32_t input_num;     //输入数据数目， 如39
+    int32_t result_num;    //结果数据数目， 如10
     string nodes_map;
 }PowerConfParam;
 
@@ -251,8 +254,10 @@ typedef struct UnionSimData{
     double sim_time;                     //仿真时刻.
     //communication sim
     CommSimData comm_dat;      //通信信息数据.
-    //power sim
-    PowerSimData power_dat;     //电力信息数据.
+    //power sim data
+    //PowerSimData power_dat;     //电力信息数据.
+
+    char power_dat[192];
 }UnionSimData;
 
 #pragma pack(pop)

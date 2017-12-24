@@ -3,6 +3,7 @@
 
 #include "Api.hpp"
 #include "Utils.hpp"
+#include "power_data_def.h"
 #include "powerhandler_global.h"
 
 struct BusInfor
@@ -27,7 +28,7 @@ public:
 
 public:
     bool InitHandler(const char* prj_name, const char* case_name, double sim_time, double sim_period);
-    int Execute(int bus_num, DGInfor *dg_infor, BusInfor *bus_infor);
+    int Execute(int dg_num, EPowerDataType dg_type, PowerSimInputData *dg_infor, int bus_num, EPowerDataType bus_type, PowerSimResultData *bus_infor);
     double QueryCurSimTime(bool realtime = false);
 
 private:
@@ -38,7 +39,7 @@ private:
     int CalculateTransient(Application* app, double simutime);
     int ExportCalculateResult(Application* app, const char *filename);
 
-    int SetEvents(Application* app, DGInfor* dgInfor, double simtime);
+    int SetEvents(Application* app, int dg_num, EPowerDataType dg_type, PowerSimInputData* dgInfor, double simtime);
 
 private:
     bool ReadSimRet(const char* filename, SStrVec& mat);

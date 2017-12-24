@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include "hisrecord_mgr.h"
+#include "power_data_def.h"
 
 HisRecordMgr::HisRecordMgr()
     : _rec_name_prefix("./sim-rec/his-rec-")
@@ -73,14 +74,17 @@ bool HisRecordMgr::load_recodes(UnionSimDatVec& vec, int64_t sim_time)
         }
 
         UnionSimData dat;
+        PowerBusInforData pbid;
         dat.sim_time = std::stod(dat_vec[0]);
-        dat.power_dat.bus_id = std::stoul(dat_vec[1]);
+        pbid.bus_id = std::stoul(dat_vec[1]);
         dat.comm_dat.src_id = std::stoul(dat_vec[2]);
         dat.comm_dat.dst_id = std::stoul(dat_vec[3]);
         dat.comm_dat.err_type  = (EErrorType)std::stoi(dat_vec[4]);
         dat.comm_dat.trans_delay = std::stol(dat_vec[5]);
-        dat.power_dat.bus_voltage = std::stod(dat_vec[6]);
-        dat.power_dat.bus_angle = std::stod(dat_vec[7]);
+        pbid.bus_volt = std::stod(dat_vec[6]);
+        pbid.bus_angle = std::stod(dat_vec[7]);
+
+        memcpy(dat.power_dat, &pbid, sizeof(PowerBusInforData));
 
         vec.push_back(dat);
     }
@@ -112,14 +116,15 @@ bool HisRecordMgr::write_recordes(int64_t sim_time, const UnionSimDatVec& vec)
 
     for(int i=0; i<vec.size(); ++i){
         const UnionSimData& dat = vec[i];
+        const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
         out << dat.sim_time
-              << dat.power_dat.bus_id
+              << pbid->bus_id
               << dat.comm_dat.src_id
               << dat.comm_dat.dst_id
               << dat.comm_dat.err_type
               << dat.comm_dat.trans_delay
-              << dat.power_dat.bus_voltage
-              << dat.power_dat.bus_angle;
+              << pbid->bus_volt
+              << pbid->bus_angle;
     }
 
     _file_list_vec.push_back(file_name);

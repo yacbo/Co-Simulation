@@ -1221,7 +1221,7 @@ bool XmlUtil::load_PowerSimConfParam_cfg(const char* cfg_path, PowerConfParam& d
         }
     }
 
-    if(cfg_par_vec.size() < 5){
+    if(cfg_par_vec.size() < 8){
         return false;
     }
 
@@ -1229,9 +1229,12 @@ bool XmlUtil::load_PowerSimConfParam_cfg(const char* cfg_path, PowerConfParam& d
     data.case_name = cfg_par_vec[1];
     data.sim_time = std::stod(cfg_par_vec[2]);
     data.sim_period = std::stod(cfg_par_vec[3]);
-    data.bus_num = std::stoi(cfg_par_vec[4]);
+    data.input_type = std::stoi(cfg_par_vec[4]);
+    data.result_type = std::stoi(cfg_par_vec[5]);
+    data.input_num = std::stoi(cfg_par_vec[6]);
+    data.result_num = std::stoi(cfg_par_vec[7]);
 
-    if(cfg_par_vec.size() > 5){
+    if(cfg_par_vec.size() > 8){
         string nodes_map_tbl;
         for(int i=5; i<cfg_par_vec.size(); ++i){
             nodes_map_tbl += cfg_par_vec[i] + " ";
@@ -1262,10 +1265,19 @@ bool  XmlUtil::parse_PowerSimConfParam_xml(const DataXmlVec& vec, PowerConfParam
     VariableMsgDataBody* var_sim_period = (VariableMsgDataBody*)vec[3];
     data.sim_period = std::stod(var_sim_period->_var_value);
 
-    VariableMsgDataBody* var_bus_num = (VariableMsgDataBody*)vec[4];
-    data.bus_num = std::stoi(var_bus_num->_var_value);
+    VariableMsgDataBody* var_input_type= (VariableMsgDataBody*)vec[4];
+    data.input_type = std::stoi(var_input_type->_var_value);
 
-    VariableMsgDataBody* var_nodes_map = (VariableMsgDataBody*)vec[5];
+    VariableMsgDataBody* var_result_type= (VariableMsgDataBody*)vec[5];
+    data.result_type = std::stoi(var_result_type->_var_value);
+
+    VariableMsgDataBody* var_input_num= (VariableMsgDataBody*)vec[6];
+    data.input_num = std::stoi(var_input_num->_var_value);
+
+    VariableMsgDataBody* var_result_num= (VariableMsgDataBody*)vec[7];
+    data.result_num = std::stoi(var_result_num->_var_value);
+
+    VariableMsgDataBody* var_nodes_map = (VariableMsgDataBody*)vec[8];
     data.nodes_map = var_nodes_map->_var_value;
 
     return true;
@@ -1306,11 +1318,29 @@ QDomDocument* XmlUtil::generate_PowerSimConfParam_xml(int ss_id, int ps_id, cons
     var_sim_period->_var_value = std::to_string(data->sim_period);
     proc_body->_data_vector.push_back(var_sim_period);
 
-    VariableMsgDataBody* var_bus_num= new VariableMsgDataBody();
-    var_bus_num->_var_name = "bus_num";
-    var_bus_num->_var_type = eData_int32;
-    var_bus_num->_var_value = std::to_string(data->bus_num);
-    proc_body->_data_vector.push_back(var_bus_num);
+    VariableMsgDataBody* var_input_type= new VariableMsgDataBody();
+    var_input_type->_var_name = "input type";
+    var_input_type->_var_type = eData_int32;
+    var_input_type->_var_value = std::to_string(data->input_type);
+    proc_body->_data_vector.push_back(var_input_type);
+
+    VariableMsgDataBody* var_result_type= new VariableMsgDataBody();
+    var_result_type->_var_name = "result type";
+    var_result_type->_var_type = eData_int32;
+    var_result_type->_var_value = std::to_string(data->result_type);
+    proc_body->_data_vector.push_back(var_result_type);
+
+    VariableMsgDataBody* var_input_num= new VariableMsgDataBody();
+    var_input_num->_var_name = "input num";
+    var_input_num->_var_type = eData_int32;
+    var_input_num->_var_value = std::to_string(data->input_num);
+    proc_body->_data_vector.push_back(var_input_num);
+
+    VariableMsgDataBody* var_result_num= new VariableMsgDataBody();
+    var_result_num->_var_name = "result num";
+    var_result_num->_var_type = eData_int32;
+    var_result_num->_var_value = std::to_string(data->result_num);
+    proc_body->_data_vector.push_back(var_result_num);
 
     VariableMsgDataBody* var_nodes_map= new VariableMsgDataBody();
     var_nodes_map->_var_name = "nodes_map";

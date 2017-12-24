@@ -28,6 +28,9 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
     _decision_alth = nullptr;
     _his_record_mgr = nullptr;
 
+    _input_info = nullptr;
+    _result_info = nullptr;
+
     if(type == eSimDev_communication){
         _sock_util_ptr = new SockUtil();
         _sock_util_ptr->register_rcv_callback(std::bind(&client_proxy::rcv_upper_msg_callback, this, std::placeholders::_1, std::placeholders::_2));
@@ -73,6 +76,14 @@ client_proxy::~client_proxy()
 
     if(_his_record_mgr){
         delete _his_record_mgr;
+    }
+
+    if(_input_info){
+        delete[] _input_info;
+    }
+
+    if(_result_info){
+        delete[] _result_info;
     }
 }
 
@@ -198,7 +209,7 @@ void client_proxy::snd_upper_to_comm()
     int snd_items = 0;
     for(int i=0; i<_union_sim_dat_snd_vec.size(); ++i){
         memcpy(dat + header_size, &_union_sim_dat_snd_vec[i], sizeof(UnionSimData));
-        if(!_sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._business_port/*_comm_tbl._dev_port*/, dat, header.length)){
+        if(!_sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._business_port, dat, header.length)){
             QString info = QString("client_proxy: snd power sim data to communication successfully, len:%1, msg:%2").arg(header.length).arg(dat);
             emit progress_log_signal(info);
             break;
@@ -223,30 +234,13 @@ void client_proxy::snd_upper_to_comm()
 
 bool client_proxy::fetch_power_cfg_param(const DataXmlVec& vec)
 {
-    if(vec.size() < 5){
+    if(!XmlUtil::parse_PowerSimConfParam_xml(vec, _power_conf_param)){
         return false;
     }
 
-    //param
-    VariableMsgDataBody* var_1 = (VariableMsgDataBody*)vec[0];
-    _power_conf_param.prj_name = var_1->_var_value;
-
-    VariableMsgDataBody* var_2 = (VariableMsgDataBody*)vec[1];
-    _power_conf_param.case_name = var_2->_var_value;
-
-    VariableMsgDataBody* var_3 = (VariableMsgDataBody*)vec[2];
-    _power_conf_param.sim_time = std::stod(var_3->_var_value);
-
-    VariableMsgDataBody* var_4 = (VariableMsgDataBody*)vec[3];
-    _power_conf_param.sim_period = std::stod(var_4->_var_value);
-
-    VariableMsgDataBody* var_5 = (VariableMsgDataBody*)vec[4];
-    _power_conf_param.bus_num = std::stoi(var_5->_var_value);
-
     //power comm node map
     IntVec ids; string resp;
-    VariableMsgDataBody* var = (VariableMsgDataBody*)vec[5];
-    std::istringstream parser(var->_var_value);
+    std::istringstream parser(_power_conf_param.nodes_map);
     while(parser >> resp){
         ids.push_back(std::stoi(resp));
     }
@@ -262,12 +256,10 @@ bool client_proxy::fetch_power_cfg_param(const DataXmlVec& vec)
        _bus_comm_id_tbl[ids[i]] = std::make_pair(ids[i+1], ids[i+2]);
     }
 
-    _power_conf_param.nodes_map = var->_var_value;
-
     return true;
 }
 
-bool client_proxy::map_power_comm_sim_data(const BusInfor* bus, int num, UnionSimDatVec& ud)
+bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
 {
     ud.clear();
 
@@ -278,32 +270,32 @@ bool client_proxy::map_power_comm_sim_data(const BusInfor* bus, int num, UnionSi
     UnionSimData data;
     bool b_map_success = true;
 
-    for(int i=0; i<num; ++i){
-        IntPairMap::const_iterator it = _bus_comm_id_tbl.find(bus[i].busno);
-        if(it == _bus_comm_id_tbl.cend()){
-            info = QString::number(bus[i].busno);
-            tips = QString("bus no: %1 not found").arg(info);
-            b_map_success = false;
-            break;
+    if(_power_conf_param.result_type == ePowerData_businfor){
+        for(int i=0; i<_power_conf_param.result_num; ++i){
+            const PowerBusInforData& d = (const PowerBusInforData&)_result_info[i];
+            IntPairMap::const_iterator it = _bus_comm_id_tbl.find(d.bus_id);
+            if(it == _bus_comm_id_tbl.cend()){
+                info = QString::number(d.bus_id);
+                tips = QString("bus no: %1 not found").arg(info);
+                b_map_success = false;
+                break;
+            }
+
+            memset(&data, 0, sizeof(UnionSimData));
+            data.realtime = phy_time;
+            data.sim_time = d.cur_sim_time;
+
+            const IntPair& comm = it->second;
+            data.comm_dat.src_id = comm.first;
+            data.comm_dat.dst_id = comm.second;
+            memcpy(data.power_dat, &d, sizeof(PowerBusInforData));
+
+            ud.push_back(data);
         }
-
-        memset(&data, 0, sizeof(UnionSimData));
-        data.realtime = phy_time;
-        data.sim_time = bus[i].sim_time;
-
-        const IntPair& comm = it->second;
-        data.comm_dat.src_id = comm.first;
-        data.comm_dat.dst_id = comm.second;
-        data.power_dat.bus_id = bus[i].busno;
-        data.power_dat.bus_angle = bus[i].V_ang;
-        data.power_dat.bus_voltage = bus[i].Volt;
-        data.power_dat.sim_time = bus[i].sim_time;
-
-        ud.push_back(data);
     }
 
     tips = b_map_success ? "successfully" : tips;
-    info = QString("client_proxy: map_power_comm_sim_data %1 items %2").arg(num).arg(tips);
+    info = QString("client_proxy: map_power_comm_sim_data %1 items %2").arg(_power_conf_param.result_num).arg(tips);
     qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
@@ -320,11 +312,13 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
     QString info = QString("client_proxy: stream_power_sim_data");
     qInfo(info.toStdString().c_str());
 
-    stream = std::to_string(data[0].sim_time);
-    for(int i=0; i<data.size(); ++i){
-        const UnionSimData& dat = data[i];
-        stream += std::to_string(dat.power_dat.bus_voltage) + " ";
-        stream += std::to_string(dat.power_dat.bus_angle) + " ";
+    if(_power_conf_param.result_type == ePowerData_businfor){
+        stream = std::to_string(data[0].sim_time);
+        for(int i=0; i<data.size(); ++i){
+            PowerBusInforData* d = (PowerBusInforData*)data[i].power_dat;
+            stream += std::to_string(d->bus_volt) + " ";
+            stream += std::to_string(d->bus_angle) + " ";
+        }
     }
 
     return stream;
@@ -332,23 +326,23 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
 
 bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec)
 {
-    if(data.size() != _power_conf_param.bus_num){
+    if(data.size() != _power_conf_param.result_num){
         return false;
     }
 
-    double* dvg_ret = new double[_power_conf_param.bus_num];
-    memset(dvg_ret, 0, sizeof(double) * _power_conf_param.bus_num);
+    double* dvg_ret = new double[_power_conf_param.result_num];
+    memset(dvg_ret, 0, sizeof(double) * _power_conf_param.result_num);
 
-    QString info = QString("client_proxy: calc_power_appl_data, items: %1").arg(_power_conf_param.bus_num);
+    QString info = QString("client_proxy: calc_power_appl_data, items: %1").arg(_power_conf_param.result_num);
     emit progress_log_signal(info);
 
     ProcEventParam param;
-    param.bus_num = _power_conf_param.bus_num;
+    param.bus_num = _power_conf_param.result_num;
     param._in_out_info = stream_power_sim_data(data);
     _decision_alth->ApplReq_ProcedureRequestSendBefore(&param, dvg_ret);
 
     DblVec tmp;
-    for(int i=0; i<_power_conf_param.bus_num; ++i){
+    for(int i=0; i<_power_conf_param.result_num; ++i){
         tmp.push_back(dvg_ret[i]);
     }
 
@@ -356,17 +350,22 @@ bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& 
     delete[] dvg_ret;
 }
 
-void client_proxy::reset_power_dginfo(DGInfor* infor, int num)
+void client_proxy::reset_power_input_data()
 {
     if(_dbl_vec.size() != _union_sim_dat_rcv_vec.size()){
         return;
     }
 
-    int index = _dbl_vec.size() - num;
-    for(int i=index; i<_dbl_vec.size(); ++i){
-        infor[i].dV = _dbl_vec[i];
-        infor[i].busno = _union_sim_dat_rcv_vec[i].power_dat.bus_id;
-        infor[i].timedifference = _union_sim_dat_rcv_vec[i].comm_dat.trans_delay;
+    if(_power_conf_param.input_type == ePowerData_dginfor){
+        int index = _dbl_vec.size() - _power_conf_param.input_num;
+        for(int i=index; i<_dbl_vec.size(); ++i){
+            PowerDGInforData& di = (PowerDGInforData&)_input_info[i];
+            PowerBusInforData* bi = (PowerBusInforData*)_union_sim_dat_rcv_vec[i].power_dat;
+
+            di.dv = _dbl_vec[i];
+            di.bus_id = bi->bus_id;
+            di.time_diff = _union_sim_dat_rcv_vec[i].comm_dat.trans_delay;
+        }
     }
 }
 
@@ -437,9 +436,6 @@ bool client_proxy::start_sock_service(const QString& comm_ip, uint16_t comm_port
 
 void client_proxy::handle_power(ApplMessage* msg)
 {
-    static DGInfor dg_info[10];
-    static BusInfor bus_info[39];
-
     long msg_type = msg->_proc_msg->_msg_type;
     long proc_type = msg->_proc_msg->_proc_type;
 
@@ -472,9 +468,12 @@ void client_proxy::handle_power(ApplMessage* msg)
         emit progress_log_signal(info);
 
         _power_sim_started = true;
-        memset(dg_info, 0, sizeof(DGInfor) * 10);
-        memset(bus_info, 0, sizeof(BusInfor) * _power_conf_param.bus_num);
-        ret = _power_handler->Execute(_power_conf_param.bus_num, &dg_info[0], &bus_info[0]);
+        ret = _power_handler->Execute(_power_conf_param.input_num,
+                                                           (EPowerDataType)_power_conf_param.input_type,
+                                                          &_input_info[0],
+                                                          _power_conf_param.result_num,
+                                                          (EPowerDataType)_power_conf_param.result_type,
+                                                          &_result_info[0]);
         if(ret < 0){
             info = QString("client_proxy: handle_power, power simulation over!!!!!!");
             qInfo(info.toStdString().c_str());
@@ -504,7 +503,7 @@ void client_proxy::handle_power(ApplMessage* msg)
         _expect_proc_type = eSubProcedure_appl_request;
     }
     else if(proc_type == eSubProcedure_appl_request && msg_type == eMessage_confirm){
-       if(map_power_comm_sim_data(bus_info, _power_conf_param.bus_num, _union_sim_dat_snd_vec)){
+       if(map_power_comm_sim_data(_union_sim_dat_snd_vec)){
             DataXmlVec vec;
             XmlUtil::generate_xml_power_sim_data(_union_sim_dat_snd_vec, vec);
             doc = XmlUtil::generate_snd_data_xml(ss_id, ps_id, appl_name, 1, vec, eMessage_request);
@@ -532,9 +531,14 @@ void client_proxy::handle_power(ApplMessage* msg)
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){
         if(_power_init_success){
-           reset_power_dginfo(&dg_info[0], 10);
-           memset(bus_info, 0, sizeof(BusInfor) * _power_conf_param.bus_num);
-           ret = _power_handler->Execute(_power_conf_param.bus_num, &dg_info[0], &bus_info[0]);
+           reset_power_input_data();
+           ret = _power_handler->Execute(_power_conf_param.input_num,
+                                                              (EPowerDataType)_power_conf_param.input_type,
+                                                             &_input_info[0],
+                                                             _power_conf_param.result_num,
+                                                             (EPowerDataType)_power_conf_param.result_type,
+                                                             &_result_info[0]);
+
            if(ret == 0){
                doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_communication], eSubProcedure_session_begin, eMessage_request);
                tips += "rcv session end msg, enter next sim stage, session begin, request";
@@ -982,6 +986,16 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
 
     if(_dev_type == eSimDev_power_appl){
         return;
+    }
+
+    if(_power_conf_param.input_type == ePowerData_dginfor){
+        _input_info = new PowerDGInforData[_power_conf_param.input_num];
+        memset(_input_info, 0, sizeof(PowerDGInforData) * _power_conf_param.input_num);
+    }
+
+    if(_power_conf_param.result_type == ePowerData_businfor){
+        _result_info = new PowerBusInforData[_power_conf_param.result_num];
+        memset(_result_info, 0, sizeof(PowerBusInforData) * _power_conf_param.result_num);
     }
 
     //_dev_type == eSimDev_power

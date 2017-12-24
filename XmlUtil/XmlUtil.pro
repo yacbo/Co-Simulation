@@ -41,7 +41,8 @@ HEADERS += xml_util.h\
     comm_table.h \
     comm_type_def.h \
     log_util.h \
-    pg_rtui_def.h
+    pg_rtui_def.h \
+    power_data_def.h
 
 unix {
     target.path = /usr/lib
