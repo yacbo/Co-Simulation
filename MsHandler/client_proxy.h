@@ -29,7 +29,6 @@ public:
     void quit();
     void start_rcv_thread();
     void register_lower_layer(const network_layer* net_layer_ptr);
-    void set_appl_proc_oper(ApplProcedureOper* oper);
 
     //当仿真软件与客户代理通过网络通信时，客户代理作服务器端
     //dev_ip: 仿真软件所在主机ip
@@ -98,7 +97,6 @@ private:
 
 private:
     EProxyState _proxy_status;                                        //客户代理状态
-    ApplProcedureOper* _appl_proc_oper;                       //应用过程实例
 
 private:
     SockUtil* _sock_util_ptr;

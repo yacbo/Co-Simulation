@@ -3,24 +3,6 @@
 #include "decisionalth.h"
 #include "algorithm_util.h"
 
-
-DecisionAlth* GetInstance()
-{
-    return DecisionAlth::get_instance();
-}
-
-bool CalculateDvg(const char* data, double* ret)
-{
-    ProcEventParam param;
-    param._in_out_info = data;
-
-    DecisionAlth* alth = DecisionAlth::get_instance();
-
-    alth->ApplReq_ProcedureRequestSendBefore(&param, ret);
-
-    return param._handle_success;
-}
-
 DecisionAlth::DecisionAlth()
 {
 
@@ -33,7 +15,7 @@ DecisionAlth* DecisionAlth::get_instance()
 }
 
 //appl request
-void DecisionAlth::ApplReq_ProcedureRequestSendBefore(const ProcEventParam* param, void* customData)
+void DecisionAlth::execute_event_proc_algorithm(const ProcEventParam* param, void* customData)
 {
     if(!param || !customData){
         return;
@@ -41,94 +23,14 @@ void DecisionAlth::ApplReq_ProcedureRequestSendBefore(const ProcEventParam* para
 
     AlgorithmUtil* util = new AlgorithmUtil();
     ProcEventParam* ev_p = const_cast<ProcEventParam*>(param);
-    ev_p->_handle_success = util->Alth_Calculate_dVg(ev_p->_in_out_info.c_str(), ev_p->bus_num,  (double*)customData);
+    switch(ev_p->_type){
+    case ePowerData_businfor:{
+        ev_p->_handle_success = util->Alth_Calculate_dVg(ev_p->_in_out_info.c_str(), ev_p->_bus_num,  (double*)customData);
+        break;
+    }
+    default: break;
+    }
+
     delete util;
-}
-
-void DecisionAlth::ApplReq_ProcedureRequestSendAfter(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::ApplReq_ProcedureRequestSendReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::ApplReq_ProcedureResponseSendAfter(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::ApplReq_ProcedureResponseConfirmReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::ApplReq_ProcedureResponseErrorReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-//data send
-void DecisionAlth::DataSnd_ProcedureRequestSendBefore(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::DataSnd_ProcedureRequestSendAfter(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::DataSnd_ProcedureRequestSendReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::DataSnd_ProcedureResponseSendAfter(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::DataSnd_ProcedureResponseConfirmReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::DataSnd_ProcedureResponseErrorReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-//invoke
-void DecisionAlth::Invoke_ProcedureRequestSendBefore(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::Invoke_ProcedureRequestSendAfter(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::Invoke_ProcedureRequestSendReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::Invoke_ProcedureResponseSendAfter(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::Invoke_ProcedureResponseConfirmReceived(const ProcEventParam* param, void* customData)
-{
-
-}
-
-void DecisionAlth::Invoke_ProcedureResponseErrorReceived(const ProcEventParam* param, void* customData)
-{
-
 }
 

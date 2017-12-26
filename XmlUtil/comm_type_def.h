@@ -242,22 +242,13 @@ typedef struct CommSimData{
     long long trans_delay;           //传输时延.
 }CommSimData;
 
-typedef struct PowerSimData{
-    uint32_t bus_id;                     //母线编号.
-    double bus_voltage;                //母线电压.
-    double bus_angle;                   //母线幅角.
-    double sim_time;
-}PowerSimData;
-
 typedef struct UnionSimData{
     double realtime;                      //物理时戳.
     double sim_time;                     //仿真时刻.
     //communication sim
     CommSimData comm_dat;      //通信信息数据.
     //power sim data
-    //PowerSimData power_dat;     //电力信息数据.
-
-    char power_dat[192];
+    char power_dat[192];              //电力信息数据.
 }UnionSimData;
 
 #pragma pack(pop)

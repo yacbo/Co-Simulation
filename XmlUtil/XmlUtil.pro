@@ -32,7 +32,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += xml_util.cpp \
     xml_message.cpp \
     xml_frame_util.cpp \
-    comm_table.cpp \
     log_util.cpp
 
 HEADERS += xml_util.h\

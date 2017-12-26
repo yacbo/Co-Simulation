@@ -39,46 +39,6 @@ bool application_layer::parse_event_dll(const char* dev_name, const char* dll_pa
         return false;
     }
 
-   DeviceMethodMap method;
-
-    //appl_req
-    EvTypeFuncMap appl_req_ev_func_map;
-    appl_req_ev_func_map[eEvent_proc_req_snding] = std::bind(&DecisionAlth::ApplReq_ProcedureRequestSendBefore, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    appl_req_ev_func_map[eEvent_proc_req_snded] = std::bind(&DecisionAlth::ApplReq_ProcedureRequestSendAfter, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    appl_req_ev_func_map[eEvent_proc_req_rcved] = std::bind(&DecisionAlth::ApplReq_ProcedureRequestSendReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    appl_req_ev_func_map[eEvent_proc_rep_snded] = std::bind(&DecisionAlth::ApplReq_ProcedureResponseSendAfter, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    appl_req_ev_func_map[eEvent_proc_cnf_rcved] = std::bind(&DecisionAlth::ApplReq_ProcedureResponseConfirmReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    appl_req_ev_func_map[eEvent_proc_err_rcved] = std::bind(&DecisionAlth::ApplReq_ProcedureResponseErrorReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    method[dev_name][eSubProcedure_appl_request] = appl_req_ev_func_map;
-
-    //data send
-    EvTypeFuncMap data_snd_ev_func_map;
-    data_snd_ev_func_map[eEvent_proc_req_snding] = std::bind(&DecisionAlth::DataSnd_ProcedureRequestSendBefore, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    data_snd_ev_func_map[eEvent_proc_req_snded] = std::bind(&DecisionAlth::DataSnd_ProcedureRequestSendAfter, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    data_snd_ev_func_map[eEvent_proc_req_rcved] = std::bind(&DecisionAlth::DataSnd_ProcedureRequestSendReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    data_snd_ev_func_map[eEvent_proc_rep_snded] = std::bind(&DecisionAlth::DataSnd_ProcedureResponseSendAfter, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    data_snd_ev_func_map[eEvent_proc_cnf_rcved] = std::bind(&DecisionAlth::DataSnd_ProcedureResponseConfirmReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    data_snd_ev_func_map[eEvent_proc_err_rcved] = std::bind(&DecisionAlth::DataSnd_ProcedureResponseErrorReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    method[dev_name][eSubProcedure_data_send] = data_snd_ev_func_map;
-
-    EvTypeFuncMap invoke_ev_func_map;
-    invoke_ev_func_map[eEvent_proc_req_snding] = std::bind(&DecisionAlth::Invoke_ProcedureRequestSendBefore, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    invoke_ev_func_map[eEvent_proc_req_snded] = std::bind(&DecisionAlth::Invoke_ProcedureRequestSendAfter, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    invoke_ev_func_map[eEvent_proc_req_rcved] = std::bind(&DecisionAlth::Invoke_ProcedureRequestSendReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    invoke_ev_func_map[eEvent_proc_rep_snded] = std::bind(&DecisionAlth::Invoke_ProcedureResponseSendAfter, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    invoke_ev_func_map[eEvent_proc_cnf_rcved] = std::bind(&DecisionAlth::Invoke_ProcedureResponseConfirmReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    invoke_ev_func_map[eEvent_proc_err_rcved] = std::bind(&DecisionAlth::Invoke_ProcedureResponseErrorReceived, decision_alth, std::placeholders::_1, std::placeholders::_2);
-    method[dev_name][eSubProcedure_invoke] = invoke_ev_func_map;
-
-    _dev_method_tbl.SetDeviceMethodMap(method);
-
-    ProcEventParam param;
-    param._in_out_info = "34.983002	1.049125	-6.944657	1.049050	-6.635524	1.028482	-10.326038	1.002328	-10.913132	1.004129	-9.400167	1.006524	-8.716241	0.996019	-10.664953	0.995074	-11.041618	1.027805	-8.713837	1.015317	-6.489169	1.011137	-7.253084	0.998449	-7.329469	1.012411	-7.300055	1.009908	-9.216595	1.013579	-10.483818	1.029744	-9.437223	1.031243	-10.003648	1.028598	-10.619849	1.048117	-5.021838	0.988396	-6.748405	1.028577	-7.287324	1.047898	-2.799310	1.042238	-3.066859	1.035798	-9.488572	1.054605	-5.549691	1.048489	-7.457448	1.034551	-9.782227	1.047588	-3.672972	1.047932	-0.825515	1.048771	-3.681040	0.981474	-0.522239	0.980573	1.751638	0.996967	0.342189	1.012135	-1.530680	1.049923	2.297490	1.062385	5.021262	1.028639	1.429075	1.026046	6.420662	1.030339	-7.092982";
-    double dvg_ret[39] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-
-    ProcedureHandler handler = appl_req_ev_func_map[eEvent_proc_req_snding];
-    handler(&param, dvg_ret);
-
     return true;
 }
 

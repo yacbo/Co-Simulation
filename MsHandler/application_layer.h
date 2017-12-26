@@ -103,8 +103,6 @@ private:
     ClientProxyIdMap _cli_proxy_tbl;                                     //客户代理表
 
     MsDeviceMap _dev_tbl;                                                   //器件表
-    ApplProcedureTable _appl_proc_tbl;                                //应用过程表
-    DeviceProcMethodTable _dev_method_tbl;                       //过程事件表
 
 private:
     IntMap _dev_type_id_tbl;
