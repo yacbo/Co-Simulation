@@ -128,8 +128,8 @@ public:
     static void generate_xml_power_appl_data(const DblVec& data, const UnionSimDatVec& us_data, DataXmlVec& vec);
 
     //通信仿真事件配置
-    static void add_CommSimEventConf_data(const char* data, int len);
-    static void delete_CommSimEventConf_data(const char* data, int len);
+    static void add_CommSimEventConf_data(const QByteArray& d);
+    static void delete_CommSimEventConf_data(const QByteArray& d);
     static bool parse_CommSimEventConf_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time);
     static QDomDocument* generate_CommSimEventConf_xml(int ss_id, int ps_id);
 

@@ -1778,21 +1778,19 @@ void XmlUtil::generate_xml_power_appl_data(const DblVec& data, const UnionSimDat
 }
 
 QByteArray XmlUtil::_comm_sim_conf_data;
-void XmlUtil::add_CommSimEventConf_data(const char* data, int len)
+void XmlUtil::add_CommSimEventConf_data(const QByteArray& d)
 {
-    QByteArray d = QByteArray::fromRawData(data, len);
     _comm_sim_conf_data.append(d);
 }
 
-void XmlUtil::delete_CommSimEventConf_data(const char* data, int len)
+void XmlUtil::delete_CommSimEventConf_data(const QByteArray& d)
 {
-    QByteArray d = QByteArray::fromRawData(data, len);
     int index = _comm_sim_conf_data.indexOf(d);
     if(index < 0){
         return;
     }
 
-    _comm_sim_conf_data.remove(index, len);
+    _comm_sim_conf_data.remove(index, d.length());
 }
 
 bool XmlUtil::parse_CommSimEventConf_xml(const DataXmlVec& vec, ByteArrVec& data, DblVec& time)

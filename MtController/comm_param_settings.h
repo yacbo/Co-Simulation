@@ -5,7 +5,7 @@
 #include <QStringListModel>
 #include "ms_handler.h"
 #include <QStandardItemModel>
-#include <vector>
+#include <QVector>
 namespace Ui {
 class comm_param_settings;
 }
@@ -125,7 +125,7 @@ private slots:
     void delete_data_button30_event();
 //存放数据的集合
 private:
-    vector<QByteArray> vec;
+    QVector<QString> vec;
 };
 
 #endif // COMM_PARAM_SETTINGS_H

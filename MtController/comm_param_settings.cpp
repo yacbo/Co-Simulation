@@ -886,7 +886,8 @@ void comm_param_settings::com_node_para_button18_event()
     char d[length]={0};
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
-    XmlUtil::add_CommSimEventConf_data(d,length);
+    QByteArray bytes(d, length);
+    XmlUtil::add_CommSimEventConf_data(bytes);
     std::stringstream ss;
     ss<<"节点:"<<ui->lineEdit->text().toStdString()
       <<"\n通信端数:"<<ui->comboBox->currentText().toStdString()
@@ -898,7 +899,7 @@ void comm_param_settings::com_node_para_button18_event()
     model_t->setItem(n,1,new QStandardItem(QString::fromStdString("节点参数事件")));
     model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
-    vec.push_back(QByteArray::fromRawData(d,length));
+    vec.push_back(QString::fromLatin1(d, length));
 }
 //事件列表添加事件 链路参数
 void comm_param_settings::com_link_para_button25_event()
@@ -932,7 +933,8 @@ void comm_param_settings::com_link_para_button25_event()
     char d[length]={0};
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
-    XmlUtil::add_CommSimEventConf_data(d,length);
+    QByteArray bytes(d, length);
+    XmlUtil::add_CommSimEventConf_data(bytes);
     std::stringstream ss;
     ss<<"源节点号:"<<ui->lineEdit_5->text().toStdString()
       <<"\n目的节点:"<<ui->lineEdit_6->text().toStdString()
@@ -945,7 +947,7 @@ void comm_param_settings::com_link_para_button25_event()
     model_t->setItem(n,1,new QStandardItem("链路参数事件"));
     model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
-    vec.push_back(QByteArray::fromRawData(d,length));
+    vec.push_back(QString::fromLatin1(d, length));
 }
 //事件列表添加事件 节点故障
 void comm_param_settings::node_breakdown_button26_event()
@@ -982,7 +984,8 @@ void comm_param_settings::node_breakdown_button26_event()
     char d[length]={0};
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
-    XmlUtil::add_CommSimEventConf_data(d,length);
+    QByteArray bytes(d, length);
+    XmlUtil::add_CommSimEventConf_data(bytes);
     if(ui->radioButton_2->isChecked())   //非半实物
     {
         std::stringstream ss;
@@ -1003,7 +1006,7 @@ void comm_param_settings::node_breakdown_button26_event()
         model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
         n++;
     }
-    vec.push_back(QByteArray::fromRawData(d,length));
+    vec.push_back(QString::fromLatin1(d, length));
 }
 //事件列表添加事件  链路故障
 void comm_param_settings::link_breakdown_button27_event()
@@ -1041,7 +1044,8 @@ void comm_param_settings::link_breakdown_button27_event()
     char d[length]={0};
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
-    XmlUtil::add_CommSimEventConf_data(d,length);
+    QByteArray bytes(d, length);
+    XmlUtil::add_CommSimEventConf_data(bytes);
     if(ui->radioButton_4->isChecked())   //非半实物
     {
         std::stringstream ss;
@@ -1064,7 +1068,7 @@ void comm_param_settings::link_breakdown_button27_event()
         model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
         n++;
     }
-    vec.push_back(QByteArray::fromRawData(d,length));
+    vec.push_back(QString::fromLatin1(d, length));
 }
 //事件列表添加事件 路由攻击
 void comm_param_settings::rout_attack_button28_event()
@@ -1095,7 +1099,8 @@ void comm_param_settings::rout_attack_button28_event()
     char d[length]={0};
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
-    XmlUtil::add_CommSimEventConf_data(d,length);
+    QByteArray bytes(d, length);
+    XmlUtil::add_CommSimEventConf_data(bytes);
     std::stringstream ss;
     ss<<"靶标节点:"<<ui->lineEdit_48->text().toStdString()
       <<"\n预设攻击时间:"<<ui->lineEdit_49->text().toStdString()
@@ -1107,7 +1112,7 @@ void comm_param_settings::rout_attack_button28_event()
     model_t->setItem(n,1,new QStandardItem(QString::fromStdString("路由攻击事件")));
     model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
-    vec.push_back(QByteArray::fromRawData(d,length));
+    vec.push_back(QString::fromLatin1(d, length));
 }
 //事件列表添加事件 数据篡改
 void comm_param_settings::data_tamper_button29_event()
@@ -1140,7 +1145,8 @@ void comm_param_settings::data_tamper_button29_event()
     char d[length]={0};
     memcpy(d,&data,data.length);
     memcpy(d+data.length,&time,sizeof(double));
-    XmlUtil::add_CommSimEventConf_data(d,length);
+    QByteArray bytes(d, length);
+    XmlUtil::add_CommSimEventConf_data(bytes);
     std::stringstream ss;
     ss<<"攻击点号:"<<ui->lineEdit_45->text().toStdString()
       <<"\n电力节点:"<<ui->lineEdit_20->text().toStdString()
@@ -1153,7 +1159,7 @@ void comm_param_settings::data_tamper_button29_event()
     model_t->setItem(n,1,new QStandardItem(QString::fromStdString("数据篡改事件")));
     model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
     n++;
-    vec.push_back(QByteArray::fromRawData(d,length));
+    vec.push_back(QString::fromLatin1(d, length));
 }
 
 //发送数据
@@ -1188,7 +1194,8 @@ void comm_param_settings::delete_data_button30_event()
     model_t->removeRow(i.row());
     n--;
     //调用删除数据接口
-    XmlUtil::delete_CommSimEventConf_data(vec.at(i.row()).data(),vec.at(i.row()).count());
+    QString d = vec.at(i.row());
+    XmlUtil::delete_CommSimEventConf_data(d.toLatin1());
     //删除集合中数据
     vec.erase(vec.begin() + i.row());
 }
