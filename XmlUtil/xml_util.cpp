@@ -1804,17 +1804,21 @@ bool XmlUtil::parse_CommSimEventConf_xml(const DataXmlVec& vec, ByteArrVec& data
     QByteArray d = QByteArray::fromBase64(d_base64);
 
     int index = 0;
+    int data_len = 0;
+    double data_time = 0.0;
     const int len_size = sizeof(uint16_t);
     const int time_size = sizeof(double);
-    const int offset_len = sizeof(LocalAddr) + sizeof(uint16_t);
+    const int offset_len = sizeof(LocalAddr) + len_size;
 
     while(index < d.length()){
-        int d_len = d.mid(index + offset_len, len_size).toInt();
-        QByteArray d_data = d.mid(index, d_len);
+        QByteArray d_len =  d.mid(index + offset_len, len_size);
+        memcpy(&data_len, d_len.data(), len_size);
+        QByteArray d_data = d.mid(index, data_len);
         data.push_back(d_data);
-        QByteArray d_time = d.mid(index + d_len, time_size);
-        time.push_back(d_time.toDouble());
-        index += d_len + time_size;
+        QByteArray d_time = d.mid(index + data_len, time_size);
+        memcpy(&data_time, d_time.data(), time_size);
+        time.push_back(data_time);
+        index += data_len + time_size;
     }
 
     return true;

@@ -457,8 +457,8 @@ void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& 
 
     int nsize = _event_time_vec.size();
     for(int i=0; i<nsize - 1; ++i){
-        for(int j=1; j<nsize; ++j){
-            if(_event_time_vec[j] - _event_time_vec[i] > EPS){
+        for(int j=i+1; j<nsize; ++j){
+            if(_event_time_vec[i] - _event_time_vec[j] > EPS){
                 std::swap(_event_time_vec[j], _event_time_vec[i]);
                 std::swap(_event_data_vec[j], _event_data_vec[i]);
             }
@@ -477,6 +477,10 @@ void application_layer::check_sim_time_event_slots()
             index = i;
             break;
         }
+    }
+
+    if(index == -1){
+        return;
     }
 
     for(int i=0; i<index; ++i){
