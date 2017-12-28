@@ -303,7 +303,7 @@ int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type
     DataObject* dslavr[10];
 
     char avr[32] = {0}, pp[32] = {0};
-    for(int i=0; i<dg_num; ++i){
+    for(int i=0; i<dg_num - 1; ++i){
         sprintf_s(avr, "AVR 0%d", i + 1);
         sprintf_s(pp, "Power Plant 0%d", i + 1);
         dslavr[i] = GetAvrObject(prj, avr, pp);
@@ -319,13 +319,13 @@ int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type
         paramevent[i]->SetAttributeString("variable", "Vbias2", &error);
     }
 
-    if(dg_type == ePowerData_dginfor){
-        double etime = simtime;
-        for (int i = 0; i < dg_num; ++i){
-            paramevent[i]->SetAttributeDouble("hrtime", 0, &error);                //这边时间为当前仿真时刻+通信时延
-            paramevent[i]->SetAttributeDouble("mtime", 0, &error);                 //这边时间为当前仿真时刻+通信时延
-            paramevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
+    double etime = simtime;
+    for (int i = 0; i < dg_num; ++i){
+        paramevent[i]->SetAttributeDouble("hrtime", 0, &error);                //这边时间为当前仿真时刻+通信时延
+        paramevent[i]->SetAttributeDouble("mtime", 0, &error);                 //这边时间为当前仿真时刻+通信时延
+        paramevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
 
+        if(dg_type == ePowerData_dginfor){
             const PowerDGInforData& dg_infor = (const PowerDGInforData&)dgInfor[i];
             paramevent[i]->SetAttributeDouble("value", dg_infor.dv, &error); //这边值为发电机机端电压调整量
         }

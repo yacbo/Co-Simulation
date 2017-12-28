@@ -212,7 +212,7 @@ bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& 
     }
 
     int ss_id = 10000;
-    int ps_id = it_id->first;
+    int ps_id = it_id->second;
     QDomDocument* doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &param);
     if(!doc){
         return false;
