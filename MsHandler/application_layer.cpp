@@ -474,7 +474,6 @@ void application_layer::handle_ack_comm_cfg_param(ApplMessage* msg)
 
      QString tips = !bcreate ? "delete client_proxy" : (b_find ? "invoke client_proxy" : "create client_proxy");
      QString info = QString("application_layer: manager_proxy, : %1").arg(tips);
-     qInfo(info.toStdString().c_str());
      emit progress_log_signal(info);
 
      if(b_find){

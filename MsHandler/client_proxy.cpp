@@ -99,61 +99,31 @@ void client_proxy::register_lower_layer(const network_layer* net_layer_ptr)
     connect(this, &client_proxy::snd_lower_signal, net_layer_ptr, &network_layer::rcv_upper_slots, Qt::UniqueConnection);
 }
 
-//void client_proxy::rcv_upper_msg_callback(const char* data, int len)
-//{
-//    _union_sim_dat_rcv_vec = _union_sim_dat_snd_vec;
-
-//    IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
-//    int ss_id = dev_type_id_tbl[eSimDev_communication];
-//    int ps_id = dev_type_id_tbl[eSimDev_power_appl];
-//    QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
-//    emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
-
-//    QString info = QString("client_proxy: rcv_upper_msg_callback,  items: %1").arg(_union_sim_dat_rcv_vec.size());
-//    qInfo(info.toStdString().c_str());
-//    emit progress_log_signal(info);
-//}
-
 void client_proxy::rcv_upper_msg_callback(const char* data, int len)
 {
-    const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
-    long type = header->type;
+    _union_sim_dat_rcv_vec = _union_sim_dat_snd_vec;
 
-    QString info = QString("client_proxy: rcv communication sim data, len:%1, data:%2").arg(len).arg(data);
+    IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
+    int ss_id = dev_type_id_tbl[eSimDev_communication];
+    int ps_id = dev_type_id_tbl[eSimDev_power_appl];
+    QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
+    emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+
+    QString info = QString("client_proxy: rcv_upper_msg_callback,  items: %1").arg(_union_sim_dat_rcv_vec.size());
     emit progress_log_signal(info);
+}
 
-    if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
-        _rcv_comm_data_enabled = type == eCommCmd_start_send_data;
-        if(type == eCommCmd_stop_send_data){
-            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
-            int ss_id = dev_type_id_tbl[eSimDev_communication];
-            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
-            QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
-            emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+//void client_proxy::rcv_upper_msg_callback(const char* data, int len)
+//{
+//    const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
+//    long type = header->type;
 
-            QString info = QString("client_proxy: rcv all the %1 communication sim data items").arg(_union_sim_dat_rcv_vec.size());
-            qInfo(info.toStdString().c_str());
-            emit progress_log_signal(info);
-        }
-        return;
-    }
+//    QString info = QString("client_proxy: rcv communication sim data, len:%1, data:%2").arg(len).arg(data);
+//    emit progress_log_signal(info);
 
-    if(type == ePG_sim_interoper_data){
-        if(_rcv_comm_data_enabled){
-            const UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
-            _union_sim_dat_rcv_vec.push_back(*dat);
-        }
-    }
-    else{
-        handle_css((EPGRTUIType)header->type, data, header->length);
-    }
-
-//    if(type == ePG_sim_interoper_data){
-//        UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
-//        replace_power_sim_data(dat);
-//        _union_sim_dat_rcv_vec.push_back(*dat);
-
-//        if(_union_sim_dat_rcv_vec.size() == _union_sim_dat_snd_vec.size()){
+//    if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
+//        _rcv_comm_data_enabled = type == eCommCmd_start_send_data;
+//        if(type == eCommCmd_stop_send_data){
 //            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
 //            int ss_id = dev_type_id_tbl[eSimDev_communication];
 //            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
@@ -161,14 +131,41 @@ void client_proxy::rcv_upper_msg_callback(const char* data, int len)
 //            emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
 
 //            QString info = QString("client_proxy: rcv all the %1 communication sim data items").arg(_union_sim_dat_rcv_vec.size());
-//            qInfo(info.toStdString().c_str());
 //            emit progress_log_signal(info);
+//        }
+//        return;
+//    }
+
+//    if(type == ePG_sim_interoper_data){
+//        if(_rcv_comm_data_enabled){
+//            const UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
+//            _union_sim_dat_rcv_vec.push_back(*dat);
 //        }
 //    }
 //    else{
 //        handle_css((EPGRTUIType)header->type, data, header->length);
 //    }
-}
+
+////    if(type == ePG_sim_interoper_data){
+////        UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
+////        replace_power_sim_data(dat);
+////        _union_sim_dat_rcv_vec.push_back(*dat);
+
+////        if(_union_sim_dat_rcv_vec.size() == _union_sim_dat_snd_vec.size()){
+////            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
+////            int ss_id = dev_type_id_tbl[eSimDev_communication];
+////            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
+////            QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
+////            emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+
+////            QString info = QString("client_proxy: rcv all the %1 communication sim data items").arg(_union_sim_dat_rcv_vec.size());
+////            emit progress_log_signal(info);
+////        }
+////    }
+////    else{
+////        handle_css((EPGRTUIType)header->type, data, header->length);
+////    }
+//}
 
 void client_proxy::snd_upper_to_comm()
 {
@@ -295,7 +292,6 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
 
     tips = b_map_success ? "successfully" : tips;
     info = QString("client_proxy: map_power_comm_sim_data %1 items %2").arg(_power_conf_param.result_num).arg(tips);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     return b_map_success;
@@ -309,7 +305,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
     }
 
     QString info = QString("client_proxy: stream_power_sim_data");
-    qInfo(info.toStdString().c_str());
+    emit progress_log_signal(info);
 
     stream = std::to_string(data[0].sim_time);
     for(int i=0; i<data.size(); ++i){
@@ -397,7 +393,6 @@ void client_proxy::replace_power_sim_data(UnionSimData* data)
 void client_proxy::handle_css(EPGRTUIType type,  const char* data, int len)
 {
     QString info = QString("client_proxy: handle_css, type:%1, data:%2, len:%3").arg(type).arg(data).arg(len);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
@@ -409,7 +404,6 @@ void client_proxy::handle_css(EPGRTUIType type,  const char* data, int len)
     QDomDocument* doc = XmlUtil::create_PG_RTUI_xml(ss_id, ps_id, d_base);
     if(!doc){
         info = QString("client_proxy: handle_css, create_PG_RTUI_xml failed.");
-        qInfo(info.toStdString().c_str());
         emit progress_log_signal(info);
         return;
     }
@@ -478,7 +472,6 @@ void client_proxy::handle_power(ApplMessage* msg)
         }
 
         QString info = QString("client_proxy: handle_power, start execute power sim");
-        qInfo(info.toStdString().c_str());
         emit progress_log_signal(info);
 
         _power_sim_started = true;
@@ -490,7 +483,6 @@ void client_proxy::handle_power(ApplMessage* msg)
                                                           &_result_info[0]);
         if(ret < 0){
             info = QString("client_proxy: handle_power, power simulation over!!!!!!");
-            qInfo(info.toStdString().c_str());
             emit progress_log_signal(info);
         }
         else{
@@ -504,7 +496,6 @@ void client_proxy::handle_power(ApplMessage* msg)
 
             QString eret = doc ? "successfully" : "failed";
             info = QString("client_proxy: handle_power, execute power sim, %1").arg(eret);
-            qInfo(info.toStdString().c_str());
             emit progress_log_signal(info);
         }
     }
@@ -562,7 +553,6 @@ void client_proxy::handle_power(ApplMessage* msg)
            }
            else if(ret < 0){
                info = QString("client_proxy: handle_power, power simulation over!!!!!!");
-               qInfo(info.toStdString().c_str());
                emit progress_log_signal(info);
            }
         }
@@ -583,7 +573,6 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
     const char* appl_name = ProcNamesSet[eApplProc_control_calc];
 
     QString info = QString("client_proxy: handle_power_appl, appl_name: %1, ss_id: %2, ps_id: %3").arg(appl_name).arg(ss_id).arg(ps_id);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     long msg_type = msg->_proc_msg->_msg_type;
@@ -630,9 +619,6 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
 
 void client_proxy::handle_communication(ApplMessage* msg)
 {
-    long msg_type = msg->_proc_msg->_msg_type;
-    long proc_type = msg->_proc_msg->_proc_type;
-
     IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
     if(msg->_i2u == dev_type_id_tbl[eSimDev_power]){
         handle_comm_power(msg);
@@ -650,8 +636,7 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
     long proc_type = msg->_proc_msg->_proc_type;
     const char* appl_name = ProcNamesSet[eApplProc_comm_sim];
 
-    QString info = QString("client_proxy: handle_comm_power, appl_name: %1, ss_id: %2, ps_id: %3").arg(appl_name).arg(ss_id).arg(ps_id);
-    qInfo(info.toStdString().c_str());
+    QString info = QString("client_proxy: handle_comm_power, appl_name: %1, ss_id: %2, ps_id: %3, proc_type: %4, msg_type: %5").arg(appl_name).arg(ss_id).arg(ps_id).arg(proc_type).arg(msg_type);
     emit progress_log_signal(info);
 
     QString tips = "session: ";
@@ -671,8 +656,8 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
         tips += "send data, confirm";
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_request){
-        snd_upper_to_comm();
-        //rcv_upper_msg_callback(nullptr, 0);
+        //snd_upper_to_comm();
+        rcv_upper_msg_callback(nullptr, 0);
         tips += "invoke comm sim, wait a moment";
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_request){
@@ -704,7 +689,6 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     const char* appl_name = ProcNamesSet[eApplProc_control_calc];
 
     QString info = QString("client_proxy: handle_comm_power_appl, appl_name: %1, ss_id: %2, ps_id: %3").arg(appl_name).arg(ss_id).arg(ps_id);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     QString tips = "session: ";
@@ -983,7 +967,6 @@ void client_proxy::handle_comm_cfg_param(ApplMessage* msg)
 
     QString tips = ret ? "successfully" : "failed";
     QString info = QString("client_proxy: handle_comm_cfg_param, send data %1, data: %2, len: %3").arg(tips).arg(data).arg(len);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 }
 
@@ -1020,7 +1003,6 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
 
     QString tips = _power_init_success ? "successfully" : "failed";
     QString info = QString("client_proxy: handle_power_cfg_param, init power sim software %1").arg(tips);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 }
 
@@ -1028,7 +1010,6 @@ void client_proxy::handle_msg(ApplMessage* msg)
 {
     long proc_type = msg->_proc_msg->_proc_type;
     QString info = QString("client_proxy: handle_msg, proc_type: %1").arg(proc_type);
-    qInfo(info.toStdString().c_str());
     emit progress_log_signal(info);
 
     switch (proc_type){

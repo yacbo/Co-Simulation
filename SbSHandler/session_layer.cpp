@@ -167,7 +167,6 @@ bool session_layer::relay_handle(SessionMessageBody* sess_msg)
     else{
         RootMessageBody root;
         root._session_msg_body = sess_msg;
-        root._session_msg_body->_procedure_msg_body->_msg_type = eMessage_confirm;
         doc = root.Attr2Document();
     }
 

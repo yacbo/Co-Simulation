@@ -27,7 +27,6 @@ bool AlgorithmUtil::Alth_Calculate_dVg(const char* sim_data,  int bus_num, doubl
     }
 
     BusInfor* businfo = new BusInfor[bus_num];
-
     for (int m = 0; m < bus_num; ++m){
         businfo[m].busno = m + 1;
         businfo[m].Volt = (double)atof(data_vec[2 * m].c_str());
