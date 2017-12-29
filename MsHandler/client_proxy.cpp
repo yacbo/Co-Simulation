@@ -305,10 +305,10 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
         return stream;
     }
 
-    QString info = QString("client_proxy: stream_power_sim_data");
+    QString info = QString("client_proxy: stream_power_sim_data, data items: %1").arg(data.size());
     emit progress_log_signal(info);
 
-    stream = std::to_string(data[0].sim_time);
+    stream = std::to_string(data[0].sim_time) + " ";
     for(int i=0; i<data.size(); ++i){
         switch (_power_conf_param.result_type) {
         case ePowerData_businfor:{
