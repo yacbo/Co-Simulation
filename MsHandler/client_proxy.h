@@ -92,8 +92,8 @@ private:
     application_layer* _appl_layer;
 
 private:
-    PowerSimInputData* _input_info;
-    PowerSimResultData* _result_info;
+    PowerSIDataVec _input_info;
+    PowerSRDataVec _result_info;
 
 private:
     EProxyState _proxy_status;                                        //客户代理状态

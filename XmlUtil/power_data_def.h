@@ -1,6 +1,7 @@
 #ifndef POWER_DATA_DEF_H
 #define POWER_DATA_DEF_H
 
+#include <vector>
 #include <inttypes.h>
 
 typedef enum E_PowerDataType{
@@ -41,6 +42,8 @@ typedef struct PowerBusInforData : public PowerSimResultData{
     double bus_angle;                   //母线幅角.
 }PowerDvgData;
 
+typedef std::vector<PowerSimInputData*> PowerSIDataVec;
+typedef std::vector<PowerSimResultData*> PowerSRDataVec;
 
 #pragma pack(pop)
 

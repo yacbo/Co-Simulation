@@ -71,7 +71,7 @@ bool PowerHandler::InitHandler(const char* prj_name, const char* case_name, doub
     return true;
 }
 
-int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, PowerSimInputData *dg_infor, int bus_num, EPowerDataType bus_type, PowerSimResultData *bus_infor)
+int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSRDataVec& bus_infor)
 {
     int err = 0;
     Application* app = _instance->GetApplication();
@@ -115,11 +115,11 @@ int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, PowerSimInputData 
     if(bus_type == ePowerData_businfor){
         int current = mat.size();
         for (int i = 0; i < bus_num; i++){
-            PowerBusInforData& info = (PowerBusInforData&)bus_infor[i];
-            info.bus_id = i + 1;
-            info.cur_sim_time = _cur_time;
-            info.bus_volt = (double)atof(mat[current - 1][2 * i + 1].c_str());
-            info.bus_angle = (double)atof(mat[current - 1][2 * i + 2].c_str());
+            PowerBusInforData* info = (PowerBusInforData*)bus_infor[i];
+            info->bus_id = i + 1;
+            info->cur_sim_time = _cur_time;
+            info->bus_volt = (double)atof(mat[current - 1][2 * i + 1].c_str());
+            info->bus_angle = (double)atof(mat[current - 1][2 * i + 2].c_str());
         }
     }
 
@@ -286,7 +286,7 @@ int PowerHandler::ExportCalculateResult(Application* app, const char *filename)
 /// @return     0 if calculation was successful
 ///                   1 on error
 //--------------------------------------------------------------------------------
-int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type, PowerSimInputData* dgInfor, double simtime)
+int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dgInfor, double simtime)
 {
     DataObject* prj = app->GetActiveProject();
     if (!prj) {
@@ -326,8 +326,8 @@ int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type
         paramevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
 
         if(dg_type == ePowerData_dginfor){
-            const PowerDGInforData& dg_infor = (const PowerDGInforData&)dgInfor[i];
-            paramevent[i]->SetAttributeDouble("value", dg_infor.dv, &error); //这边值为发电机机端电压调整量
+            const PowerDGInforData* dg_infor = (const PowerDGInforData*)dgInfor[i];
+            paramevent[i]->SetAttributeDouble("value", dg_infor->dv, &error); //这边值为发电机机端电压调整量
         }
     }
 
