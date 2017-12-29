@@ -301,7 +301,7 @@ QDomElement FuncInvokeBody::XmlElement2Attr(QDomElement element)
                 if(str.toStdString() =="variable")
                 {
                     VariableMsgDataBody* data = new VariableMsgDataBody();
-                    data->XmlElement2Attr(child_s.firstChildElement());
+                    data->XmlElement2Attr(child_s.toElement());
                     this->_data.push_back(data);
                 }
 
