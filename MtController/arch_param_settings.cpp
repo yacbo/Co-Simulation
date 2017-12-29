@@ -11,6 +11,7 @@ arch_param_settings::arch_param_settings(QWidget *parent) :
     setElecSoftOffLine();  //电力离线设置.
     setCommSoftOffLine();   //通信离线设置.
     setElecAppSoftOffLine(); //电力应用离线设置.
+    init();
 }
 
 arch_param_settings::~arch_param_settings()

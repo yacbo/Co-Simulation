@@ -7,6 +7,7 @@ comm_config_dlg::comm_config_dlg(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::comm_config_dlg)
 {
+    this->setStyleSheet("background-image: url(:/bac.jpg)");
     ui->setupUi(this);
     init();
 }

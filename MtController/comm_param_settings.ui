@@ -14,10 +14,10 @@
    <string>通信参数配置</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resourece.qrc">
+   <iconset resource="../MidSoftUI/minsoft.qrc">
     <normaloff>:/power_32.png</normaloff>:/power_32.png</iconset>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_15">
+  <layout class="QHBoxLayout" name="horizontalLayout_61">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_60">
      <item>
@@ -25,12 +25,6 @@
        <item>
         <widget class="QGroupBox" name="groupBox_6">
          <property name="minimumSize">
-          <size>
-           <width>230</width>
-           <height>280</height>
-          </size>
-         </property>
-         <property name="maximumSize">
           <size>
            <width>230</width>
            <height>280</height>
@@ -231,13 +225,7 @@
         <widget class="QGroupBox" name="groupBox_5">
          <property name="minimumSize">
           <size>
-           <width>230</width>
-           <height>340</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>230</width>
+           <width>0</width>
            <height>340</height>
           </size>
          </property>
@@ -283,7 +271,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>500</width>
            <height>280</height>
           </size>
          </property>
@@ -441,12 +429,6 @@
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="minimumSize">
-          <size>
-           <width>230</width>
-           <height>340</height>
-          </size>
-         </property>
-         <property name="maximumSize">
           <size>
            <width>230</width>
            <height>340</height>
@@ -699,7 +681,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>500</width>
            <height>280</height>
           </size>
          </property>
@@ -840,12 +822,6 @@
        <item>
         <widget class="QGroupBox" name="groupBox_4">
          <property name="minimumSize">
-          <size>
-           <width>230</width>
-           <height>340</height>
-          </size>
-         </property>
-         <property name="maximumSize">
           <size>
            <width>230</width>
            <height>340</height>
@@ -1019,7 +995,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>230</width>
+           <width>500</width>
            <height>280</height>
           </size>
          </property>
@@ -1199,12 +1175,6 @@
        <item>
         <widget class="QGroupBox" name="groupBox_7">
          <property name="minimumSize">
-          <size>
-           <width>230</width>
-           <height>340</height>
-          </size>
-         </property>
-         <property name="maximumSize">
           <size>
            <width>230</width>
            <height>340</height>
@@ -1430,12 +1400,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_14">
        <item>
         <widget class="QGroupBox" name="groupBox_9">
-         <property name="minimumSize">
-          <size>
-           <width>360</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="title">
           <string>事件列表</string>
          </property>
@@ -1490,7 +1454,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resourece.qrc"/>
+  <include location="../MidSoftUI/minsoft.qrc"/>
  </resources>
  <connections/>
 </ui>

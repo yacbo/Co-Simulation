@@ -32,7 +32,7 @@ QT_BEGIN_NAMESPACE
 class Ui_comm_param_settings
 {
 public:
-    QVBoxLayout *verticalLayout_15;
+    QHBoxLayout *horizontalLayout_61;
     QHBoxLayout *horizontalLayout_60;
     QVBoxLayout *verticalLayout_10;
     QGroupBox *groupBox_6;
@@ -259,8 +259,8 @@ public:
         QIcon icon;
         icon.addFile(QStringLiteral(":/power_32.png"), QSize(), QIcon::Normal, QIcon::Off);
         comm_param_settings->setWindowIcon(icon);
-        verticalLayout_15 = new QVBoxLayout(comm_param_settings);
-        verticalLayout_15->setObjectName(QStringLiteral("verticalLayout_15"));
+        horizontalLayout_61 = new QHBoxLayout(comm_param_settings);
+        horizontalLayout_61->setObjectName(QStringLiteral("horizontalLayout_61"));
         horizontalLayout_60 = new QHBoxLayout();
         horizontalLayout_60->setObjectName(QStringLiteral("horizontalLayout_60"));
         verticalLayout_10 = new QVBoxLayout();
@@ -268,7 +268,6 @@ public:
         groupBox_6 = new QGroupBox(comm_param_settings);
         groupBox_6->setObjectName(QStringLiteral("groupBox_6"));
         groupBox_6->setMinimumSize(QSize(230, 280));
-        groupBox_6->setMaximumSize(QSize(230, 280));
         verticalLayout_6 = new QVBoxLayout(groupBox_6);
         verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
         horizontalLayout_33 = new QHBoxLayout();
@@ -421,8 +420,7 @@ public:
 
         groupBox_5 = new QGroupBox(comm_param_settings);
         groupBox_5->setObjectName(QStringLiteral("groupBox_5"));
-        groupBox_5->setMinimumSize(QSize(230, 340));
-        groupBox_5->setMaximumSize(QSize(230, 340));
+        groupBox_5->setMinimumSize(QSize(0, 340));
         verticalLayout_5 = new QVBoxLayout(groupBox_5);
         verticalLayout_5->setObjectName(QStringLiteral("verticalLayout_5"));
         listView = new QListView(groupBox_5);
@@ -456,7 +454,7 @@ public:
         groupBox = new QGroupBox(comm_param_settings);
         groupBox->setObjectName(QStringLiteral("groupBox"));
         groupBox->setMinimumSize(QSize(230, 280));
-        groupBox->setMaximumSize(QSize(230, 280));
+        groupBox->setMaximumSize(QSize(500, 280));
         verticalLayout = new QVBoxLayout(groupBox);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         horizontalLayout = new QHBoxLayout();
@@ -603,7 +601,6 @@ public:
         groupBox_2 = new QGroupBox(comm_param_settings);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
         groupBox_2->setMinimumSize(QSize(230, 340));
-        groupBox_2->setMaximumSize(QSize(230, 340));
         verticalLayout_2 = new QVBoxLayout(groupBox_2);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         horizontalLayout_8 = new QHBoxLayout();
@@ -796,7 +793,7 @@ public:
         groupBox_3 = new QGroupBox(comm_param_settings);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
         groupBox_3->setMinimumSize(QSize(230, 280));
-        groupBox_3->setMaximumSize(QSize(230, 280));
+        groupBox_3->setMaximumSize(QSize(500, 280));
         verticalLayout_3 = new QVBoxLayout(groupBox_3);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
         horizontalLayout_17 = new QHBoxLayout();
@@ -909,7 +906,6 @@ public:
         groupBox_4 = new QGroupBox(comm_param_settings);
         groupBox_4->setObjectName(QStringLiteral("groupBox_4"));
         groupBox_4->setMinimumSize(QSize(230, 340));
-        groupBox_4->setMaximumSize(QSize(230, 340));
         verticalLayout_4 = new QVBoxLayout(groupBox_4);
         verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
         horizontalLayout_21 = new QHBoxLayout();
@@ -1043,7 +1039,7 @@ public:
         groupBox_8 = new QGroupBox(comm_param_settings);
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
         groupBox_8->setMinimumSize(QSize(230, 280));
-        groupBox_8->setMaximumSize(QSize(230, 280));
+        groupBox_8->setMaximumSize(QSize(500, 280));
         verticalLayout_8 = new QVBoxLayout(groupBox_8);
         verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         horizontalLayout_43 = new QHBoxLayout();
@@ -1188,7 +1184,6 @@ public:
         groupBox_7 = new QGroupBox(comm_param_settings);
         groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
         groupBox_7->setMinimumSize(QSize(230, 340));
-        groupBox_7->setMaximumSize(QSize(230, 340));
         verticalLayout_7 = new QVBoxLayout(groupBox_7);
         verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
         horizontalLayout_39 = new QHBoxLayout();
@@ -1355,7 +1350,6 @@ public:
         verticalLayout_14->setObjectName(QStringLiteral("verticalLayout_14"));
         groupBox_9 = new QGroupBox(comm_param_settings);
         groupBox_9->setObjectName(QStringLiteral("groupBox_9"));
-        groupBox_9->setMinimumSize(QSize(360, 0));
         verticalLayout_9 = new QVBoxLayout(groupBox_9);
         verticalLayout_9->setObjectName(QStringLiteral("verticalLayout_9"));
         tableView = new QTableView(groupBox_9);
@@ -1392,7 +1386,7 @@ public:
         horizontalLayout_60->addLayout(verticalLayout_14);
 
 
-        verticalLayout_15->addLayout(horizontalLayout_60);
+        horizontalLayout_61->addLayout(horizontalLayout_60);
 
 
         retranslateUi(comm_param_settings);
