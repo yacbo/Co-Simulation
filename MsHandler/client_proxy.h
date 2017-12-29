@@ -111,6 +111,7 @@ private:
 private:
     SockUtil* _sock_remote_ptr;
     CommConfParam _comm_conf_param;
+    PG_RTUI_Msg_CommSimHandleDelay _comm_sim_delay;
 
 private:
     data_queue<ApplMessage*> _proxy_msg_que;

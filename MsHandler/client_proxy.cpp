@@ -603,6 +603,7 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
         DataXmlVec vec;
         bool ret = calc_power_appl_data(_union_sim_dat_rcv_vec, vec);
         doc = XmlUtil::generate_invoke_xml(ss_id, ps_id, "", appl_name, 1, vec, eMessage_confirm);
+        XmlUtil::generate_xml_file("define.xml", doc);
         tips += "invoke confirm";
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_request){
@@ -620,6 +621,16 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
 
 void client_proxy::handle_communication(ApplMessage* msg)
 {
+    long msg_type = msg->_proc_msg->_msg_type;
+    long proc_type = msg->_proc_msg->_proc_type;
+    if(proc_type == eSubProcedure_sim_cmd && msg_type == eSimCmd_start_sim){
+        int ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._dev_port, (const char*)&_comm_sim_delay, _comm_sim_delay.length);
+        QString tips = ret ? "successfully" : "failed";
+        QString info = QString("client_proxy: handle_communication, send comm sim max handl delay %1").arg(tips);
+        emit progress_log_signal(info.toStdString().c_str());
+        return;
+    }
+
     IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
     if(msg->_i2u == dev_type_id_tbl[eSimDev_power]){
         handle_comm_power(msg);
@@ -939,16 +950,10 @@ void client_proxy::handle_comm_cfg_param(ApplMessage* msg)
         emit progress_log_signal(info.toStdString().c_str());
 
         //配置仿真最大处理时延
-        PG_RTUI_Msg_CommSimHandleDelay comm_sim_delay;
-        memset(&comm_sim_delay, 0, sizeof(PG_RTUI_Msg_CommSimHandleDelay));
-        comm_sim_delay.type = eCommCmd_sim_delay_cfg;
-        comm_sim_delay.length = sizeof(PG_RTUI_Msg_CommSimHandleDelay);
-        comm_sim_delay.comm_sim_handle_delay = _comm_conf_param.comm_sim_handle_max_delay;
-
-        ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._dev_port, (const char*)&comm_sim_delay, comm_sim_delay.length);
-        tips = ret ? "successfully" : "failed";
-        info = QString("client_proxy: handle_comm_cfg_param, send comm sim max handl delay %1").arg(tips);
-        emit progress_log_signal(info.toStdString().c_str());
+        memset(&_comm_sim_delay, 0, sizeof(PG_RTUI_Msg_CommSimHandleDelay));
+        _comm_sim_delay.type = eCommCmd_sim_delay_cfg;
+        _comm_sim_delay.length = sizeof(PG_RTUI_Msg_CommSimHandleDelay);
+        _comm_sim_delay.comm_sim_handle_delay = _comm_conf_param.comm_sim_handle_max_delay;
 
         return;
     }
