@@ -100,31 +100,59 @@ void client_proxy::register_lower_layer(const network_layer* net_layer_ptr)
     connect(this, &client_proxy::snd_lower_signal, net_layer_ptr, &network_layer::rcv_upper_slots, Qt::UniqueConnection);
 }
 
-void client_proxy::rcv_upper_msg_callback(const char* data, int len)
-{
-    _union_sim_dat_rcv_vec = _union_sim_dat_snd_vec;
-
-    IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
-    int ss_id = dev_type_id_tbl[eSimDev_communication];
-    int ps_id = dev_type_id_tbl[eSimDev_power_appl];
-    QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
-    emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
-
-    QString info = QString("client_proxy: rcv_upper_msg_callback,  items: %1").arg(_union_sim_dat_rcv_vec.size());
-    emit progress_log_signal(info);
-}
-
 //void client_proxy::rcv_upper_msg_callback(const char* data, int len)
 //{
-//    const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
-//    long type = header->type;
+//    _union_sim_dat_rcv_vec = _union_sim_dat_snd_vec;
 
-//    QString info = QString("client_proxy: rcv communication sim data, len:%1, data:%2").arg(len).arg(data);
+//    IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
+//    int ss_id = dev_type_id_tbl[eSimDev_communication];
+//    int ps_id = dev_type_id_tbl[eSimDev_power_appl];
+//    QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
+//    emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+
+//    QString info = QString("client_proxy: rcv_upper_msg_callback,  items: %1").arg(_union_sim_dat_rcv_vec.size());
 //    emit progress_log_signal(info);
+//}
 
-//    if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
-//        _rcv_comm_data_enabled = type == eCommCmd_start_send_data;
-//        if(type == eCommCmd_stop_send_data){
+void client_proxy::rcv_upper_msg_callback(const char* data, int len)
+{
+    const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
+    long type = header->type;
+
+    QString info = QString("client_proxy: rcv communication sim data, len:%1, data:%2").arg(len).arg(data);
+    emit progress_log_signal(info);
+
+    if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
+        _rcv_comm_data_enabled = type == eCommCmd_start_send_data;
+        if(type == eCommCmd_stop_send_data){
+            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
+            int ss_id = dev_type_id_tbl[eSimDev_communication];
+            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
+            QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
+            emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+
+            QString info = QString("client_proxy: rcv all the %1 communication sim data items").arg(_union_sim_dat_rcv_vec.size());
+            emit progress_log_signal(info);
+        }
+        return;
+    }
+
+    if(type == ePG_sim_interoper_data){
+        if(_rcv_comm_data_enabled){
+            const UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
+            _union_sim_dat_rcv_vec.push_back(*dat);
+        }
+    }
+    else{
+        handle_css((EPGRTUIType)header->type, data, header->length);
+    }
+
+//    if(type == ePG_sim_interoper_data){
+//        UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
+//        replace_power_sim_data(dat);
+//        _union_sim_dat_rcv_vec.push_back(*dat);
+
+//        if(_union_sim_dat_rcv_vec.size() == _union_sim_dat_snd_vec.size()){
 //            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
 //            int ss_id = dev_type_id_tbl[eSimDev_communication];
 //            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
@@ -134,39 +162,11 @@ void client_proxy::rcv_upper_msg_callback(const char* data, int len)
 //            QString info = QString("client_proxy: rcv all the %1 communication sim data items").arg(_union_sim_dat_rcv_vec.size());
 //            emit progress_log_signal(info);
 //        }
-//        return;
-//    }
-
-//    if(type == ePG_sim_interoper_data){
-//        if(_rcv_comm_data_enabled){
-//            const UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
-//            _union_sim_dat_rcv_vec.push_back(*dat);
-//        }
 //    }
 //    else{
 //        handle_css((EPGRTUIType)header->type, data, header->length);
 //    }
-
-////    if(type == ePG_sim_interoper_data){
-////        UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
-////        replace_power_sim_data(dat);
-////        _union_sim_dat_rcv_vec.push_back(*dat);
-
-////        if(_union_sim_dat_rcv_vec.size() == _union_sim_dat_snd_vec.size()){
-////            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
-////            int ss_id = dev_type_id_tbl[eSimDev_communication];
-////            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
-////            QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], eSubProcedure_session_begin, eMessage_request);
-////            emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
-
-////            QString info = QString("client_proxy: rcv all the %1 communication sim data items").arg(_union_sim_dat_rcv_vec.size());
-////            emit progress_log_signal(info);
-////        }
-////    }
-////    else{
-////        handle_css((EPGRTUIType)header->type, data, header->length);
-////    }
-//}
+}
 
 void client_proxy::snd_upper_to_comm()
 {
@@ -672,8 +672,8 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
         tips += "send data, confirm";
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_request){
-        //snd_upper_to_comm();
-        rcv_upper_msg_callback(nullptr, 0);
+        snd_upper_to_comm();
+        //rcv_upper_msg_callback(nullptr, 0);
         tips += "invoke comm sim, wait a moment";
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_request){
@@ -791,11 +791,22 @@ void client_proxy::handle_sim_cmd(ApplMessage* msg)
         case eSimDev_power:{
             if(_power_handler){
                 _power_handler->ExitHandler();
-            } ;
+
+                QString info = QString("client_proxy: handle_sim_cmd, close power sim software.");
+                emit progress_log_signal(info.toStdString().c_str());
+            }
             break;
         }
         case eSimDev_power_appl: break;
-        case eSimDev_communication: handle_communication(msg); break;
+        case eSimDev_communication:{
+            string cmd = "exit " + _comm_conf_param.comm_cmd;
+            bool ret = _sock_remote_ptr->send_data(_comm_tbl._comm_host_ip.c_str(), _comm_tbl._comm_host_port, cmd.c_str(), cmd.length());
+
+            QString tips = ret ? "successfully" : "failed";
+            QString info = QString("client_proxy: handle_sim_cmd, send remote operate comm software cmd(exit) %1").arg(tips);
+            emit progress_log_signal(info.toStdString().c_str());
+            break;
+        }
         }
     }
     default: break;
@@ -958,10 +969,12 @@ void client_proxy::handle_comm_cfg_param(ApplMessage* msg)
 {
     if(msg->_pg_rtui_type == ePG_comm_sim_cmd_data){
         XmlUtil::parse_CommSimConfParam_xml(msg->_proc_msg->_data_vector, _comm_conf_param);
-        bool ret = _sock_remote_ptr->send_data(_comm_tbl._comm_host_ip.c_str(), _comm_tbl._comm_host_port, _comm_conf_param.comm_cmd.c_str(), _comm_conf_param.comm_cmd.length());
+
+        string cmd = "start " + _comm_conf_param.comm_cmd;
+        bool ret = _sock_remote_ptr->send_data(_comm_tbl._comm_host_ip.c_str(), _comm_tbl._comm_host_port, cmd.c_str(), cmd.length());
 
         QString tips = ret ? "successfully" : "failed";
-        QString info = QString("client_proxy: handle_comm_cfg_param, send remote operate comm software cmd %1").arg(tips);
+        QString info = QString("client_proxy: handle_comm_cfg_param, send remote operate comm software cmd(start) %1").arg(tips);
         emit progress_log_signal(info.toStdString().c_str());
 
         //配置仿真最大处理时延
