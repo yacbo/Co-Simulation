@@ -30,6 +30,7 @@ public:
     bool InitHandler(const char* prj_name, const char* case_name, double sim_time, double sim_period);
     int Execute(int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSRDataVec& bus_infor);
     double QueryCurSimTime(bool realtime = false);
+    void ExitHandler();
 
 private:
     DataObject* GetChild(DataObject* object, const char* child_name);

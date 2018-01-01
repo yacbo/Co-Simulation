@@ -483,6 +483,8 @@ void client_proxy::handle_power(ApplMessage* msg)
                                                           (EPowerDataType)_power_conf_param.result_type,
                                                           _result_info);
         if(ret < 0){
+            _power_handler->ExitHandler();
+
             info = QString("client_proxy: handle_power, power simulation over!!!!!!");
             emit progress_log_signal(info);
         }
@@ -553,6 +555,8 @@ void client_proxy::handle_power(ApplMessage* msg)
                _expect_proc_type = eSubProcedure_session_begin;
            }
            else if(ret < 0){
+               _power_handler->ExitHandler();
+
                info = QString("client_proxy: handle_power, power simulation over!!!!!!");
                emit progress_log_signal(info);
            }
@@ -782,7 +786,18 @@ void client_proxy::handle_sim_cmd(ApplMessage* msg)
         break;
     }
     case eSimCmd_pause_sim: break;
-    case eSimCmd_stop_sim: break;
+    case eSimCmd_stop_sim: {
+        switch(_dev_type){
+        case eSimDev_power:{
+            if(_power_handler){
+                _power_handler->ExitHandler();
+            } ;
+            break;
+        }
+        case eSimDev_power_appl: break;
+        case eSimDev_communication: handle_communication(msg); break;
+        }
+    }
     default: break;
     }
 }

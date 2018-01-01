@@ -94,7 +94,7 @@ bool session_layer::deliver_to_upper(SessionMessageBody* sess_msg)
     bool ret = true;
     long proc_type = sess_msg->_procedure_msg_body->_proc_type;
     if(proc_type == eSubProcedure_register || proc_type == eSubProcedure_unregister){
-        check_login(sess_msg);
+        ret = check_login(sess_msg);
     }
     else if(proc_type != eSubProcedure_cfg_sim_param_data && proc_type != eSubProcedure_sim_cmd &&
                proc_type != eSubProcedure_sim_time_notify_data){
@@ -110,13 +110,18 @@ bool session_layer::check_login(SessionMessageBody* sess_msg)
         return false;
     }
 
-    if(sess_msg->_procedure_msg_body->_proc_type == eSubProcedure_register){
-        if(_session_id_ip_tbl.find(sess_msg->_id_i2u) != _session_id_ip_tbl.end()){
-            return false;
-        }
-
+    long proc_type = sess_msg->_procedure_msg_body->_proc_type;
+    if(proc_type == eSubProcedure_register){
         NetAddrMsgDataBody* net =  (NetAddrMsgDataBody*)sess_msg->_procedure_msg_body->_data_vector[0];
         QString id = QString("%1:%2").arg(net->_device_ip).arg(net->_device_port);
+
+        IntStrMap::iterator it = _session_id_ip_tbl.begin();
+        for(; it != _session_id_ip_tbl.end(); ++it){
+            if(it->second == id.toStdString()){
+                return false;
+            }
+        }
+
         _session_id_ip_tbl[_cur_id] = id.toStdString();
         sess_msg->_id_i2u = _cur_id;                                                      //设置ID
 
@@ -128,7 +133,7 @@ bool session_layer::check_login(SessionMessageBody* sess_msg)
         QString info = QString("session_layer: check_login, set device id = %1 for %2").arg(_cur_id - 1).arg(net->_device_name.c_str());
         emit progress_log_signal(info);
     }
-    else if(sess_msg->_procedure_msg_body->_proc_type == eSubProcedure_unregister){
+    else if(proc_type == eSubProcedure_unregister){
         IntStrMap::iterator it = _session_id_ip_tbl.find(sess_msg->_id_i2u);
         if(it == _session_id_ip_tbl.end()){
             return false;
@@ -245,6 +250,3 @@ QDomDocument* session_layer::handle_cfg_comm_param(SessionMessageBody* sess_msg)
     QDomDocument* doc = root.Attr2Document();
     return doc;
 }
-
-
-

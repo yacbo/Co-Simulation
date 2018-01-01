@@ -16,6 +16,7 @@ PowerHandler::~PowerHandler()
 {
     if(_api_fixture){
         delete _api_fixture;
+        _api_fixture = nullptr;
     }
 }
 
@@ -135,6 +136,14 @@ double PowerHandler::QueryCurSimTime(bool realtime)
     }
 
     return 0.0;
+}
+
+void PowerHandler::ExitHandler()
+{
+    if(_api_fixture){
+        delete _api_fixture;
+        _api_fixture = nullptr;
+    }
 }
 
 DataObject* PowerHandler::GetChild(DataObject* object, const char* child_name)
