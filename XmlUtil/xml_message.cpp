@@ -30,36 +30,36 @@ QDomElement ApplStepMsgBody::Attr2XmlElement()
 
 QDomElement ApplStepMsgBody::XmlElement2Attr(QDomElement element)
  {
-     QDomNode child =  element.firstChild();
+     QDomElement child =  element.firstChildElement();
      while(!child.isNull())
      {
-         if(child.toElement().tagName() == "number")
+         if(child.tagName() == "number")
          {
              //int _step_num 属性
-             if(child.toElement().hasAttribute("value"))
+             if(child.hasAttribute("value"))
              {
-                 this->_step_num = child.toElement().attribute("value").toInt();
+                 this->_step_num = child.attribute("value").toInt();
              }
          }
-         if(child.toElement().tagName() == "step")
+         else if(child.tagName() == "step")
          {
              //_step_vec属性
-             if(child.toElement().hasAttribute("value"))
+             if(child.hasAttribute("value"))
              {
                  //child.toElement().setAttribute("value",QString::number(_step_num,10));
-                  this->_step_vec.push_back(child.toElement().attribute("value").toInt());
+                  this->_step_vec.push_back(child.attribute("value").toInt());
              }
-            QDomNode child_s = child.toElement().firstChild();
-            if(child_s.toElement().tagName()=="progress")
+            QDomElement child_s = child.firstChildElement();
+            if(child_s.tagName()=="progress")
             {
                 //_proc_name_vec属性
-                if(child_s.toElement().hasAttribute("value"))
+                if(child_s.hasAttribute("value"))
                 {
-                    this->_proc_name_vec.push_back(child_s.toElement().attribute("value").toStdString());
+                    this->_proc_name_vec.push_back(child_s.attribute("value").toStdString());
                 }
             }
          }
-         child = child.nextSibling();
+         child = child.nextSiblingElement();
      }
      return element;
  }
@@ -67,39 +67,39 @@ QDomElement ApplStepMsgBody::XmlElement2Attr(QDomElement element)
 void ApplStepMsgBody::AttrFillXmlElement(QDomElement root)
  {
      int i = 0;
-     QDomNode child =  root.firstChild();
+     QDomElement child =  root.firstChildElement();
      while(!child.isNull())
      {
-         if(child.toElement().tagName() == "number")
+         if(child.tagName() == "number")
          {
              //int _step_num 属性
-             if(child.toElement().hasAttribute("value"))
+             if(child.hasAttribute("value"))
              {
-                 child.toElement().setAttribute("value",QString::number(this->_step_num,10));
+                 child.setAttribute("value",QString::number(this->_step_num,10));
                  //_step_num = child.toElement().attribute("value").toInt();
              }
          }
-         if(child.toElement().tagName() == "step")
+         else if(child.tagName() == "step")
          {
              //_step_vec属性
              int _step_int = 0;
-             if(child.toElement().hasAttribute("value"))
+             if(child.hasAttribute("value"))
              {
-                 _step_int = child.toElement().attribute("value").toInt();
+                 _step_int = child.attribute("value").toInt();
              }
-            QDomNode child_s = child.toElement().firstChild();
-            if(child_s.toElement().tagName()=="progress")
+            QDomElement child_s = child.firstChildElement();
+            if(child_s.tagName()=="progress")
             {
                 //_proc_name_vec属性
-                if(child_s.toElement().hasAttribute("value"))
+                if(child_s.hasAttribute("value"))
                 {
-                    child.toElement().setAttribute(QString::fromStdString("value"),QString::fromStdString(this->_proc_name_vec[_step_int]));
+                    child.setAttribute(QString::fromStdString("value"),QString::fromStdString(this->_proc_name_vec[_step_int]));
                     //_proc_name_vec[i] = child.toElement().attribute("value");
                 }
             }
             i++;
          }
-         child = child.nextSibling();
+         child = child.nextSiblingElement();
      }
  }
 
@@ -131,62 +131,62 @@ QDomElement ApplMessageBody::Attr2XmlElement()
 QDomElement ApplMessageBody::XmlElement2Attr(QDomElement element)
 {
     QDomElement reElement;
-    QDomNode child = element.firstChild();
+    QDomElement child = element.firstChildElement();
     while(!child.isNull())
     {
-        if(child.toElement().tagName() == "name")
+        if(child.tagName() == "name")
         {
             //string _appl_name 属性
-            if(child.toElement().hasAttribute("value"))
+            if(child.hasAttribute("value"))
             {
-                this->_appl_name = child.toElement().attribute("value").toStdString();
+                this->_appl_name = child.attribute("value").toStdString();
             }
         }
-        if(child.toElement().tagName() == "step")
+       else  if(child.tagName() == "step")
         {
             //int _appl_step 属性
-            if(child.toElement().hasAttribute("value"))
+            if(child.hasAttribute("value"))
             {
-                this->_appl_step = child.toElement().attribute("value").toInt();
+                this->_appl_step = child.attribute("value").toInt();
             }
         }
-        if(child.toElement().tagName()=="steps")
+        else if(child.tagName()=="steps")
         {
-            reElement = child.toElement();
+            reElement = child;
             _msg_step = new ApplStepMsgBody();
             this->_msg_step->XmlElement2Attr(reElement);
         }
-        child = child.nextSibling();
+        child = child.nextSiblingElement();
     }
     return reElement;
 }
 
 void ApplMessageBody::AttrFillXmlElement(QDomElement root)
 {
-    QDomNode child =  root.firstChild();
+    QDomElement child =  root.firstChildElement();
     while(!child.isNull())
     {
-        if(child.toElement().tagName() == "name")
+        if(child.tagName() == "name")
         {
             //string _appl_name 属性
-            if(child.toElement().hasAttribute("value"))
+            if(child.hasAttribute("value"))
             {
-                child.toElement().setAttribute("value",QString::fromStdString(_appl_name));
+                child.setAttribute("value",QString::fromStdString(_appl_name));
             }
         }
-        if(child.toElement().tagName() == "step")
+        else if(child.tagName() == "step")
         {
             //int _appl_step属性
-            if(child.toElement().hasAttribute("value"))
+            if(child.hasAttribute("value"))
             {
-                child.toElement().setAttribute("value",QString::number(this->_appl_step,10));
+                child.setAttribute("value",QString::number(this->_appl_step,10));
             }
         }
-        if(child.toElement().tagName()=="steps")
+        else if(child.tagName()=="steps")
         {
-            this->_msg_step->AttrFillXmlElement(child.toElement());
+            this->_msg_step->AttrFillXmlElement(child);
         }
-        child = child.nextSibling();
+        child = child.nextSiblingElement();
     }
 }
 
@@ -214,40 +214,38 @@ QDomElement FuncInvokeBody::Attr2XmlElement()
     QDomAttr type_attr = doc.createAttribute("value");
     type_attr.setValue(QString::number(_msg_type,10));
     type.setAttributeNode(type_attr);
-    if(_data.size()>0)
+
+    for(int i= 0;i<_data.size();i++)
     {
-        for(int i= 0;i<_data.size();i++)
-        {
-            if( eTransData_variable == _data[i]->_data_type)
-            {
-                VariableMsgDataBody* variable = (VariableMsgDataBody*)_data.at(i);
-                QDomElement varEl =  variable->Attr2XmlElement();
-                type.appendChild(varEl);
-            }
-
-            if(eTransData_table == _data.at(i)->_data_type)
-            {
-                TableMsgDataBody* table = (TableMsgDataBody*)_data.at(i);
-                QDomElement tabEl =  table->Attr2XmlElement();
-                type.appendChild(tabEl);
-            }
-
-            if(eTransData_file == _data.at(i)->_data_type)
-            {
-                FileMsgDataBody* file = (FileMsgDataBody*)_data.at(i);
-                QDomElement fileEl =  file->Attr2XmlElement();
-                type.appendChild(fileEl);
-            }
-
-            if(eTransData_net_addr == _data.at(i)->_data_type)
-            {
-                NetAddrMsgDataBody* netAddr = (NetAddrMsgDataBody*)_data.at(i);
-                QDomElement netEl =  netAddr->Attr2XmlElement();
-                type.appendChild(netEl);
-            }
+        switch(_data[i]->_data_type){
+        case eTransData_variable:{
+            VariableMsgDataBody* variable = (VariableMsgDataBody*)_data.at(i);
+            QDomElement varEl =  variable->Attr2XmlElement();
+            type.appendChild(varEl);
+            break;
         }
-
+        case eTransData_table:{
+            TableMsgDataBody* table = (TableMsgDataBody*)_data.at(i);
+            QDomElement tabEl =  table->Attr2XmlElement();
+            type.appendChild(tabEl);
+            break;
+        }
+        case eTransData_file:{
+            FileMsgDataBody* file = (FileMsgDataBody*)_data.at(i);
+            QDomElement fileEl =  file->Attr2XmlElement();
+            type.appendChild(fileEl);
+            break;
+        }
+        case eTransData_net_addr:{
+            NetAddrMsgDataBody* netAddr = (NetAddrMsgDataBody*)_data.at(i);
+            QDomElement netEl =  netAddr->Attr2XmlElement();
+            type.appendChild(netEl);
+            break;
+        }
+        default: break;
+        }
     }
+
     function.appendChild(name);
     function.appendChild(type);
     return function;
@@ -267,7 +265,7 @@ QDomElement FuncInvokeBody::XmlElement2Attr(QDomElement element)
                 this->_name = child.attribute("value").toStdString();
             }
         }
-        if(child.tagName() == "type")
+        else if(child.tagName() == "type")
         {
             //int _msg_type 属性
             QDomElement typeEl = child.toElement();
