@@ -286,19 +286,19 @@ QDomElement FuncInvokeBody::XmlElement2Attr(QDomElement element)
                     data->XmlElement2Attr(child_s.toElement());
                     this->_data.push_back(data);
                 }
-                if(str.toStdString() =="")
+                else if(str.toStdString() =="")
                 {
                     TableMsgDataBody* data = new TableMsgDataBody();
                     data->XmlElement2Attr(child_s.toElement());
                     this->_data.push_back(data);
                 }
-                if(str.toStdString() =="file")
+                else if(str.toStdString() =="file")
                 {
                     FileMsgDataBody* data = new FileMsgDataBody();
                     data->XmlElement2Attr(child_s.toElement());
                     this->_data.push_back(data);
                 }
-                if(str.toStdString() =="variable")
+                else if(str.toStdString() =="variable")
                 {
                     VariableMsgDataBody* data = new VariableMsgDataBody();
                     data->XmlElement2Attr(child_s.toElement());
@@ -358,21 +358,21 @@ QDomElement ProcedureMessageBody::Attr2XmlElement()
                     type.appendChild(varEl);
                 }
 
-                if(eTransData_table == _data_vector.at(i)->_data_type)
+                else if(eTransData_table == _data_vector.at(i)->_data_type)
                 {
                     TableMsgDataBody* table = (TableMsgDataBody*)_data_vector.at(i);
                     QDomElement tabEl =  table->Attr2XmlElement();
                     type.appendChild(tabEl);
                 }
 
-                if(eTransData_file == _data_vector.at(i)->_data_type)
+                else if(eTransData_file == _data_vector.at(i)->_data_type)
                 {
                     FileMsgDataBody* file = (FileMsgDataBody*)_data_vector.at(i);
                     QDomElement fileEl =  file->Attr2XmlElement();
                     type.appendChild(fileEl);
                 }
 
-                if(eTransData_net_addr == _data_vector.at(i)->_data_type)
+                else if(eTransData_net_addr == _data_vector.at(i)->_data_type)
                 {
                     NetAddrMsgDataBody* netAddr = (NetAddrMsgDataBody*)_data_vector.at(i);
                     QDomElement netEl =  netAddr->Attr2XmlElement();
@@ -407,12 +407,12 @@ QDomElement ProcedureMessageBody::XmlElement2Attr(QDomElement element)
             }
 
             //long _pro_type 属性
-            if(child.toElement().hasAttribute("type"))
+            else if(child.toElement().hasAttribute("type"))
             {
                 this->_proc_type = child.toElement().attribute("type").toLong();
             }
         }
-        if(child.toElement().tagName() == "type")
+        else if(child.toElement().tagName() == "type")
         {
             //int _proc_type 属性
             QDomElement typeEl = child.toElement();
@@ -438,19 +438,19 @@ QDomElement ProcedureMessageBody::XmlElement2Attr(QDomElement element)
                         data->XmlElement2Attr(child_s.toElement());
                         this->_data_vector.push_back(data);
                     }
-                    if(str.toStdString() =="")
+                    else if(str.toStdString() =="")
                     {
                         TableMsgDataBody* data = new TableMsgDataBody();
                         data->XmlElement2Attr(child_s.toElement());
                         this->_data_vector.push_back(data);
                     }
-                    if(str.toStdString() =="file")
+                    else if(str.toStdString() =="file")
                     {
                         FileMsgDataBody* data = new FileMsgDataBody();
                         data->XmlElement2Attr(child_s.toElement());
                         this->_data_vector.push_back(data);
                     }
-                    if(str.toStdString() =="variable")
+                    else if(str.toStdString() =="variable")
                     {
                         VariableMsgDataBody* data = new VariableMsgDataBody();
                         data->XmlElement2Attr(child_s.toElement());
@@ -460,7 +460,7 @@ QDomElement ProcedureMessageBody::XmlElement2Attr(QDomElement element)
                 child_s = child_s.nextSibling();
             }
         }
-        if(child.toElement().tagName() == "application")
+        else if(child.toElement().tagName() == "application")
         {
             reElement = child.toElement();
             _appl_msg_body = new ApplMessageBody();
@@ -627,7 +627,7 @@ QDomElement SessionMessageBody::XmlElement2Attr(QDomElement element)
                 this->_id_i2u = child.toElement().attribute("value").toLong();
             }
         }
-        if(child.toElement().tagName() == "U2I")
+        else if(child.toElement().tagName() == "U2I")
         {
             //long _id_u2i 属性
             if(child.toElement().hasAttribute("value"))
@@ -635,7 +635,7 @@ QDomElement SessionMessageBody::XmlElement2Attr(QDomElement element)
                 this->_id_u2i = child.toElement().attribute("value").toLong();
             }
         }
-        if(child.toElement().tagName() == "sessType")
+        else if(child.toElement().tagName() == "sessType")
         {
             //sessType 属性
             if(child.toElement().hasAttribute("value"))
@@ -643,7 +643,7 @@ QDomElement SessionMessageBody::XmlElement2Attr(QDomElement element)
                 this->_msg_type = child.toElement().attribute("value").toLong();
             }
         }
-        if(child.toElement().tagName()=="progress")
+        else if(child.toElement().tagName()=="progress")
         {
             reElement = child.toElement();
             _procedure_msg_body = new ProcedureMessageBody();
@@ -667,7 +667,7 @@ void SessionMessageBody::AttrFillXmlElement(QDomElement root)
                 child.toElement().setAttribute("value",QString::number(this->_id_i2u,10));
             }
         }
-        if(child.toElement().tagName() == "U2I")
+        else if(child.toElement().tagName() == "U2I")
         {
             //long _id_u2i属性
             if(child.toElement().hasAttribute("value"))
@@ -675,7 +675,7 @@ void SessionMessageBody::AttrFillXmlElement(QDomElement root)
                 child.toElement().setAttribute("value",QString::number(this->_id_u2i,10));
             }
         }
-        if(child.toElement().tagName()=="application")
+        else if(child.toElement().tagName()=="application")
         {
             this->_procedure_msg_body->AttrFillXmlElement(child.toElement());
         }
@@ -818,14 +818,14 @@ QDomElement NetAddrMsgDataBody::XmlElement2Attr(QDomElement element)
                         this->_device_name = child_s.toElement().attribute("value").toStdString();
                     }
                 }
-                if(child_s.toElement().tagName()=="ip")
+                else if(child_s.toElement().tagName()=="ip")
                 {
                     if(child_s.toElement().hasAttribute("value"))
                     {
                         this->_device_ip = child_s.toElement().attribute("value").toLongLong();
                     }
                 }
-                if(child_s.toElement().tagName()=="port")
+                else if(child_s.toElement().tagName()=="port")
                 {
                     if(child_s.toElement().hasAttribute("value"))
                     {
@@ -929,7 +929,7 @@ void FileMsgDataBody::AttrFillXmlElement(QDomElement root)
                         //this->_file_name = child_s.toElement().attribute("value").toStdString();
                     }
                 }
-                if(child_s.toElement().tagName()=="path")
+                else if(child_s.toElement().tagName()=="path")
                 {
                     if(child_s.toElement().hasAttribute("value"))
                     {
@@ -1039,14 +1039,14 @@ QDomElement VariableMsgDataBody::XmlElement2Attr(QDomElement element)
                         this->_var_name = child_s.attribute("value").toStdString();
                     }
                 }
-                if(child_s.tagName()=="type")
+                else if(child_s.tagName()=="type")
                 {
                     if(child_s.hasAttribute("value"))
                     {
                         this->_var_type = child_s.attribute("value").toInt();
                     }
                 }
-                if(child_s.tagName()=="value")
+                else if(child_s.tagName()=="value")
                 {
                     if(child_s.hasAttribute("value"))
                     {
@@ -1080,7 +1080,7 @@ void VariableMsgDataBody::AttrFillXmlElement(QDomElement root)
                         //this->_var_name = child_s.toElement().attribute("value").toStdString();
                     }
                 }
-                if(child_s.toElement().tagName()=="type")
+                else if(child_s.toElement().tagName()=="type")
                 {
                     if(child_s.toElement().hasAttribute("value"))
                     {
@@ -1088,7 +1088,7 @@ void VariableMsgDataBody::AttrFillXmlElement(QDomElement root)
                         //this->_var_type = child_s.toElement().attribute("value").toInt();
                     }
                 }
-                if(child_s.toElement().tagName()=="value")
+                else if(child_s.toElement().tagName()=="value")
                 {
                     if(child_s.toElement().hasAttribute("value"))
                     {
