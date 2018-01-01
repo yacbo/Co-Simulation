@@ -405,7 +405,7 @@ QDomElement ProcedureMessageBody::XmlElement2Attr(QDomElement element)
             }
 
             //long _pro_type 属性
-            else if(child.toElement().hasAttribute("type"))
+            if(child.toElement().hasAttribute("type"))
             {
                 this->_proc_type = child.toElement().attribute("type").toLong();
             }
