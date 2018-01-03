@@ -181,6 +181,8 @@ void client_proxy::snd_upper_to_comm()
     snd_dat_cmd.length = sizeof(snd_dat_cmd);
     memcpy(dat, &snd_dat_cmd, snd_dat_cmd.length);
     bool ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._business_port, dat, snd_dat_cmd.length);
+
+    QThread::msleep(200);
     QString tips = ret ? "successfully" : "failed";
     QString info = QString("client_proxy: snd start send power data cmd %1").arg(tips);
     emit progress_log_signal(info);
@@ -672,8 +674,8 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
         tips += "send data, confirm";
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_request){
-        snd_upper_to_comm();
-        //rcv_upper_msg_callback(nullptr, 0);
+        //snd_upper_to_comm();
+        rcv_upper_msg_callback(nullptr, 0);
         tips += "invoke comm sim, wait a moment";
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_request){

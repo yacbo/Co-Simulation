@@ -33,12 +33,12 @@ void comm_config_dlg::init()
     connect(ui->toolButton, &QToolButton::clicked, this, &comm_config_dlg::choose_dll_event);
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &comm_config_dlg::button_box_ok);
     ui->toolButton->setVisible(false);
-    ui->lineEdit->setText("192.168.0.200"); //设定ip初值.
+    ui->lineEdit->setText("192.168.31.35"); //设定ip初值.
     ui->lineEdit_2->setText("5132");//设定port初值.
     ui->lineEdit_3->setText("6666");//业务端口设初值.
 
     ui->lineEdit_4->setText("192.168.31.35");
-    ui->lineEdit_5->setText("10010");
+    ui->lineEdit_5->setText("12321");
 }
 
 void comm_config_dlg::get_net_info(QString& ip, uint16_t& port, int& proto_type,uint16_t&port_business,QString& host_ip,uint16_t &host_port)

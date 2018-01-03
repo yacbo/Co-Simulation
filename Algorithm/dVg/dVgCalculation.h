@@ -362,10 +362,10 @@ int GetdQgg(double *dQg_ptr, double *Cg_ptr, int *Zone_ptr, BusInfor *businfor_P
 	}
 	//double *temp_V=new double[Num_Bus];
 	double temp_V[39];
+    memset(temp_V, 0, sizeof(double) * Num_Bus);
 
-	memset(&temp_V[0], 0, Num_Bus);
 	for (i_PBus_ref = 0; i_PBus_ref < Num_PBus; i_PBus_ref++)
-	{
+    {
 		temp_no_PBus_ref = businfor_PBus_Ref_ptr[i_PBus_ref].busno - 1;
 		for (i_PBus = 0; i_PBus < Num_PBus; i_PBus++)
 		{
