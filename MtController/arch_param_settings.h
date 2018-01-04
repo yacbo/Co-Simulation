@@ -31,6 +31,9 @@ public:
     void setCommSoftOffLine();   //通信离线设置.
     void setElecAppSoftOnLine();//电力应用在线设置.
     void setElecAppSoftOffLine(); //电力应用离线设置.
+
+private:
+    void paintEvent(QPaintEvent* pEvent);
 };
 
 #endif // ARCH_PARAM_SETTINGS_H

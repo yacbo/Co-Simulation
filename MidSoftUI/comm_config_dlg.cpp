@@ -2,12 +2,14 @@
 #include "ui_comm_config_dlg.h"
 #include <QFileDialog>
 #include <QMessageBox>
-
+#include <QPainter>
 comm_config_dlg::comm_config_dlg(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::comm_config_dlg)
 {
-    this->setStyleSheet("background-image: url(:/bac.jpg)");
+    //this->setStyleSheet("background-image: url(:/bac.jpg)");
+     this->setFixedSize( 360,325);
+    this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
     init();
 }
@@ -16,7 +18,16 @@ comm_config_dlg::~comm_config_dlg()
 {
     delete ui;
 }
-
+void comm_config_dlg::paintEvent(QPaintEvent* pEvent)
+{
+//    QPixmap _pBg;
+//    _pBg.load(":/bac.jpg");
+//    QPainter painter;
+//    painter.begin(this);
+//    QSize s =this->geometry().size();
+//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+//    painter.end();
+}
 void comm_config_dlg::init()
 {
     //0-65535的正则表达.
@@ -39,6 +50,9 @@ void comm_config_dlg::init()
 
     ui->lineEdit_4->setText("192.168.31.35");
     ui->lineEdit_5->setText("12321");
+
+    ui->groupBox_2->setStyleSheet("color:white;");//border:1px solid black;
+    ui->groupBox->setStyleSheet("color:white;");
 }
 
 void comm_config_dlg::get_net_info(QString& ip, uint16_t& port, int& proto_type,uint16_t&port_business,QString& host_ip,uint16_t &host_port)

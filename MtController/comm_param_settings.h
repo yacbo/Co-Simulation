@@ -126,6 +126,9 @@ private slots:
 //存放数据的集合
 private:
     QVector<QString> vec;
+
+private:
+    void paintEvent(QPaintEvent* pEvent);
 };
 
 #endif // COMM_PARAM_SETTINGS_H

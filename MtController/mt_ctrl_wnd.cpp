@@ -8,7 +8,7 @@
 #include "comm_type_def.h"
 #include "comm_param_settings.h"
 #include "xml_util.h"
-
+#include <QPainter>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -18,7 +18,16 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setStyleSheet("background-image: url(:/bac.jpg)");
     init();
 }
-
+void MainWindow::paintEvent(QPaintEvent* pEvent)
+{
+    QPixmap _pBg;
+    _pBg.load(":/bac.jpg");
+    QPainter painter;
+    painter.begin(this);
+    QSize s =this->geometry().size();
+    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+    painter.end();
+}
 MainWindow::~MainWindow()
 {
     delete ui;

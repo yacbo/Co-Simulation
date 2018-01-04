@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include "comm_config_dlg.h"
 #include "xml_util.h"
-
+#include <QPainter>
 MidSoftUI::MidSoftUI(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::MidSoftUI)
@@ -14,11 +14,24 @@ MidSoftUI::MidSoftUI(QWidget *parent)
     flags |=Qt::WindowMaximizeButtonHint;
     flags |=Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
-    this->setStyleSheet("background-image: url(:/bac.jpg)");
+
+//    QPalette pal;
+//    pal.setColor(QPalette::WindowText, QColor(0,0,255));
+//    this->setPalette(pal);
+    this->setStyleSheet("color:white;background-color:#444240;");
     ui->setupUi(this);
     init();
 }
-
+void MidSoftUI::paintEvent(QPaintEvent* pEvent)
+{
+//    QPixmap _pBg;
+//    _pBg.load(":/bac.jpg");
+//    QPainter painter;
+//    painter.begin(this);
+//    QSize s =this->geometry().size();
+//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+//    painter.end();
+}
 MidSoftUI::~MidSoftUI()
 {
     if(_ms_handler){
@@ -70,6 +83,15 @@ void MidSoftUI::init()
 
     //禁用注销按钮
     ui->unregisterButton->setEnabled(false);
+
+    ui->groupBox_4->setStyleSheet("color:white;");
+    ui->groupBox_3->setStyleSheet("color:white;");
+    ui->groupBox_2->setStyleSheet("color:white;");//border:1px solid black;
+    ui->groupBox->setStyleSheet("color:white;");
+    ui->tableView->setStyleSheet("color:white;");
+
+    ui->registerButton->setStyleSheet("color:white;background:#696969;");
+    ui->unregisterButton->setStyleSheet("color:black;background:#444240;");
 }
 
 void MidSoftUI::register_device()
@@ -131,7 +153,8 @@ void MidSoftUI::unregister_device()
             qInfo(info.c_str());
         }
     }
-
+    ui->registerButton->setStyleSheet("color:white;background:#696969;");
+    ui->unregisterButton->setStyleSheet("color:black;background:#444240;");
 }
 
 void MidSoftUI::combox_select_event(int a)
@@ -167,6 +190,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
            ui->lineEdit_4->setEnabled(false);
            ui->comboBox->setEnabled(false);
            ui->comboBox_2->setEnabled(false);
+           ui->unregisterButton->setStyleSheet("color:white;background:#696969;");
+           ui->registerButton->setStyleSheet("color:black;background:#444240;");
         }
 
         //若注销成功，注册按钮禁用,启用注销按钮.
@@ -180,6 +205,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
            ui->lineEdit_4->setEnabled(true);
            ui->comboBox->setEnabled(true);
            ui->comboBox_2->setEnabled(true);
+           ui->registerButton->setStyleSheet("color:white;background:#696969;");
+           ui->unregisterButton->setStyleSheet("color:black;background:#444240;");
         }
     }
 }

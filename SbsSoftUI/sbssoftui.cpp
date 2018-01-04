@@ -1,6 +1,6 @@
 #include "sbssoftui.h"
 #include "ui_sbssoftui.h"
-
+#include <QPainter>
 SbsSoftUI::SbsSoftUI(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SbsSoftUI)
@@ -10,16 +10,21 @@ SbsSoftUI::SbsSoftUI(QWidget *parent) :
     flags |=Qt::WindowMaximizeButtonHint;
     flags |=Qt::WindowCloseButtonHint;
     setWindowFlags(flags);
-    this->setStyleSheet("background-image: url(:/bac.jpg)");
-//    QPixmap pixmap = QPixmap(":/bac.jpg").scaled(this->size());
-//    QPalette palette(this->palette());
-//    palette.setBrush(QPalette::Background, QBrush(pixmap));
-//    this->setPalette(palette);
+    this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
 
     init();
 }
-
+void SbsSoftUI::paintEvent(QPaintEvent* pEvent)
+{
+//    QPixmap _pBg;
+//    _pBg.load(":/bac.jpg");
+//    QPainter painter;
+//    painter.begin(this);
+//    QSize s =this->geometry().size();
+//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+//    painter.end();
+}
 SbsSoftUI::~SbsSoftUI()
 {
     if(_sbs_handler){
@@ -68,6 +73,20 @@ void SbsSoftUI::init()
     ui->lineEdit_2->setEnabled(false);
     //禁用"停止服务"按钮
     ui->pushButton_2->setEnabled(false);
+
+    ui->groupBox_3->setStyleSheet("color:white;border:1px solid black");//border-color:black
+    //QGroupBox{border:1px solid black;margin-top: 0.5ex;}
+    //ui->groupBox_2->setStyleSheet("color:white;");
+   // ui->groupBox->setStyleSheet("color:white;")
+    ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
+    ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
+    ui->tableView->setStyleSheet("color:white;border:1px solid black;");
+    ui->tableView_2->setStyleSheet("color:white;border:1px solid black;");
+
+    //ui->pushButton->setFlat(true);
+
+    ui->pushButton->setStyleSheet("color:white;background:#696969;");
+    ui->pushButton_2->setStyleSheet("color:black;background:#444240;");
 }
 
 void SbsSoftUI::start_service()
@@ -79,7 +98,10 @@ void SbsSoftUI::start_service()
     //禁用开始服务button
     ui->pushButton->setEnabled(false);
     //开启停止服务
+    ui->pushButton_2->setStyleSheet("color:white;background:#696969;");
+    ui->pushButton->setStyleSheet("color:black;background:#444240;");
     ui->pushButton_2->setEnabled(true);
+
 
     int port = 9999;
     if(!ui->lineEdit->text().isEmpty() && !ui->lineEdit->text().isNull())
@@ -104,11 +126,12 @@ void SbsSoftUI::exit_service()
 
       }
 
+      ui->pushButton->setStyleSheet("color:white;background:#696969;");
+      ui->pushButton_2->setStyleSheet("color:black;background:#444240;");
       ui->pushButton->setEnabled(true);
       ui->pushButton_2->setEnabled(false);
       ui->lineEdit->setEnabled(true);
       ui->comboBox->setEnabled(true);
-
       //停止服务的时候，清除"连接的设备"的日志.
       _login_num = 0;
       _login_model->removeRows(0,_login_model->rowCount());

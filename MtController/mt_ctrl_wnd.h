@@ -60,7 +60,8 @@ public:
     int n =0;
     QStandardItemModel  *model;
 
-
+private:
+    void paintEvent(QPaintEvent* pEvent);
 
 };
 

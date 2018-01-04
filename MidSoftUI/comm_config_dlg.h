@@ -25,6 +25,7 @@ private slots:
 public :
     void init();
     void get_net_info(QString& ip, uint16_t& port, int& proto_type, uint16_t& bss_port,QString& host_ip,uint16_t &host_port);
+    void paintEvent(QPaintEvent* pEvent);
 
 private:
     QString _ip;

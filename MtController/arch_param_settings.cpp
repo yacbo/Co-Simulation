@@ -1,6 +1,7 @@
 #include "arch_param_settings.h"
 #include "ui_arch_param_settings.h"
 #include "comm_type_def.h"
+#include <QPainter>
 arch_param_settings::arch_param_settings(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::arch_param_settings)
@@ -18,7 +19,16 @@ arch_param_settings::~arch_param_settings()
 {
     delete ui;
 }
-
+void arch_param_settings::paintEvent(QPaintEvent* pEvent)
+{
+    QPixmap _pBg;
+    _pBg.load(":/bac.jpg");
+    QPainter painter;
+    painter.begin(this);
+    QSize s =this->geometry().size();
+    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+    painter.end();
+}
 void arch_param_settings::init()
 {
     ui->comboBox->clear();

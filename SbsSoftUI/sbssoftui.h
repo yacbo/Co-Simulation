@@ -42,6 +42,8 @@ public:
     int _log_num;
     QStandardItemModel  *_log_model;
 
+private:
+    void paintEvent(QPaintEvent* pEvent);
 };
 
 #endif // SBSSOFTUI_H

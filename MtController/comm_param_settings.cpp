@@ -15,7 +15,7 @@
 #include<xml_util.h>
 #include <iostream>
 #include <sstream>
-
+#include <QPainter>
 bool flagSendGetInterface =false;
 
 comm_param_settings::comm_param_settings(unsigned int ip , MsHandler* msHandler,QWidget *parent) :
@@ -24,16 +24,24 @@ comm_param_settings::comm_param_settings(unsigned int ip , MsHandler* msHandler,
 {
     _ip = ip;
     _msHandler = msHandler;
-    this->setStyleSheet("background-image: url(:/bac.jpg)");
+    //this->setStyleSheet("background-image: url(:/bac.jpg)");
     ui->setupUi(this);
     init();
 }
-
 comm_param_settings::~comm_param_settings()
 {
     delete ui;
 }
-
+void comm_param_settings::paintEvent(QPaintEvent* pEvent)
+{
+    QPixmap _pBg;
+    _pBg.load(":/bac.jpg");
+    QPainter painter;
+    painter.begin(this);
+    QSize s =this->geometry().size();
+    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+    painter.end();
+}
 void comm_param_settings::init()
 {
     //0-65535的正则表达.

@@ -49,12 +49,12 @@ private slots:
 private slots:
     void login_singal_slots(QString dev_name, QString dev_ip, uint16_t dev_port, bool login);
     void progress_log_slots(QString log);
+    void paintEvent(QPaintEvent* pEvent);
 
 public:
     //列表序号
     int n =0;
     QStandardItemModel  *model;
-
 };
 
 #endif // MIDSOFTUI_H
