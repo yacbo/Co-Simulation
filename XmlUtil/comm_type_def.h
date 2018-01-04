@@ -118,8 +118,8 @@ typedef enum E_SimCmdType{
 
 typedef enum E_CommCmdType{
     eCommCmd_sim_delay_cfg = 38,
-    eCommCmd_start_send_data = 1001,
-    eCommCmd_stop_send_data = 1002,
+    eCommCmd_start_send_data = 1000,
+    eCommCmd_stop_send_data = 1001,
 }ECommCmdType;
 
 typedef enum E_TransDataType{
