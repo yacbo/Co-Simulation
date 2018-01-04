@@ -362,6 +362,8 @@ bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& 
 void client_proxy::reset_power_input_data()
 {
     if(_dbl_vec.size() != _union_sim_dat_rcv_vec.size()){
+        QString info = QString("client_proxy: reset_power_input_data, double data items: %1, rcv sim data items: %2").arg(_dbl_vec.size()).arg(_union_sim_dat_rcv_vec.size());
+        emit progress_log_signal(info);
         return;
     }
 
@@ -369,7 +371,7 @@ void client_proxy::reset_power_input_data()
     for(int i=index; i<_dbl_vec.size(); ++i){
         switch (_power_conf_param.input_type) {
         case ePowerData_dginfor:{
-            PowerDGInforData* di = (PowerDGInforData*)_input_info[i];
+            PowerDGInforData* di = (PowerDGInforData*)_input_info[i - index];
             PowerBusInforData* bi = (PowerBusInforData*)_union_sim_dat_rcv_vec[i].power_dat;
 
             di->dv = _dbl_vec[i];
