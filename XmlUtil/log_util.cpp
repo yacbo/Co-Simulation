@@ -4,8 +4,6 @@
 #include <QTextStream>
 #include "log_util.h"
 
-QMutex LogUtil::_mutex;
-QString LogUtil::_file_name;
 LogUtil::LogUtil()
 {
     _file_name = "log.txt";
@@ -29,14 +27,12 @@ void LogUtil::Output(QtMsgType type, const QString& msg)
 
 void LogUtil::OutputMsg(QtMsgType type, const QString& msg)
 {
-    QString text = "Info: ";
     QString current_date_time = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss ddd");
-    QString current_date = QString("(%1)").arg(current_date_time);
-    QString message = QString("%1 %2 %3").arg(current_date).arg(text).arg(msg);
+    QString message = QString("[%1] %2").arg(current_date_time).arg(msg);
 
     _mutex.lock();
     QFile log(_file_name);
-    if(log.open(QIODevice::WriteOnly | QIODevice::Append)){
+    if(log.open(QIODevice::WriteOnly | QIODevice::Truncate)){
         QTextStream log_stream(&log);
         log_stream << message << "\r\n";
         log.flush();
