@@ -4,6 +4,7 @@
 #include "session_layer.h"
 #include "network_layer.h"
 #include "xml_util.h"
+#include "log_util.h"
 
 network_layer::network_layer()
 {
@@ -48,9 +49,7 @@ void network_layer::rcv_upper_register_slots(QString sbs_ip, int sbs_port,  int 
     _protocol_type = (EProtocolType)proto_type;
     bool ret =_sock_layer_ptr->start_trans_service(sbs_ip, sbs_port, _protocol_type, dev_port);
 
-    QString tips = ret ? "successfully" : "failed";
-    QString info = QString("network_layer: rcv_upper_register_slots, connect sbs %1").arg(tips);
-    qInfo(info.toStdString().c_str());
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "connect sbs", MACRO_SUCFAIL(ret));
     emit progress_log_signal(info);
 }
 
@@ -58,9 +57,7 @@ void network_layer::rcv_upper_unregister_slots(QString sbs_ip, int port)
 {
     bool ret = _sock_layer_ptr->stop_trans_service(sbs_ip, port);
 
-    QString tips = ret ? "successfully" : "failed";
-    QString info = QString("network_layer: rcv_upper_unregister_slots, disconnect sbs %1").arg(tips);
-    qInfo(info.toStdString().c_str());
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "disconnect sbs", MACRO_SUCFAIL(ret));
     emit progress_log_signal(info);
 }
 
@@ -68,8 +65,7 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
 {
     QString info;
     if(!_xml_frm_util_ptr->VerifyCheckSum(data)){
-        info = QString("network_layer: rcv_lower_info_callback, VerifyCheckSum failed");
-        qInfo(info.toStdString().c_str());
+        info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "VerifyCheckSum failed");
         emit progress_log_signal(info);
         return;
     }
@@ -83,8 +79,7 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
 
     _snd_upper_que.push(dst_data);
 
-    info = QString("network_layer: rcv_lower_info_callback, rcv data, len: %1").arg(len);
-    qInfo(info.toStdString().c_str());
+    info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "rcv data, len:", len);
     emit progress_log_signal(info);
 }
 
@@ -150,9 +145,7 @@ void network_layer::snd_lower_thread()
         bool ret = _sock_layer_ptr->send_data(ip, port.toUShort(), packet, pkt_len);
         delete[] packet;
 
-        QString tips = ret ? "successfully" : "failed";
-        QString info = QString("network_layer: snd_lower_thread, snd data %1, len: %2").arg(tips).arg(pkt_len);
-        qInfo(info.toStdString().c_str());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "send data", MACRO_SUCFAIL(ret), "len:", pkt_len);
         emit progress_log_signal(info);
     }
 }

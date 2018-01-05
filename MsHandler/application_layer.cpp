@@ -48,8 +48,7 @@ bool application_layer::config_communication(const char* comm_ip, uint16_t comm_
         return false;
     }
 
-    QString info = QString("application_layer:config_communication, comm_ip:%1, comm_port:%2, proto_type:%3").arg(comm_ip).arg(comm_port).arg(proto_type);
-    qInfo(info.toStdString().c_str());
+    LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "ip:",comm_ip, "port:", comm_port, "protocol:", proto_type);
 
     _comm_tbl._dev_ip = comm_ip;
     _comm_tbl._dev_port = comm_port;
@@ -63,8 +62,11 @@ bool application_layer::config_communication(const char* comm_ip, uint16_t comm_
 
 bool application_layer::config_sim_device(const char* dev_name, int ss_id,  const char* dll_path)
 {
-    QString info = QString("application_layer:config_sim_device, dev_name:%1, ss_id:%2, dll_path:%3").arg(dev_name).arg(ss_id).arg(dll_path);
-    qInfo(info.toStdString().c_str());
+    if(!dev_name){
+        return false;
+    }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "device name:",dev_name, "ss_id:", ss_id, "dll path:", dll_path);
 
     MsDeviceTable tbl;
 
@@ -80,8 +82,11 @@ bool application_layer::config_sim_device(const char* dev_name, int ss_id,  cons
 
 bool application_layer::config_sim_device(const char* dev_name, int ss_id,  const char* dev_ip, uint16_t dev_port, EProtocolType type)
 {
-    QString info = QString("application_layer:config_sim_device, dev_name:%1, ss_id:%2, dev_ip:%3, dev_port:%4, proto_type:%5").arg(dev_name).arg(ss_id).arg(dev_ip).arg(dev_port).arg(type);
-    qInfo(info.toStdString().c_str());
+    if(!dev_name){
+        return false;
+    }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "device name:",dev_name, "ss_id:", ss_id, "device ip:", dev_ip, "device port:", dev_port, "protocol:", type);
 
     MsDeviceTable tbl;
 
@@ -103,8 +108,11 @@ bool application_layer::config_sim_device(const char* dev_name, int ss_id,  cons
 
 bool application_layer::register_device(const char* dev_name,  int ss_id,  const char* sbs_ip, uint16_t sbs_port, EProtocolType type)
 {
-    QString info = QString("application_layer:register_device, dev_name:%1, ss_id:%2, sbs_ip:%3, sbs_port:%4, proto_type:%5").arg(dev_name).arg(ss_id).arg(sbs_ip).arg(sbs_port).arg(type);
-    qInfo(info.toStdString().c_str());
+    if(!dev_name || !sbs_ip){
+        return false;
+    }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Register", "device name:",dev_name, "ss_id:", ss_id, "sbs ip:", sbs_ip, "sbs port:", sbs_port, "protocol:", type);
 
     //connect SBS
     _sbs_ip = sbs_ip;
@@ -115,24 +123,27 @@ bool application_layer::register_device(const char* dev_name,  int ss_id,  const
     host.setAddress(tbl._dev_ip.c_str());
 
     emit snd_lower_register_signal(ss_id, _sbs_ip.c_str(), sbs_port, type, tbl._dev_port);
-    info = QString("application_layer:register_device, connect SBS, ss_id:%1, sbs_ip:%2, sbs_port:%3, proto_type:%4").arg(ss_id).arg(sbs_ip).arg(sbs_port).arg(type);
-    qInfo(info.toStdString().c_str());
-   // QThread::msleep(500);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "connect SBS:", "ss_id:", ss_id, "sbs ip:", sbs_ip, "sbs port:", sbs_port, "protocol:", type);
+    emit progress_log_signal(info);
+    QThread::msleep(500);
 
     //send login request xml
     QDomDocument* xml_reg= XmlUtil::generate_conn_xml(dev_name, host.toIPv4Address(), tbl._dev_port, ss_id, 10000, eSubProcedure_register, eMessage_request);
     emit snd_lower_signal(xml_reg, QString::fromStdString(_sbs_ip), sbs_port);
 
-    info = QString("application_layer:register_device, device id: %1, device name: %2, Logging in...").arg(ss_id).arg(dev_name);
-    notify_ui_msg(info);
+    info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Login......:", "ss_id:", ss_id, "device name:",dev_name);
+    emit progress_log_signal(info);
 
     return true;
 }
 
 bool application_layer::unregister(const char* dev_name, int ss_id, const char* sbs_ip)
 {
-    QString info = QString("application_layer:unregister, dev_name:%1, ss_id:%2, sbs_ip:%3").arg(dev_name).arg(ss_id).arg(sbs_ip);
-    qInfo(info.toStdString().c_str());
+    if(!dev_name){
+        return false;
+    }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Unregister", "device name:",dev_name, "ss_id:", ss_id, "sbs ip:", sbs_ip);
 
     //send logout request xml
     const MsDeviceTable& tbl = _dev_tbl[dev_name];
@@ -140,9 +151,10 @@ bool application_layer::unregister(const char* dev_name, int ss_id, const char* 
 
     QDomDocument* xml_unreg = XmlUtil::generate_conn_xml(dev_name, host.toIPv4Address(), tbl._dev_port, ss_id, 10000, eSubProcedure_unregister, eMessage_request);
     emit snd_lower_signal(xml_unreg, QString::fromStdString(_sbs_ip), _sbs_port);
+    QThread::msleep(500);
 
-    info = QString("application_layer:unregister, device id:%1, device name: %2, Aborting...").arg(ss_id).arg(dev_name);
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Logout......:", "device id:", ss_id, "device name:",dev_name);
+    emit progress_log_signal(info);
 
     return true;
 }
@@ -151,13 +163,13 @@ bool application_layer::unregister(const char* dev_name, int ss_id, const char* 
 bool application_layer::config_comm_sim_event()
 {
     int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
-    QString info = QString("application_layer:config_comm_sim_event, snd comm sim event to SBS.");
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "send communication simulation events to SBS");
+    emit progress_log_signal(info);
 
     QDomDocument* doc = XmlUtil::generate_CommSimEventConf_xml(ss_id, 10000);
     if(!doc){
-        info = QString("application_layer:config_comm_sim_event, generate_CommSimEventConf_xml failed.");
-        notify_ui_msg(info);
+        info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "generate_CommSimEventConf_xml failed");
+        emit progress_log_signal(info);
         return false;
     }
 

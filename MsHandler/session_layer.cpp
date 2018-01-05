@@ -79,19 +79,14 @@ void session_layer::handle_msg(SessionMessageBody* msg)
             emit snd_upper_type_id_signal(&_session_type_id_tbl);
         }
 
-        QString tips = QString("rcv dev_type_id_data ") + (ret ? "successfully" : "failed");
-        QString info = QString("session_layer:handle_msg,  %1").arg(tips);
-        qInfo(info.toStdString().c_str());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "rcv dev_type_id_data", MACRO_SUCFAIL(ret));
         emit progress_log_signal(info);
 
         return;
     }
-
-    if(proc_type == eSubProcedure_register && msg_type == eMessage_confirm){
+    else if(proc_type == eSubProcedure_register && msg_type == eMessage_confirm){
         _local_id = msg->_id_u2i;
-
-        QString info = QString("session_layer:handle_msg,  register rcv confirm msg: %1, _local_id: %2").arg(proc_type).arg(_local_id);
-        qInfo(info.toStdString().c_str());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "register rcv confirm msg", parse_type(proc_type), "local id:", _local_id);
         emit progress_log_signal(info);
     }
 
@@ -108,15 +103,21 @@ void session_layer::rcv_lower_thread()
 {
     QDomElement* elem = nullptr;
     while(!_quit){
-        if(elem = _snd_upper_que.pop(!_quit)){
-            _sess_msg_ptr->XmlElement2Attr(*elem);
-            delete elem;
-
-            handle_msg(_sess_msg_ptr);
-
-            QString info = QString("session_layer:rcv_lower_thread,msg_name: %1, ss_id: %2, ps_id: %3, proc_type: %4, msg_type: %5").arg(_sess_msg_ptr->_procedure_msg_body->_msg_name.c_str()).arg(_sess_msg_ptr->_id_i2u).arg(_sess_msg_ptr->_id_u2i).arg(_sess_msg_ptr->_procedure_msg_body->_proc_type).arg(_sess_msg_ptr->_procedure_msg_body->_msg_type);
-            LogUtil::Instance()->Output(QtInfoMsg, info);
+        if(!(elem = _snd_upper_que.pop(!_quit))){
+            continue;
         }
+
+        _sess_msg_ptr->XmlElement2Attr(*elem);
+        delete elem;
+
+        LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "Ready Handle Message",
+                                    "msg_name:", _sess_msg_ptr->_procedure_msg_body->_msg_name,
+                                    "ss_id:", _sess_msg_ptr->_id_i2u,
+                                    "ps_id:", _sess_msg_ptr->_id_u2i,
+                                    "proc_type:", parse_type(_sess_msg_ptr->_procedure_msg_body->_proc_type),
+                                    "msg_type:", parse_type((_sess_msg_ptr->_procedure_msg_body->_msg_type)));
+
+        handle_msg(_sess_msg_ptr);
     }
 }
 

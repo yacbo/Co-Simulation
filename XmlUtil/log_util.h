@@ -7,10 +7,15 @@
 #include <QMutex>
 #include "xmlutil_global.h"
 
-#define MACRO_FIL {\
-    char info[1024] = {0};\
-    sprintf_s(info, 1024, "func: %s line: %d", __FUNCTION__, __LINE__);  \
-    return std::string(info);}
+#define MACRO_CLASS(x) #x
+#define MACRO_LINE __LINE__
+#define MACRO_FUNCTION __FUNCTION__
+
+#define MACRO_SUCFAIL(x) (x ? "successfully" : "failed")
+
+#define MACRO_IN1_LOCAL(c, f, l) ("<"##c##"::"f ":"###l##">")
+#define MACRO_IN2_LOCAL(c, f, l) MACRO_IN1_LOCAL(c, f, l)
+#define MACRO_LOCAL(c)  MACRO_IN2_LOCAL(MACRO_CLASS(c),  MACRO_FUNCTION,  MACRO_LINE)
 
 class  XMLUTILSHARED_EXPORT LogUtil
 {
@@ -53,11 +58,14 @@ private:
     }
 
 private:
+    void InitTypeStrMap();
     void OutputMsg(QtMsgType type, const QString& msg);
 
 private:
     QMutex _mutex;
     QString _file_name;
 };
+
+XMLUTILSHARED_EXPORT const char* parse_type(int type);
 
 #endif // LOG_UTIL_H

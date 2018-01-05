@@ -32,9 +32,9 @@ typedef enum E_SimDevType{
 const char DevNamesSet[][128] = {
     "power",
     "communication",
-    "power_appl",
-    "sim_controller",
-    "half_real_entity",
+    "power application",
+    "simulation controller",
+    "half real entity",
 };
 
 typedef enum E_ApplProcType{
@@ -67,12 +67,16 @@ typedef enum E_BaseDataType{
     eData_ptr64 = 12,
 }EBaseDataType;
 
+typedef enum E_EnumBase{
+    eMsg_base = 0x10000001,
+}EEnumBase;
+
 typedef enum E_MessageType {
     eMessage_undef     = -1,
-    eMessage_request  = 0,
-	eMessage_confirm = 1,
-	eMessage_notify  = 2,
-	eMessage_error   = 3,
+    eMessage_request  = eMsg_base + 0,
+    eMessage_confirm = eMsg_base + 1,
+    eMessage_notify  = eMsg_base + 2,
+    eMessage_error   = eMsg_base + 3,
 }EMessageType;
 
 typedef enum E_ProcedureType {
@@ -106,14 +110,15 @@ typedef enum E_SubProcedureType {
     eSubProcedure_cfg_power_appl_data = eProcedure_custom + 4,                       //电力应用配置数据, 260
     eSubProcedure_cfg_sim_param_data = eProcedure_custom + 5,                        //仿真参数配置数据，如仿真时长，通信方式（TCP/UDP）等, 261
     eSubProcedure_sim_time_notify_data = eProcedure_custom + 6,                       //电力仿真时间数据, 262
-    eSubProcedure_sim_cmd = eProcedure_custom + 100,                                       //仿真控制命令，包括初始化，开始、暂停、结束仿真等, 356
+    eSubProcedure_sim_cmd = eProcedure_custom + 1000,                                       //仿真控制命令，包括初始化，开始、暂停、结束仿真等, 356
 }ESubProcedureType;
 
 typedef enum E_SimCmdType{
     eSimCmd_undef = -1,
-    eSimCmd_start_sim = 0,
-    eSimCmd_pause_sim = 1,
-    eSimCmd_stop_sim = 2,
+    eSimCmd_start_sim = eSubProcedure_sim_cmd + 0,
+    eSimCmd_pause_sim = eSubProcedure_sim_cmd + 1,
+    eSimCmd_keep_sim = eSubProcedure_sim_cmd + 2,
+    eSimCmd_stop_sim = eSubProcedure_sim_cmd + 3,
 }ESimCmdType;
 
 typedef enum E_CommCmdType{
@@ -124,10 +129,10 @@ typedef enum E_CommCmdType{
 
 typedef enum E_TransDataType{
 	eTransData_undef      = -1,
-    eTransData_net_addr   = eSubProcedure_data_send  + 0,
-    eTransData_file       = eSubProcedure_data_send  + 1,
-    eTransData_table      = eSubProcedure_data_send  + 2,
-    eTransData_variable   = eSubProcedure_data_send  + 3,
+    eTransData_net_addr   = eSubProcedure_data_send  + 100,
+    eTransData_file       = eSubProcedure_data_send  + 101,
+    eTransData_table      = eSubProcedure_data_send  + 102,
+    eTransData_variable   = eSubProcedure_data_send  + 103,
 }ETransDataType;
 
 typedef enum E_ProtocolType {
@@ -171,16 +176,6 @@ typedef enum E_SimDeviceState {
 	eDeviceState_busy         = 3,
 	eDeviceState_unregisting  = 4,
 }ESimDeviceState;
-
-typedef enum E_EventType {
-	eEvent_undef           = -1,
-	eEvent_proc_req_snding = 0,
-	eEvent_proc_req_snded  = 1,
-	eEvent_proc_req_rcved  = 2,
-	eEvent_proc_rep_snded  = 3,
-	eEvent_proc_cnf_rcved  = 4,
-	eEvent_proc_err_rcved  = 5,
-}EEventType;
 
 typedef enum E_ErrCauseType {
 	eErrCause_undef = -1,
