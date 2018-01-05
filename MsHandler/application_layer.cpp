@@ -187,15 +187,15 @@ bool application_layer::config_comm_param(const PG_RTUI_Base* param)
 
     int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
     int ps_id = _dev_type_id_tbl[eSimDev_communication];
-    QString info = QString("application_layer:config_comm_param, PG_RTUI, type:%1, ss_id:%2, ps_id:%3").arg(param->type).arg(ss_id).arg(ps_id);
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "ss_id", ss_id, "ps_id", ps_id, "PG_RTUI type:", param->type);
+    emit progress_log_signal(info);
 
     QDomDocument* doc = XmlUtil::create_PG_RTUI_xml(ss_id, ps_id, param);
     delete param;
 
     if(!doc){
-        info = QString("application_layer:config_comm_param, create_PG_RTUI_xml failed.");
-        notify_ui_msg(info);
+        info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "create_PG_RTUI_xml failed");
+        emit progress_log_signal(info);
         return false;
     }
 
@@ -208,12 +208,12 @@ bool application_layer::config_comm_param(const PG_RTUI_Base* param)
 bool application_layer::config_union_sim_param(const UnionSimConfParam* param)
 {
     int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
+    int ps_id = 10000;
 
-    QString info = QString("application_layer:config_union_sim_param, UnionSimConfParam, ss_id:%1").arg(ss_id);
-    qInfo(info.toStdString().c_str());
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "UnionSimConfParam", "ss_id:", ss_id, "ps_id:", ps_id);
     emit progress_log_signal(info);
 
-    QDomDocument* doc = XmlUtil::generate_UnionSimConfParam_xml(ss_id, 10000, param);
+    QDomDocument* doc = XmlUtil::generate_UnionSimConfParam_xml(ss_id, ps_id, param);
     emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
 
     return true;
@@ -222,11 +222,12 @@ bool application_layer::config_union_sim_param(const UnionSimConfParam* param)
 //power sim parameter config
 bool application_layer::config_power_sim_param(const PowerConfParam* power_cfg_data)
 {
-    QString info = QString("application_layer:config_power_sim_param.");
-    notify_ui_msg(info);
-
     int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
     int ps_id = _dev_type_id_tbl[eSimDev_power];
+
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "PowerConfParam", "ss_id:", ss_id, "ps_id:", ps_id);
+    emit progress_log_signal(info);
+
     QDomDocument* doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, power_cfg_data);
     emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
 
@@ -236,11 +237,12 @@ bool application_layer::config_power_sim_param(const PowerConfParam* power_cfg_d
 //comm sim parameter config
 bool application_layer::config_comm_sim_param(const CommConfParam* cfg_param)
 {
-    QString info = QString("application_layer:config_comm_sim_param.");
-    notify_ui_msg(info);
-
     int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
     int ps_id = _dev_type_id_tbl[eSimDev_communication];
+
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "CommConfParam", "ss_id:", ss_id, "ps_id:", ps_id);
+    emit progress_log_signal(info);
+
     QDomDocument* doc = XmlUtil::generate_CommSimConfParam_xml(ss_id, ps_id, cfg_param);
     emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
 
@@ -250,10 +252,12 @@ bool application_layer::config_comm_sim_param(const CommConfParam* cfg_param)
 //sim cmd
 bool application_layer::exec_sim_oper_cmd(int cmd)
 {
-    QString info = QString("application_layer:exec_sim_oper_cmd, exec_sim_oper_cmd, cmd:%1").arg(cmd);
-    notify_ui_msg(info);
-
     int ss_id = _dev_type_id_tbl[eSimDev_sim_controller];
+    int ps_id = 10000;
+
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "ss_id:", ss_id, "ps_id:", ps_id, "execute simulation operation cmd:",  cmd);
+    emit progress_log_signal(info);
+
     QDomDocument* doc = XmlUtil::generate_sim_cmd_xml(ss_id, 10000, cmd);
     emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
 
@@ -329,8 +333,8 @@ const IntMap& application_layer::get_dev_id_map()
      NetAddrMsgDataBody* net = (NetAddrMsgDataBody*)msg->_proc_msg->_data_vector[0];
      MsDeviceMap::iterator it =  _dev_tbl.find(net->_device_name) ;
      if(it == _dev_tbl.end()){
-         info = QString("application_layer::handle_login, but not found device: %1").arg(net->_device_name.c_str());
-         qInfo(info.toStdString().c_str());
+         QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "not found device:", net->_device_name);
+         emit progress_log_signal(info);
          delete msg;
          return;
      }
@@ -343,12 +347,12 @@ const IntMap& application_layer::get_dev_id_map()
      if(type == eSimDev_communication){
          client_proxy* proxy = manager_proxy(msg->_i2u, msg->_u2i);
          bool ret = proxy && proxy->start_sock_service(_comm_tbl._dev_ip.c_str(), _comm_tbl._dev_port, _comm_tbl._proto_type, tbl._dev_port, _comm_tbl._business_port, _comm_tbl._comm_host_ip.c_str(), _comm_tbl._comm_host_port);
-         info = QString("application_layer:handle_login, connect communication ") + (ret ? "successfully" : "failed");
-         notify_ui_msg(info);
+         info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "connect communication software", MACRO_SUCFAIL(ret));
+         emit progress_log_signal(info);
      }
 
-     info = QString("application_layer:handle login, device id: %1, device name: %2, login successfully. ").arg(msg->_u2i).arg(net->_device_name.c_str());
-     notify_ui_msg(info);
+     info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "device name:", net->_device_name, "device id:", msg->_u2i, "login successfully");
+     emit progress_log_signal(info);
 
      emit login_signal(net->_device_name.c_str(), "", net->_device_port, true);
 
@@ -377,8 +381,8 @@ const IntMap& application_layer::get_dev_id_map()
      NetAddrMsgDataBody* net = (NetAddrMsgDataBody*)msg->_proc_msg->_data_vector[0];
      MsDeviceMap::iterator it =  _dev_tbl.find(net->_device_name) ;
      if(it == _dev_tbl.end()){
-         info = QString("application_layer:handle logout, but not found device: %1").arg(net->_device_name.c_str());
-         qInfo(info.toStdString().c_str());
+         QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "not found device:", net->_device_name);
+         emit progress_log_signal(info);
          delete msg;
          return;
      }
@@ -386,8 +390,8 @@ const IntMap& application_layer::get_dev_id_map()
      _dev_tbl.remove(net->_device_name);
      emit login_signal(net->_device_name.c_str(), "", net->_device_port, false);
 
-     info = QString("application_layer:handle logout, device id: %1, device name: %2, logout successfully.").arg(msg->_u2i).arg(net->_device_name.c_str());
-     notify_ui_msg(info);
+     info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "device name:", net->_device_name, "device id:", msg->_u2i, "logout successfully");
+     emit progress_log_signal(info);
 
      //disconnect SBS
      emit snd_lower_unregister_signal(0, _sbs_ip.c_str(), _sbs_port);
@@ -400,71 +404,49 @@ void application_layer::handle_interoper(ApplMessage* msg)
     long msg_type = msg->_proc_msg->_msg_type;
     long proc_type = msg->_proc_msg->_proc_type;
 
-    QString info = QString("application_layer:handle_interoper, proc type: %1, msg name: %2").arg(proc_type).arg(msg->_proc_msg->_msg_name.c_str());
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Interoper Information:",
+                                               "proc type:", parse_type(proc_type),
+                                               "msg type:", parse_type(msg_type));
+    emit progress_log_signal(info);
 
-//    if(msg_type == eMessage_request && proc_type == eSubProcedure_appl_request){
-//        ApplProcedureOper* oper = nullptr;
-//        if(oper = _appl_proc_tbl.FindProcedureTemplate(msg->_proc_msg->_appl_msg_body->_appl_name.c_str())){
-//            QDomDocument* doc = XmlUtil::generate_appl_req_xml(msg->_u2i, msg->_i2u,
-//                                                               msg->_proc_msg->_appl_msg_body->_appl_name.c_str(),
-//                                                               msg->_proc_msg->_appl_msg_body->_msg_step->_step_vec,
-//                                                               eMessage_confirm);
-
-//            emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
-
-//            //创建实例
-//            string dev_name = DevNamesSet[_dev_type];
-//            oper = _appl_proc_tbl.CreateProcInstance(dev_name.c_str(),
-//                                                     msg->_proc_msg->_appl_msg_body->_appl_name,
-//                                                     _dev_method_tbl, false);
-//            if(oper){
-//                client_proxy* proxy = manager_proxy(msg->_i2u, msg->_u2i);
-//                proxy->set_appl_proc_oper(oper);
-//            }
-//        }
-//        else{        //mismatch
-//            QDomDocument* doc = XmlUtil::generate_appl_req_xml(msg->_u2i, msg->_i2u,
-//                                                               msg->_proc_msg->_appl_msg_body->_appl_name.c_str(),
-//                                                               msg->_proc_msg->_appl_msg_body->_msg_step->_step_vec,
-//                                                               eMessage_error, "mismatch");
-
-//            emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
-//        }
-//    }
-//    else{
-        client_proxy* proxy = manager_proxy(msg->_i2u, msg->_u2i);
-        emit proxy->ready_rcv_signal(msg);
-//    }
+     client_proxy* proxy = manager_proxy(msg->_i2u, msg->_u2i);
+     emit proxy->ready_rcv_signal(msg);
 }
 
 void application_layer::handle_union_sim_param(ApplMessage* msg)
 {
+    long msg_type = msg->_proc_msg->_msg_type;
     long proc_type = msg->_proc_msg->_proc_type;
     Q_ASSERT(proc_type == eSubProcedure_cfg_sim_param_data);
 
-    QString info = QString("application_layer:handle_union_sim_param, proc type: %1, msg name: %2").arg(proc_type).arg(msg->_proc_msg->_msg_name.c_str());
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Union Simulation Parameters",
+                                               "proc type:", parse_type(proc_type),
+                                               "msg type:", parse_type(msg_type));
+    emit progress_log_signal(info);
 
-    long len = 0;
     char param[128] = {0};
-    if(len = msg->_proc_msg->FetchPayloadData(param) > 0){
-        memcpy(&_union_sim_conf_param, param, sizeof(UnionSimConfParam));
+    if(msg->_proc_msg->FetchPayloadData(param) <= 0){
+        return;
     }
+
+    memcpy(&_union_sim_conf_param, param, sizeof(UnionSimConfParam));
 }
 
 void application_layer::handle_ack_comm_cfg_param(ApplMessage* msg)
 {
+    long msg_type = msg->_proc_msg->_msg_type;
     long proc_type = msg->_proc_msg->_proc_type;
     Q_ASSERT(proc_type == eSubProcedure_cfg_communication_data);
 
-    QString info = QString("application_layer:handle_ack_comm_cfg_param, proc type: %1, msg name: %2").arg(proc_type).arg(msg->_proc_msg->_msg_name.c_str());
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Communication Config Parameters Response",
+                                               "proc type:", parse_type(proc_type),
+                                               "msg type:", parse_type(msg_type));
+    emit progress_log_signal(info);
 
     PG_RTUI_Base* data = XmlUtil::parse_PG_RTUI_xml((EPGRTUIType)msg->_pg_rtui_type, msg->_proc_msg->_data_vector);
     if(!data){
-        QString info = QString("application_layer:handle_ack_comm_cfg_param, parse_PG_RTUI_xml failed.");
-        notify_ui_msg(info);
+        info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "parse_PG_RTUI_xml failed");
+        emit progress_log_signal(info);
         return;
     }
 
@@ -484,8 +466,8 @@ void application_layer::handle_ack_comm_cfg_param(ApplMessage* msg)
          }
      }
 
-     QString tips = !bcreate ? "delete client_proxy" : (b_find ? "invoke client_proxy" : "create client_proxy");
-     QString info = QString("application_layer: manager_proxy, : %1").arg(tips);
+     std::string tips = !bcreate ? "delete client_proxy" : (b_find ? "invoke client_proxy" : "create client_proxy");
+     QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), tips);
      emit progress_log_signal(info);
 
      if(b_find){
@@ -508,8 +490,8 @@ void application_layer::handle_ack_comm_cfg_param(ApplMessage* msg)
  {
      client_proxy* proxy = new client_proxy(this, _sbs_ip.c_str(),  _sbs_port, _dev_type);
      if(!proxy){
-         QString info = QString("application_layer: init_proxy, fail, dst_id(u2i):%1").arg(u2i);
-         qInfo(info.toStdString().c_str());
+         QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer), "Init failed", "dst_id(u2i):", u2i);
+         emit progress_log_signal(info);
          return nullptr;
      }
 
@@ -522,13 +504,6 @@ void application_layer::handle_ack_comm_cfg_param(ApplMessage* msg)
      return proxy;
  }
 
-void application_layer::notify_ui_msg(const QString& info)
-{
-    emit progress_log_signal(info);
-    qInfo(info.toStdString().c_str());
-    //LogUtil::Instance()->Output(QtInfoMsg, info);
-}
-
 void application_layer::start_rcv_thread()
 {
      _rcv_th = std::thread(std::bind(&application_layer::rcv_lower_thread, this));
@@ -539,9 +514,11 @@ void application_layer::rcv_lower_thread()
 {
     ApplMessage* msg = nullptr;
     while(!_quit){
-        if(msg = _snd_upper_que.pop(!_quit)){
-            handle_msg(msg);
+        if(!(msg = _snd_upper_que.pop(!_quit))){
+            continue;
         }
+
+        handle_msg(msg);
     }
 }
 
@@ -550,8 +527,12 @@ void application_layer::handle_msg(ApplMessage* msg)
     long proc_type = msg->_proc_msg->_proc_type;
     long msg_type = msg->_proc_msg->_msg_type;
 
-    QString info = QString("application_layer::handle_msg, msg_name:%1, src_id:%2, dst_id:%3, proc_type:%4, msg_type:%5").arg(msg->_proc_msg->_msg_name.c_str()).arg(msg->_i2u).arg(msg->_u2i).arg(proc_type).arg(msg_type);
-    notify_ui_msg(info);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(application_layer),
+                                               "msg name:", msg->_proc_msg->_msg_name,
+                                               "ss_id:", msg->_i2u, "ps_id:", msg->_u2i,
+                                               "proc type:", parse_type(proc_type),
+                                               "msg type:", parse_type(msg_type));
+    emit progress_log_signal(info);
 
     client_proxy* proxy = nullptr;
     if(proc_type != eSubProcedure_register && _dev_type != eSimDev_sim_controller){

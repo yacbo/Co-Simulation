@@ -79,6 +79,7 @@ private:
     uint16_t _sbs_port;
     string _local_ip;
     ESimDevType _dev_type;
+    ESimDevType _dst_dev_type;
 
 private:
     long _expect_msg_type;

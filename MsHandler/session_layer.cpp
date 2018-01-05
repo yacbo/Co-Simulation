@@ -79,14 +79,14 @@ void session_layer::handle_msg(SessionMessageBody* msg)
             emit snd_upper_type_id_signal(&_session_type_id_tbl);
         }
 
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "rcv dev_type_id_data", MACRO_SUCFAIL(ret));
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "rcv device type&id_data", MACRO_SUCFAIL(ret));
         emit progress_log_signal(info);
 
         return;
     }
     else if(proc_type == eSubProcedure_register && msg_type == eMessage_confirm){
         _local_id = msg->_id_u2i;
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "register rcv confirm msg", parse_type(proc_type), "local id:", _local_id);
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "rcv register confirm msg", parse_type(proc_type), "local id:", _local_id);
         emit progress_log_signal(info);
     }
 
