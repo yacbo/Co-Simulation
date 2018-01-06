@@ -3,6 +3,7 @@
 #include "application_layer.h"
 #include "session_layer.h"
 #include "network_layer.h"
+#include "log_util.h"
 
 network_layer::network_layer()
 {
@@ -42,8 +43,7 @@ bool network_layer::start_sbs_rt_service(const char* local_ip,  uint16_t listen_
     _protocol_type = type;
     bool ret = _sock_layer_ptr->start_trans_service(local_ip, listen_port, type, 0, false);
 
-    QString tips = ret ? "successfully" : "failed";
-    QString info = QString("network_layer: start_sbs_rt_service, start service %1").arg(tips);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "start SBS service", MACRO_SUCFAIL(ret));
     emit progress_log_signal(info);
 
     return ret;
@@ -53,8 +53,7 @@ bool network_layer::stop_sbs_service()
 {
     bool ret = _sock_layer_ptr->stop_sbs_service();
 
-    QString tips = ret ? "successfully" : "failed";
-    QString info = QString("network_layer: start_sbs_rt_service, stop service %1").arg(tips);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "stop SBS service", MACRO_SUCFAIL(ret));
     emit progress_log_signal(info);
 
     return ret;
@@ -69,7 +68,7 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
 {
     QString info;
     if(!_xml_frm_util_ptr->VerifyCheckSum(data)){
-        info = QString("network_layer: rcv_lower_info_callback, VerifyCheckSum failed");
+        info = LogUtil::Instance()->Output(MACRO_LOCAL, "verify CheckSum failed, data length:", len);
         emit progress_log_signal(info);
         return;
     }
@@ -80,11 +79,9 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
 
     char* dst_data = new char[len];
     memcpy(dst_data, data, len);
-
     _snd_upper_que.push(dst_data);
 
-    info = QString("network_layer: rcv_lower_info_callback, rcv data, len: %1").arg(len);
-    emit progress_log_signal(info);
+    LogUtil::Instance()->Output(MACRO_LOCAL, "receive data, length:", len);
 }
 
 void network_layer::rcv_upper_slots(QDomDocument* doc, QString dst_ip, quint16 port)
@@ -108,6 +105,7 @@ void network_layer::rcv_lower_thread()
     while(!_quit){
         const char* packet = _snd_upper_que.pop(!_quit);
         if(!packet){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "null packet");
             continue;
         }
 
@@ -115,12 +113,14 @@ void network_layer::rcv_lower_thread()
         delete[] packet;
 
         if(!doc){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "data frame to xml failed");
             continue;
         }
 
         QDomNodeList node_list = doc->elementsByTagName("session");
         delete doc;
         if(node_list.isEmpty()){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "not found xml session node");
             continue;
         }
 
@@ -134,6 +134,7 @@ void network_layer::snd_lower_thread()
     while(!_quit){
         QDomDocument* doc = _rcv_upper_doc_que.pop(!_quit);
         if(!doc){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "invalid QDomDocument");
             continue;
         }
 
@@ -143,6 +144,7 @@ void network_layer::snd_lower_thread()
 
         int pkt_len = _xml_frm_util_ptr->GetMsgLength();
         if(!pkt_len){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "msg length:", pkt_len);
             continue;
         }
 
@@ -152,9 +154,7 @@ void network_layer::snd_lower_thread()
         bool ret = _sock_layer_ptr->send_data(ip, port.toUShort(), packet, pkt_len);
         delete[] packet;
 
-        QString tips = ret ? "successfully" : "failed";
-        QString info = QString("network_layer: snd_lower_thread, snd data %1, len: %2").arg(tips).arg(pkt_len);
-        emit progress_log_signal(info);
+        LogUtil::Instance()->Output(MACRO_LOCAL, "send data", MACRO_SUCFAIL(ret), "length:", pkt_len);
     }
 }
 

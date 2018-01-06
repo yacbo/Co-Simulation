@@ -73,20 +73,27 @@ void session_layer::handle_msg(SessionMessageBody* msg)
     long msg_type = msg->_procedure_msg_body->_msg_type;
     long proc_type =  msg->_procedure_msg_body->_proc_type;
 
+    LogUtil::Instance()->Output(MACRO_LOCAL, "Handle Message",
+                                "msg_name:", msg->_procedure_msg_body->_msg_name,
+                                "ss_id:", msg->_id_i2u,
+                                "ps_id:", msg->_id_u2i,
+                                "proc_type:", parse_type(proc_type),
+                                "msg_type:", parse_type(msg_type));
+
     bool ret = false;
     if(proc_type == eSubProcedure_dev_type_id_data){
         if(ret = XmlUtil::parse_device_id_type_data(msg->_procedure_msg_body->_data_vector, _session_type_id_tbl)){
             emit snd_upper_type_id_signal(&_session_type_id_tbl);
         }
 
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "rcv device type&id_data", MACRO_SUCFAIL(ret));
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "parse device type&id_data", MACRO_SUCFAIL(ret));
         emit progress_log_signal(info);
 
         return;
     }
     else if(proc_type == eSubProcedure_register && msg_type == eMessage_confirm){
         _local_id = msg->_id_u2i;
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "rcv register confirm msg", parse_type(proc_type), "local id:", _local_id);
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv register confirm msg", parse_type(proc_type), "local id:", _local_id);
         emit progress_log_signal(info);
     }
 
@@ -109,13 +116,6 @@ void session_layer::rcv_lower_thread()
 
         _sess_msg_ptr->XmlElement2Attr(*elem);
         delete elem;
-
-        LogUtil::Instance()->Output(MACRO_LOCAL(session_layer), "Ready Handle Message",
-                                    "msg_name:", _sess_msg_ptr->_procedure_msg_body->_msg_name,
-                                    "ss_id:", _sess_msg_ptr->_id_i2u,
-                                    "ps_id:", _sess_msg_ptr->_id_u2i,
-                                    "proc_type:", parse_type(_sess_msg_ptr->_procedure_msg_body->_proc_type),
-                                    "msg_type:", parse_type((_sess_msg_ptr->_procedure_msg_body->_msg_type)));
 
         handle_msg(_sess_msg_ptr);
     }

@@ -59,22 +59,28 @@ void session_layer::rcv_lower_thread()
 {
     QDomElement* elem = nullptr;
     while(!_quit){
-        if(elem = _snd_upper_que.pop(!_quit)){
-            _sess_msg_ptr->XmlElement2Attr(*elem);
-            delete elem;
-
-            handle_msg(_sess_msg_ptr);
-
-            QString info = QString("session_layer:rcv_lower_thread,msg_name: %1, ss_id: %2, ps_id: %3, proc_type: %4, msg_type: %5").arg(_sess_msg_ptr->_procedure_msg_body->_msg_name.c_str()).arg(_sess_msg_ptr->_id_i2u).arg(_sess_msg_ptr->_id_u2i).arg(_sess_msg_ptr->_procedure_msg_body->_proc_type).arg(_sess_msg_ptr->_procedure_msg_body->_msg_type);
-            LogUtil::Instance()->Output(QtInfoMsg, info);
+        if(!(elem = _snd_upper_que.pop(!_quit))){
+            continue;
         }
+
+        _sess_msg_ptr->XmlElement2Attr(*elem);
+        delete elem;
+
+        handle_msg(_sess_msg_ptr);
     }
 }
 
 void session_layer::handle_msg(SessionMessageBody* sess_msg)
 {
-    QString info = QString("session_layer: handle_msg, session msg name: %1").arg(sess_msg->_procedure_msg_body->_msg_name.c_str());
-    emit progress_log_signal(info);
+    long msg_type = sess_msg->_procedure_msg_body->_msg_type;
+    long proc_type =  sess_msg->_procedure_msg_body->_proc_type;
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, "Handle Message",
+                                "msg_name:", sess_msg->_procedure_msg_body->_msg_name,
+                                "ss_id:", sess_msg->_id_i2u,
+                                "ps_id:", sess_msg->_id_u2i,
+                                "proc_type:", parse_type(proc_type),
+                                "msg_type:", parse_type(msg_type));
 
     if(!deliver_to_upper(_sess_msg_ptr)){
         return;
@@ -107,8 +113,11 @@ bool session_layer::deliver_to_upper(SessionMessageBody* sess_msg)
 bool session_layer::check_login(SessionMessageBody* sess_msg)
 {
     if(!sess_msg){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "null pointer");
         return false;
     }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL);
 
     long proc_type = sess_msg->_procedure_msg_body->_proc_type;
     if(proc_type == eSubProcedure_register){
@@ -128,9 +137,8 @@ bool session_layer::check_login(SessionMessageBody* sess_msg)
         ESimDevType dev_type = XmlUtil::query_sim_dev_type(net->_device_name.c_str());
         _session_type_id_tbl[dev_type] = _cur_id;
         emit snd_upper_type_id_signal(dev_type, _cur_id);              //发送到应用层，以便通过目标器件类型查找其id
-        ++_cur_id;
 
-        QString info = QString("session_layer: check_login, set device id = %1 for %2").arg(_cur_id - 1).arg(net->_device_name.c_str());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "Set [", net->_device_name, "] device id:", _cur_id++);
         emit progress_log_signal(info);
     }
     else if(proc_type == eSubProcedure_unregister){
@@ -148,7 +156,7 @@ bool session_layer::check_login(SessionMessageBody* sess_msg)
             _session_type_id_tbl.erase(it_t);
         }
 
-        QString info = QString("session_layer: check_login, remove device: %1").arg(net->_device_name.c_str());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "Remove device [", net->_device_name, "]");
         emit progress_log_signal(info);
     }
 
@@ -157,8 +165,11 @@ bool session_layer::check_login(SessionMessageBody* sess_msg)
 
 bool session_layer::relay_handle(SessionMessageBody* sess_msg)
 {
+    LogUtil::Instance()->Output(MACRO_LOCAL);
+
     IntStrMap::const_iterator it = _session_id_ip_tbl.find(sess_msg->_id_u2i);
     if(it == _session_id_ip_tbl.cend()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found device id:", sess_msg->_id_u2i);
         return false;
     }
 
@@ -182,6 +193,9 @@ bool session_layer::relay_handle(SessionMessageBody* sess_msg)
         QHostAddress dst(ip.toULong());
         emit snd_lower_signal(doc, dst.toString(), port.toUShort());
     }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate QDomDocument failed, current proc_type:", parse_type(sess_msg->_procedure_msg_body->_proc_type));
+    }
 
     return doc != nullptr;
 }
@@ -190,8 +204,9 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
 {
     int ss_id = sess_msg->_id_i2u;
     int ps_id = sess_msg->_id_u2i;
+    int proc_type = sess_msg->_procedure_msg_body->_proc_type;
 
-    QString info = QString("session_layer: handle_cfg_power_param, transmmit power config data, ss_id: %1, ps_id: %2, data type: %3").arg(ss_id).arg(ps_id).arg(sess_msg->_msg_type);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward power config data", "ss_id", ss_id, "ps_id", ps_id, "proc_type:", proc_type);
     emit progress_log_signal(info);
 
     QDomDocument* doc = nullptr;
@@ -200,19 +215,26 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
         doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &power_cfg_data);
         forward_power_cfg_param_to_power_appl(power_cfg_data);            //forward to power appl
     }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "parse power config data failed");
+    }
 
     return doc;
 }
 
 bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& param)
 {
+    LogUtil::Instance()->Output(MACRO_LOCAL);
+
     IntMap::const_iterator it_id = _session_type_id_tbl.find(eSimDev_power_appl);
     if(it_id == _session_type_id_tbl.cend()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found power application");
         return false;
     }
 
     IntStrMap::const_iterator it_ip = _session_id_ip_tbl.find(it_id->second);
     if(it_ip == _session_id_ip_tbl.cend()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found valid ip of power");
         return false;
     }
 
@@ -220,6 +242,7 @@ bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& 
     int ps_id = it_id->second;
     QDomDocument* doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &param);
     if(!doc){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate power sim config parameter xml failed");
         return false;
     }
 
@@ -229,7 +252,8 @@ bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& 
     QHostAddress dst(ip.toULong());
     emit snd_lower_signal(doc, dst.toString(), port.toUShort());
 
-    QString info = QString("session_layer: forward_power_cfg_param_to_power_appl, transmmit power config data, ss_id: %1, ps_id: %2, data type: %3").arg(ss_id).arg(ps_id).arg(eSubProcedure_cfg_power_data);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward power sim config parameter to power application",
+                                               "ss_id", ss_id, "ps_id", ps_id, "proc_type", parse_type(eSubProcedure_cfg_power_data));
     emit progress_log_signal(info);
 }
 
@@ -237,13 +261,16 @@ QDomDocument* session_layer::handle_cfg_comm_param(SessionMessageBody* sess_msg)
 {
     int ss_id = sess_msg->_id_i2u;
     int ps_id = sess_msg->_id_u2i;
-
-    QString info = QString("session_layer: handle_cfg_comm_param, transmmit communication config data, ss_id: %1, ps_id: %2, data type: %3").arg(ss_id).arg(ps_id).arg(sess_msg->_msg_type);
-    emit progress_log_signal(info);
+    int proc_type = sess_msg->_procedure_msg_body->_proc_type;
 
     if(sess_msg->_msg_type ==  ePG_comm_sim_event_data){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "communication sim event data");
         return nullptr;
     }
+
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward communication config parameter",
+                                               "ss_id", ss_id, "ps_id", ps_id, "proc_type", parse_type(proc_type));
+    emit progress_log_signal(info);
 
     RootMessageBody root;
     root._session_msg_body = sess_msg;

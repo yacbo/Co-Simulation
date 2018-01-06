@@ -11,7 +11,6 @@
 application_layer::application_layer()
 {
     _quit = false;
-    LogUtil::Instance()->SetFileName("SbS");
 
     _cur_sim_time = 0.0;
     _event_timer = new QTimer();
@@ -66,17 +65,18 @@ void application_layer::quit()
  void application_layer::handle_login(ApplMessage* msg)
  {
      if(!msg){
+         LogUtil::Instance()->Output(MACRO_LOCAL, "null pointer");
          return;
      }
 
      NetAddrMsgDataBody* net = (NetAddrMsgDataBody*)msg->_proc_msg->_data_vector[0];
-
-     QString info = QString("application_layer: handle_login, dev_name: %1, dev_ip: %2, dev_id: %3").arg(net->_device_name.c_str()).arg(net->_device_ip).arg(msg->_i2u);
+     QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "device name:", net->_device_name, "device ip:", net->_device_ip, "device id:", msg->_i2u);
      emit progress_log_signal(info);
 
      //confirm
      QDomDocument* xml_confirm = XmlUtil::generate_conn_xml(net->_device_name.c_str(), net->_device_ip, net->_device_port, 10000, msg->_i2u, eSubProcedure_register, eMessage_confirm);
      if(!xml_confirm){
+         LogUtil::Instance()->Output(MACRO_LOCAL, "generate connection xml failed");
          return;
      }
 
@@ -91,7 +91,7 @@ void application_layer::quit()
 
      //发送登录确认信息
      emit snd_lower_signal(xml_confirm, dst_ip, dst_port);
-     info = QString("application_layer: handle_login, send login confirm info to device: %1").arg(net->_device_name.c_str());
+     info = LogUtil::Instance()->Output(MACRO_LOCAL, "send login confirm msg to device:", net->_device_name);
      emit progress_log_signal(info);
 
      //向UI发送登录信息
@@ -106,7 +106,7 @@ void application_layer::quit()
              QDomDocument* notify_xml = XmlUtil::generate_notify_dev_id_xml(10000, it->second, _dev_type_id_tbl);
              emit snd_lower_signal(notify_xml, it_t->_dev_ip.c_str(), it_t->_dev_port);
 
-             info = QString("application_layer: handle_login, notify register device type and id to device: %1").arg(dev_name);
+             info = LogUtil::Instance()->Output(MACRO_LOCAL, "send register device type&id to device:", dev_name);
              emit progress_log_signal(info);
          }
      }
@@ -115,14 +115,14 @@ void application_layer::quit()
  void application_layer::handle_logout(ApplMessage* msg)
  {
      if(!msg){
+         LogUtil::Instance()->Output(MACRO_LOCAL, "null pointer");
          return;
      }
 
      NetAddrMsgDataBody* net = (NetAddrMsgDataBody*)msg->_proc_msg->_data_vector[0];
      SbsDeviceMap::iterator it = _dev_tbl.find(net->_device_name.c_str());
      if(it == _dev_tbl.end()){
-         QString info = QString("application_layer: handle_logout, not found device: %1").arg(net->_device_name.c_str());
-         emit progress_log_signal(info);
+         LogUtil::Instance()->Output(MACRO_LOCAL, "not found device:", net->_device_name);
          return;
      }
 
@@ -131,6 +131,7 @@ void application_layer::quit()
      //confirm
      QDomDocument* xml_confirm = XmlUtil::generate_conn_xml(net->_device_name.c_str(), net->_device_ip, net->_device_port, 10000, tbl._dev_id, eSubProcedure_unregister, eMessage_confirm);
      if(!xml_confirm){
+         LogUtil::Instance()->Output(MACRO_LOCAL, "generate connection xml failed");
          return;
      }
 
@@ -144,8 +145,7 @@ void application_layer::quit()
          if(it != _dev_tbl.end()){
              QDomDocument* notify_xml = XmlUtil::generate_reg_xml(10000, it->_dev_id, net->_device_name.c_str(), eSubProcedure_unregister);
              emit snd_lower_signal(notify_xml, it->_dev_ip.c_str(), it->_dev_port);
-
-             QString info = QString("application_layer: handle_logout, transmmit login msg to controller");
+             QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "send device [", net->_device_name, "] logout msg to controller:", net->_device_name);
              emit progress_log_signal(info);
          }
      }
@@ -170,11 +170,16 @@ void application_layer::handle_session(ApplMessage* msg)
     ESimDevType dev_type = query_dev_type(msg->_u2i);
     string dev_name = DevNamesSet[dev_type];
 
-    QString info = QString("application_layer: handle_session, dev_name: %1, msg_name:%2, proc_type: %3, msg_type: %4").arg(dev_name.c_str()).arg(msg_name.c_str()).arg(proc_type).arg(msg_type);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL,
+                                               "device name:", dev_name,
+                                               "msg name:", msg_name,
+                                               "proc_type", parse_type(proc_type),
+                                               "msg_type:", parse_type(msg_type));
     emit progress_log_signal(info);
 
     SbsDeviceMap::iterator it = _dev_tbl.find(dev_name);
     if(it == _dev_tbl.end()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found device name:", dev_name);
         delete msg;
         return;
     }
@@ -261,16 +266,19 @@ void application_layer::handle_session(ApplMessage* msg)
     if(doc){
        emit snd_lower_signal(doc, it->_dev_ip.c_str(), it->_dev_port);
 
-       info = QString("application_layer: handle_session, %1").arg(tips);
+       info = LogUtil::Instance()->Output(MACRO_LOCAL, tips.toStdString());
        emit progress_log_signal(info);
+    }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate QDomDocument failed", "msg name:", msg_name,
+                                    "proc_type", parse_type(proc_type), "msg_type:", parse_type(msg_type));
     }
 }
 
 void application_layer::handle_sim_cmd(ApplMessage* msg)
 {
     long msg_type = msg->_proc_msg->_msg_type;
-
-    QString info = QString("application_layer: handle_sim_cmd, cmd: %1").arg(msg_type);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward simulation cmd:",  parse_type(msg_type));
     emit progress_log_signal(info);
 
     IntMap::const_iterator it = _dev_type_id_tbl.cbegin();
@@ -285,15 +293,22 @@ void application_layer::handle_sim_cmd(ApplMessage* msg)
             QDomDocument* cmd = XmlUtil::generate_sim_cmd_xml(10000, it->second, msg_type);
             emit snd_lower_signal(cmd, it_t->_dev_ip.c_str(), it_t->_dev_port);
         }
+        else{
+            LogUtil::Instance()->Output(MACRO_LOCAL, "not found device name:", dev_name);
+        }
     }
 }
 
 void application_layer::handle_cfg_sim_param(ApplMessage* msg)
 {
-    QString info = QString("application_layer: handle_cfg_sim_param");
+    long msg_type = msg->_proc_msg->_msg_type;
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward simulation config parameter, msg type:",  parse_type(msg_type));
     emit progress_log_signal(info);
 
-    XmlUtil::parse_UnionSimConfParam_xml(msg->_proc_msg->_data_vector, _sim_conf_param);
+    if(!XmlUtil::parse_UnionSimConfParam_xml(msg->_proc_msg->_data_vector, _sim_conf_param)){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "parse union simulation config parameter failed");
+        return;
+    }
 
     //向各中间件转发联合仿真配置参数
     IntMap::const_iterator it = _dev_type_id_tbl.cbegin();
@@ -308,6 +323,9 @@ void application_layer::handle_cfg_sim_param(ApplMessage* msg)
             QDomDocument* doc = XmlUtil::generate_UnionSimConfParam_xml(10000, it->second, &_sim_conf_param);
             emit snd_lower_signal(doc, it_t->_dev_ip.c_str(), it_t->_dev_port);
         }
+        else{
+            LogUtil::Instance()->Output(MACRO_LOCAL, "not found device name:", dev_name);
+        }
     }
 }
 
@@ -320,13 +338,12 @@ server_proxy* application_layer::init_proxy(int i2u, int u2i)
 {
     server_proxy* proxy = new server_proxy();
     if(!proxy){
-        QString info = QString("application_layer: init_proxy, fail, dst_id(u2i):%1").arg(u2i);
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "Init Proxy failed", "dst_id(u2i):", u2i);
         emit progress_log_signal(info);
         return nullptr;
     }
 
-    QString info = QString("application_layer: init_proxy, i2u: %1, u2i: %2").arg(i2u).arg(u2i);
-    emit progress_log_signal(info);
+    LogUtil::Instance()->Output(MACRO_LOCAL, "Init Proxy successfully", "i2u:", i2u, "u2i:", u2i);
 
     proxy->register_lower_layer(_net_layer_ptr);
     connect(proxy, &server_proxy::ready_rcv_signal, proxy, &server_proxy::rcv_lower_slots, Qt::UniqueConnection);
@@ -351,8 +368,7 @@ server_proxy* application_layer::init_proxy(int i2u, int u2i)
      }
 
      QString tips = !bcreate ? "delete server_proxy" : (b_find ? "invoke server_proxy" : "create server_proxy");
-     QString info = QString("application_layer: manager_proxy, : %1").arg(tips);
-     emit progress_log_signal(info);
+     LogUtil::Instance()->Output(MACRO_LOCAL, tips.toStdString());
 
      if(b_find){
          proxy = it.key();
@@ -380,23 +396,26 @@ void application_layer::rcv_lower_thread()
 {
     ApplMessage* msg = nullptr;
     while(!_quit){
-        if(msg = _snd_upper_que.pop(!_quit)){
-            handle_msg(msg);
-
-            QString info = QString("client_proxy:rcv_lower_thread, msg_name: %1, ss_id: %2, ps_id: %3, proc_type: %4, msg_type: %5").arg(msg->_proc_msg->_msg_name.c_str()).arg(msg->_i2u).arg(msg->_u2i).arg(msg->_proc_msg->_proc_type).arg(msg->_proc_msg->_msg_type);
-            LogUtil::Instance()->Output(QtInfoMsg, info);
+        if(!(msg = _snd_upper_que.pop(!_quit))){
+            continue;
         }
+
+        handle_msg(msg);
     }
 }
 
 void application_layer::handle_msg(ApplMessage* msg)
 {
     if(!msg){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "null pointer");
         return;
     }
 
-    QString info = QString("application_layer: handle_msg, proc_type: %1").arg(msg->_proc_msg->_proc_type);
-    emit progress_log_signal(info);
+    long proc_type = msg->_proc_msg->_proc_type;
+    long msg_type = msg->_proc_msg->_msg_type;
+    LogUtil::Instance()->Output(MACRO_LOCAL, "msg name:", msg->_proc_msg->_msg_name,
+                                               "ss_id:", msg->_i2u, "ps_id:", msg->_u2i,
+                                               "proc type:", parse_type(proc_type), "msg type:", parse_type(msg_type));
 
     switch(msg->_proc_msg->_proc_type){
     case eSubProcedure_sim_cmd: handle_sim_cmd(msg); break;
@@ -431,8 +450,13 @@ void application_layer::handle_comm_sim_event(ApplMessage* msg)
 {
     int ss_id = msg->_i2u;
     int ps_id = msg->_u2i;
+    int proc_type = msg->_proc_msg->_proc_type;
 
-    QString info = QString("application_layer: handle_comm_sim_event, ss_id: %1, ps_id: %2, data type: %3").arg(ss_id).arg(ps_id).arg(msg->_pg_rtui_type);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL,
+                                               "msg name:", msg->_proc_msg->_msg_name,
+                                               "ss_id:", ss_id, "ps_id:", ps_id,
+                                               "proc type:", parse_type(proc_type),
+                                               "PG_RTUI type:", msg->_pg_rtui_type);
     emit progress_log_signal(info);
 
     if(msg->_pg_rtui_type ==  ePG_comm_sim_event_data){
@@ -449,6 +473,9 @@ void application_layer::handle_comm_sim_event(ApplMessage* msg)
 
 void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& data)
 {
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "event data items:", data.size());
+    emit progress_log_signal(info);
+
     _event_time_vec.insert(_event_time_vec.end(), time.begin(), time.end());
     _event_data_vec.insert(_event_data_vec.end(), data.begin(), data.end());
 
@@ -507,6 +534,7 @@ void application_layer::check_sim_time_event_slots()
 void application_layer::forward_event_data(QByteArray& data)
 {
     if(data.length() == 0){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "data length:", data.length());
         return;
     }
 
@@ -611,14 +639,17 @@ void application_layer::forward_event_data(QByteArray& data)
         const char* dev_name = DevNamesSet[eSimDev_communication];
         SbsDeviceMap::const_iterator it = _dev_tbl.find(dev_name);
         if(it == _dev_tbl.cend()){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "not found device name:", dev_name, "current event type:", event_type);
             delete doc;
             return;
         }
 
         emit snd_lower_signal(doc, it->_dev_ip.c_str(), it->_dev_port);
-
-        QString info = QString("application_layer: forward_event_data, event type: %1").arg(event_type);
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward communication event data", "event type:", event_type, "data length:", data.length());
+        emit progress_log_signal(info);
+    }
+    else{
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "generate communication event xml failed", "event type:", event_type);
         emit progress_log_signal(info);
     }
 }
-

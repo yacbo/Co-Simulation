@@ -39,7 +39,7 @@ void LogUtil::OutputMsg(QtMsgType type, const QString& msg)
 
     _mutex.lock();
     QFile log(_file_name);
-    if(log.open(QIODevice::WriteOnly | QIODevice::Truncate)){
+    if(log.open(QIODevice::WriteOnly | QIODevice::Append)){
         QTextStream log_stream(&log);
         log_stream << message << "\r\n";
         log.flush();

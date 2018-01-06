@@ -13,9 +13,9 @@
 
 #define MACRO_SUCFAIL(x) (x ? "successfully" : "failed")
 
-#define MACRO_IN1_LOCAL(c, f, l) ("<"##c##"::"f":"###l##">")
-#define MACRO_IN2_LOCAL(c, f, l) MACRO_IN1_LOCAL(c, f, l)
-#define MACRO_LOCAL(c)  MACRO_IN2_LOCAL(MACRO_CLASS(c),  MACRO_FUNCTION,  MACRO_LINE)
+#define MACRO_IN1_LOCAL(f, l) ("["f":"###l##"]")
+#define MACRO_IN2_LOCAL(f, l) MACRO_IN1_LOCAL(f, l)
+#define MACRO_LOCAL  MACRO_IN2_LOCAL(MACRO_FUNCTION,  MACRO_LINE)
 
 class  XMLUTILSHARED_EXPORT LogUtil
 {

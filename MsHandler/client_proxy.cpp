@@ -51,7 +51,7 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
     _local_ip = SockUtil::query_local_ip();
     start_rcv_thread();
 
-    LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), DevNamesSet[type], "create client proxy successfully");
+    LogUtil::Instance()->Output(MACRO_LOCAL, DevNamesSet[type], "create client proxy successfully");
 }
 
 client_proxy::~client_proxy()
@@ -117,14 +117,14 @@ void client_proxy::register_lower_layer(const network_layer* net_layer_ptr)
 void client_proxy::rcv_upper_msg_callback(const char* data, int len)
 {
     if(!data){
-        LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "Invalid Input Arguments");
+        LogUtil::Instance()->Output(MACRO_LOCAL, "Invalid Input Arguments");
         return;
     }
 
     const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
     long type = header->type;
 
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "rcv communication sim data", "PG_RTUI type:", type, "data len", len);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv communication sim data", "PG_RTUI type:", type, "data len", len);
     emit progress_log_signal(info);
 
     if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
@@ -148,7 +148,7 @@ void client_proxy::rcv_upper_msg_callback(const char* data, int len)
                 info = QString("rcv communication sim data items:").arg(_union_sim_dat_rcv_vec.size());
             }
             else{
-                info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "not set dst device type when transfer the receieved communication sim data");
+                info = LogUtil::Instance()->Output(MACRO_LOCAL, "not set dst device type when forward the received communication sim data");
             }
 
             emit progress_log_signal(info);
@@ -206,7 +206,7 @@ void client_proxy::snd_upper_to_comm()
     bool ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._business_port, dat, snd_dat_cmd.length);
     QThread::msleep(200);
 
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send start send power data cmd", MACRO_SUCFAIL(ret));
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "send start send power data cmd", MACRO_SUCFAIL(ret));
     emit progress_log_signal(info);
 
     if(!ret){
@@ -226,7 +226,7 @@ void client_proxy::snd_upper_to_comm()
     for(int i=0; i<_union_sim_dat_snd_vec.size(); ++i){
         memcpy(dat + header_size, &_union_sim_dat_snd_vec[i], sizeof(UnionSimData));
         if(!_sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._business_port, dat, header.length)){
-            QString info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+            QString info = LogUtil::Instance()->Output(MACRO_LOCAL,
                                                        "send power sim data to communication failed",
                                                        "cur data index:", i, "len:", header.length,
                                                        "total items:", _union_sim_dat_snd_vec.size());
@@ -245,16 +245,17 @@ void client_proxy::snd_upper_to_comm()
     ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._business_port, dat, snd_dat_cmd.length);
     QThread::msleep(200);
 
-    info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send stop send power data cmd", MACRO_SUCFAIL(ret));
+    info = LogUtil::Instance()->Output(MACRO_LOCAL, "send stop send power data cmd", MACRO_SUCFAIL(ret));
     emit progress_log_signal(info);
 
-    info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send power sim data items:", snd_items);
+    info = LogUtil::Instance()->Output(MACRO_LOCAL, "send power sim data items:", snd_items);
     emit progress_log_signal(info);
 }
 
 bool client_proxy::fetch_power_cfg_param(const DataXmlVec& vec)
 {
     if(!XmlUtil::parse_PowerSimConfParam_xml(vec, _power_conf_param)){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "parse power simulation config parameters failed");
         return false;
     }
 
@@ -266,7 +267,7 @@ bool client_proxy::fetch_power_cfg_param(const DataXmlVec& vec)
     }
 
     if(ids.size() % 3 != 0){
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "fetch data failed", "total node map items:", ids.size());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "fetch data failed", "total node map items:", ids.size());
         emit progress_log_signal(info);
         return false;
     }
@@ -319,7 +320,7 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     }
 
     tips = b_map_success ? "successfully" : tips;
-    info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "map total", _power_conf_param.result_num, "data items", tips.toStdString());
+    info  = LogUtil::Instance()->Output(MACRO_LOCAL, "map total", _power_conf_param.result_num, "data items", tips.toStdString());
     emit progress_log_signal(info);
 
     return b_map_success;
@@ -329,10 +330,11 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
 {
     string stream;
     if(data.empty()){
+         LogUtil::Instance()->Output(MACRO_LOCAL, "data is empty");
         return stream;
     }
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "total data items:", data.size());
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", data.size());
     emit progress_log_signal(info);
 
     stream = std::to_string(data[0].sim_time) + " ";
@@ -353,10 +355,11 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
 bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec)
 {
     if(data.size() != _power_conf_param.result_num){
+         LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value");
         return false;
     }
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "total data items:", _power_conf_param.result_num);
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.result_num);
     emit progress_log_signal(info);
 
     ProcEventParam param;
@@ -387,7 +390,7 @@ bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& 
 void client_proxy::reset_power_input_data()
 {
     if(_dbl_vec.size() != _union_sim_dat_rcv_vec.size()){
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "double data items:", _dbl_vec.size(), "rcv sim data items:", _union_sim_dat_rcv_vec.size());
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "double data items:", _dbl_vec.size(), "rcv sim data items:", _union_sim_dat_rcv_vec.size(), "not equal");
         emit progress_log_signal(info);
         return;
     }
@@ -422,7 +425,7 @@ void client_proxy::replace_power_sim_data(UnionSimData* data)
 
 void client_proxy::handle_css(EPGRTUIType type,  const char* data, int len)
 {
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "PG_RTUI type:", type, "data len:", len);
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "PG_RTUI type:", type, "data len:", len);
     emit progress_log_signal(info);
 
     IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
@@ -433,7 +436,7 @@ void client_proxy::handle_css(EPGRTUIType type,  const char* data, int len)
     const PG_RTUI_Base* d_base = (PG_RTUI_Base*)data;
     QDomDocument* doc = XmlUtil::create_PG_RTUI_xml(ss_id, ps_id, d_base);
     if(!doc){
-        info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "create_PG_RTUI_xml failed");
+        info  = LogUtil::Instance()->Output(MACRO_LOCAL, "create_PG_RTUI_xml failed");
         emit progress_log_signal(info);
         return;
     }
@@ -461,12 +464,12 @@ bool client_proxy::start_sock_service(const QString& comm_ip, uint16_t comm_port
     bool ret_3 = _sock_remote_ptr->start_trans_service(host_ip, host_port, eProtocol_tcp, dev_port);
 
     bool ret = ret_1 && ret_2;
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                                 "connect communiction software", MACRO_SUCFAIL(ret),
                                                 "ip:", comm_ip.toStdString(), "port:", comm_port,"protocol:", type);
     emit progress_log_signal(info);
 
-    info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                                 "connect remote start listener", MACRO_SUCFAIL(ret_3),
                                                 "ip:", host_ip.toStdString(), "port:", host_port,"protocol:", eProtocol_tcp);
     emit progress_log_signal(info);
@@ -480,7 +483,7 @@ void client_proxy::handle_power(ApplMessage* msg)
     long proc_type = msg->_proc_msg->_proc_type;
 
     if(proc_type !=  _expect_proc_type || msg_type != _expect_msg_type){
-        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "unexpected status:",
+        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "unexpected status:",
                                                     "[current state]: proc_type:",  parse_type(proc_type),
                                                     "msg_type:", parse_type(msg_type),
                                                     "[expected state]: proc_type:", parse_type(_expect_proc_type),
@@ -495,7 +498,7 @@ void client_proxy::handle_power(ApplMessage* msg)
     int ps_id = dev_type_id_tbl[eSimDev_communication];
     const char* appl_name = ProcNamesSet[eApplProc_comm_sim];
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                                 "application name:", appl_name,
                                                 "ss_id", ss_id, "ps_id", ps_id,
                                                 "proc_type:",  parse_type(proc_type),
@@ -511,7 +514,7 @@ void client_proxy::handle_power(ApplMessage* msg)
             return;
         }
 
-        info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "start execute power simulation");
+        info  = LogUtil::Instance()->Output(MACRO_LOCAL, "start execute power simulation");
         emit progress_log_signal(info);
 
         _power_sim_started = true;
@@ -523,7 +526,7 @@ void client_proxy::handle_power(ApplMessage* msg)
                                                           _result_info);
         if(ret < 0){
             _power_handler->ExitHandler();
-            info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "power simulation execute Over, power software has closed");
+            info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute Over, power software has closed");
             emit progress_log_signal(info);
         }
         else{
@@ -535,7 +538,7 @@ void client_proxy::handle_power(ApplMessage* msg)
                 _expect_proc_type = eSubProcedure_session_begin;
             }
 
-            info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "power simulation execute", MACRO_SUCFAIL(!doc));
+            info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute", MACRO_SUCFAIL(!doc));
             emit progress_log_signal(info);
         }
     }
@@ -593,7 +596,7 @@ void client_proxy::handle_power(ApplMessage* msg)
            }
            else if(ret < 0){
                _power_handler->ExitHandler();
-               info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "power simulation execute Over, power software has closed");
+               info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute Over, power software has closed");
                emit progress_log_signal(info);
            }
         }
@@ -601,8 +604,13 @@ void client_proxy::handle_power(ApplMessage* msg)
 
     if(doc){
         emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
-        info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "power subprogress information:", tips.toStdString());
+        info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power subprogress information:", tips.toStdString());
         emit progress_log_signal(info);
+    }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate QDomDocument failed",
+                                    "proc_type:", parse_type(proc_type),
+                                    "msg_type:", parse_type(msg_type));
     }
 }
 
@@ -616,7 +624,7 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
     long msg_type = msg->_proc_msg->_msg_type;
     long proc_type = msg->_proc_msg->_proc_type;
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                         "application name:", appl_name,
                                         "ss_id:", ss_id, "ps_id:", ps_id,
                                         "proc_type:", parse_type(proc_type),
@@ -658,8 +666,13 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
     if(doc){
         emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
 
-        info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "power application subprogress information:", tips.toStdString());
+        info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power application subprogress information:", tips.toStdString());
         emit progress_log_signal(info);
+    }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate QDomDocument failed",
+                                    "proc_type:", parse_type(proc_type),
+                                    "msg_type:", parse_type(msg_type));
     }
 }
 
@@ -669,7 +682,7 @@ void client_proxy::handle_communication(ApplMessage* msg)
     long proc_type = msg->_proc_msg->_proc_type;
     if(proc_type == eSubProcedure_sim_cmd && msg_type == eSimCmd_start_sim){
         int ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._dev_port, (const char*)&_comm_sim_delay, _comm_sim_delay.length);
-        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send communication sim max handl delay(",
+        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "send communication sim max handl delay(",
                                                     _comm_sim_delay.comm_sim_handle_delay, "s )", MACRO_SUCFAIL(ret));
         emit progress_log_signal(info);
         return;
@@ -692,7 +705,7 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
     long proc_type = msg->_proc_msg->_proc_type;
     const char* appl_name = ProcNamesSet[eApplProc_comm_sim];
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                         "application name:", appl_name,
                                         "ss_id:", ss_id, "ps_id:", ps_id,
                                         "proc_type:", parse_type(proc_type),
@@ -729,8 +742,13 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
     if(doc){
         emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
 
-        info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "communication to power software subprogress information:", tips.toStdString());
+        info  = LogUtil::Instance()->Output(MACRO_LOCAL, "communication to power software subprogress information:", tips.toStdString());
         emit progress_log_signal(info);
+    }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate QDomDocument failed",
+                                    "proc_type:", parse_type(proc_type),
+                                    "msg_type:", parse_type(msg_type));
     }
 }
 
@@ -740,7 +758,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     long proc_type = msg->_proc_msg->_proc_type;
 
     if(proc_type != _expect_proc_type || msg_type != _expect_msg_type){
-        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "unexpected status:",
+        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "unexpected status:",
                                                     "[current state]: proc_type:",  parse_type(proc_type),
                                                     "msg_type:", parse_type(msg_type),
                                                     "[expected state]: proc_type:", parse_type(_expect_proc_type),
@@ -753,7 +771,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     int ps_id = msg->_i2u;
     const char* appl_name = ProcNamesSet[eApplProc_control_calc];
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                                 "application name:", appl_name,
                                                 "ss_id", ss_id, "ps_id", ps_id,
                                                 "proc_type:",  parse_type(proc_type),
@@ -814,8 +832,13 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     if(doc){
         emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
 
-        info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "communication to power application software subprogress information:", tips.toStdString());
+        info  = LogUtil::Instance()->Output(MACRO_LOCAL, "communication to power application software subprogress information:", tips.toStdString());
         emit progress_log_signal(info);
+    }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate QDomDocument failed",
+                                    "proc_type:", parse_type(proc_type),
+                                    "msg_type:", parse_type(msg_type));
     }
 }
 
@@ -830,6 +853,8 @@ void client_proxy::handle_interoper(ApplMessage* msg)
 
 void client_proxy::handle_sim_cmd(ApplMessage* msg)
 {
+    LogUtil::Instance()->Output(MACRO_LOCAL);
+
     switch( msg->_proc_msg->_msg_type){
     case eSimCmd_start_sim:{
         switch(_dev_type){
@@ -845,7 +870,7 @@ void client_proxy::handle_sim_cmd(ApplMessage* msg)
         case eSimDev_power:{
             if(_power_handler){
                 _power_handler->ExitHandler();
-                QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "rcv stop sim cmd, close power simulation software");
+                QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv stop sim cmd, close power simulation software");
                 emit progress_log_signal(info);
             }
             break;
@@ -854,7 +879,7 @@ void client_proxy::handle_sim_cmd(ApplMessage* msg)
         case eSimDev_communication:{
             string cmd = "exit " + _comm_conf_param.comm_cmd;
             bool ret = _sock_remote_ptr->send_data(_comm_tbl._comm_host_ip.c_str(), _comm_tbl._comm_host_port, cmd.c_str(), cmd.length());
-            QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send remote operate comm software cmd(exit)", MACRO_SUCFAIL(ret));
+            QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "send remote operate comm software cmd(exit)", MACRO_SUCFAIL(ret));
             emit progress_log_signal(info);
             break;
         }
@@ -867,6 +892,7 @@ void client_proxy::handle_sim_cmd(ApplMessage* msg)
 int client_proxy::parse_comm_cfg_param(ApplMessage* msg, char* value)
 {
     if(!msg || !value){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "invalid arguments");
         return -1;
     }
 
@@ -1008,7 +1034,7 @@ int client_proxy::parse_comm_cfg_param(ApplMessage* msg, char* value)
     default: break;
     }
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "current PG_RTUI type:", msg->_pg_rtui_type);
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "current PG_RTUI type:", msg->_pg_rtui_type);
     emit progress_log_signal(info);
 
     return len;
@@ -1022,7 +1048,7 @@ void client_proxy::handle_comm_cfg_param(ApplMessage* msg)
 
         string cmd = "start " + _comm_conf_param.comm_cmd;
         bool ret = _sock_remote_ptr->send_data(_comm_tbl._comm_host_ip.c_str(), _comm_tbl._comm_host_port, cmd.c_str(), cmd.length());
-        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send remote operate communication software cmd(start)", MACRO_SUCFAIL(ret));
+        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "send remote operate communication software cmd(start)", MACRO_SUCFAIL(ret));
         emit progress_log_signal(info);
 
         //配置仿真最大处理时延
@@ -1037,7 +1063,7 @@ void client_proxy::handle_comm_cfg_param(ApplMessage* msg)
     char data[256] = {0};
     int len = parse_comm_cfg_param(msg, data);
     if(len <= 0){
-        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "msg invalid, parse communication config parameter failed");
+        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "msg invalid, parse communication config parameter failed");
         emit progress_log_signal(info);
         return;
     }
@@ -1046,13 +1072,14 @@ void client_proxy::handle_comm_cfg_param(ApplMessage* msg)
     uint32_t val_ip = host.toIPv4Address();
     memcpy(data, &val_ip, sizeof(uint32_t));
     bool ret = _sock_util_ptr->send_data(_comm_tbl._dev_ip.c_str(), _comm_tbl._dev_port, data, len);
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "send communication config parameter", MACRO_SUCFAIL(ret), "data len:", len);
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "send communication config parameter", MACRO_SUCFAIL(ret), "data len:", len);
     emit progress_log_signal(info);
 }
 
 void client_proxy::handle_power_cfg_param(ApplMessage* msg)
 {
     if(_power_init_success){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "power has been initialized");
         return;
     }
 
@@ -1088,7 +1115,7 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
                                                                                         _power_conf_param.sim_time,
                                                                                         _power_conf_param.sim_period);
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy), "Init power sim software", MACRO_SUCFAIL(_power_init_success));
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "Init power sim software", MACRO_SUCFAIL(_power_init_success));
     emit progress_log_signal(info);
 }
 
@@ -1097,7 +1124,7 @@ void client_proxy::handle_msg(ApplMessage* msg)
     long msg_type = msg->_proc_msg->_msg_type;
     long proc_type = msg->_proc_msg->_proc_type;
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL(client_proxy),
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL,
                                                 "msg name:", msg->_proc_msg->_msg_name,
                                                 "ss_id:", msg->_i2u, "ps_id:", msg->_u2i,
                                                 "proc_type:", parse_type(proc_type),

@@ -3,9 +3,12 @@
 #include "session_layer.h"
 #include "application_layer.h"
 #include "sock_util.h"
+#include "log_util.h"
 
 SbSHandler::SbSHandler()
 {
+    LogUtil::Instance()->SetFileName("SoftBusServer");
+
     _net_layer_ptr = new network_layer();
     _sess_layer_ptr = new session_layer();
     _appl_layer_ptr = new application_layer();

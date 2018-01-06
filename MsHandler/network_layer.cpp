@@ -48,24 +48,20 @@ void network_layer::rcv_upper_register_slots(QString sbs_ip, int sbs_port,  int 
 {
     _protocol_type = (EProtocolType)proto_type;
     bool ret =_sock_layer_ptr->start_trans_service(sbs_ip, sbs_port, _protocol_type, dev_port);
-
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "connect sbs", MACRO_SUCFAIL(ret));
-    emit progress_log_signal(info);
+    LogUtil::Instance()->Output(MACRO_LOCAL, "connect sbs", MACRO_SUCFAIL(ret));
 }
 
 void network_layer::rcv_upper_unregister_slots(QString sbs_ip, int port)
 {
     bool ret = _sock_layer_ptr->stop_trans_service(sbs_ip, port);
-
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "disconnect sbs", MACRO_SUCFAIL(ret));
-    emit progress_log_signal(info);
+    LogUtil::Instance()->Output(MACRO_LOCAL, "disconnect sbs", MACRO_SUCFAIL(ret));
 }
 
 void network_layer::rcv_lower_info_callback(const char* data, int len)
 {
     QString info;
     if(!_xml_frm_util_ptr->VerifyCheckSum(data)){
-        info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "VerifyCheckSum failed");
+        info = LogUtil::Instance()->Output(MACRO_LOCAL, "verify CheckSum failed, data length:", len);
         emit progress_log_signal(info);
         return;
     }
@@ -76,11 +72,9 @@ void network_layer::rcv_lower_info_callback(const char* data, int len)
 
     char* dst_data = new char[len];
     memcpy(dst_data, data, len);
-
     _snd_upper_que.push(dst_data);
 
-    info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "rcv data, len:", len);
-    emit progress_log_signal(info);
+    LogUtil::Instance()->Output(MACRO_LOCAL, "receive data, length:", len);
 }
 
 void network_layer::rcv_upper_slots(QDomDocument* doc, QString dst_ip, uint16_t port)
@@ -104,16 +98,23 @@ void network_layer::rcv_lower_thread()
     while(!_quit){
         const char* packet = _snd_upper_que.pop(true);
         if(!packet){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "null packet");
             continue;
         }
 
         QDomDocument* doc = _xml_frm_util_ptr->DataFrame2Xml(packet, eEncode_utf8, 0);
         delete[] packet;
 
+        if(!doc){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "data frame to xml failed");
+            continue;
+        }
+
         QDomNodeList node_list = doc->elementsByTagName("session");
         delete doc;
 
         if(node_list.isEmpty()){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "not found xml session node");
             continue;
         }
 
@@ -127,6 +128,7 @@ void network_layer::snd_lower_thread()
     while(!_quit){
         QDomDocument* doc = _rcv_upper_doc_que.pop(true);
         if(!doc){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "invalid QDomDocument");
             continue;
         }
 
@@ -135,6 +137,7 @@ void network_layer::snd_lower_thread()
         delete doc;
 
         if(!packet){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "null packet");
             continue;
         }
 
@@ -145,8 +148,7 @@ void network_layer::snd_lower_thread()
         bool ret = _sock_layer_ptr->send_data(ip, port.toUShort(), packet, pkt_len);
         delete[] packet;
 
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL(network_layer), "send data", MACRO_SUCFAIL(ret), "len:", pkt_len);
-        emit progress_log_signal(info);
+        LogUtil::Instance()->Output(MACRO_LOCAL, "send data", MACRO_SUCFAIL(ret), "length:", pkt_len);
     }
 }
 
