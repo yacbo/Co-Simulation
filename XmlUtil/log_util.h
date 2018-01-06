@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <QFile>
 #include <QString>
 #include <QMutex>
 #include "xmlutil_global.h"
@@ -21,6 +22,7 @@ class  XMLUTILSHARED_EXPORT LogUtil
 {
 private:
     LogUtil();
+    virtual ~LogUtil();
 
 public:
     static LogUtil* Instance();
@@ -64,6 +66,7 @@ private:
 private:
     QMutex _mutex;
     QString _file_name;
+    QFile _log_file;
 };
 
 XMLUTILSHARED_EXPORT const char* parse_type(int type);

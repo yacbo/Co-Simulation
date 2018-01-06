@@ -19,7 +19,7 @@ public:
 signals:
     void snd_lower_signal(QDomDocument* doc, QString dst_ip, quint16 port);
 
-    void ui_login_signal(QString dev_name, QString dev_ip, int dev_port, bool login);
+    void ui_login_signal(QString dev_name, QString dev_ip, int dev_port, int dev_id, bool login);
     void progress_log_signal(QString log);
 
 private slots:

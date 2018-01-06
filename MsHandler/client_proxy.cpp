@@ -6,6 +6,7 @@
 #include "xml_util.h"
 #include "log_util.h"
 #include "pg_rtui_def.h"
+#include "hisrecord_mgr.h"
 
 client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, quint16 port, ESimDevType type)
 {
@@ -27,7 +28,6 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
     _power_init_success = false;
     _power_sim_started = false;
     _decision_alth = nullptr;
-    _his_record_mgr = nullptr;
 
     if(type == eSimDev_communication){
         _sock_util_ptr = new SockUtil();
@@ -45,7 +45,7 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
         _power_handler = new PowerHandler();
     }
     else if(type == eSimDev_power_appl){
-        _his_record_mgr = new HisRecordMgr();
+
     }
 
     _local_ip = SockUtil::query_local_ip();
@@ -68,10 +68,6 @@ client_proxy::~client_proxy()
 
     if(_power_handler){
         delete _power_handler;
-    }
-
-    if(_his_record_mgr){
-        delete _his_record_mgr;
     }
 
     if(_input_info.size()){
@@ -352,11 +348,23 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
     return stream;
 }
 
-bool client_proxy::calc_power_appl_data(const UnionSimDatVec& data, DataXmlVec& vec)
+bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 {
     if(data.size() != _power_conf_param.result_num){
-         LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value");
-        return false;
+        UnionSimDatVec his_rec_vec;
+        if(!HisRecordMgr::instance()->load_recorde(_power_conf_param.result_type, his_rec_vec)){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "load history recorde failed");
+            return false;
+        }
+
+        if(!HisRecordMgr::instance()->fill_recorde(_power_conf_param.result_type, his_rec_vec, data)){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "fill recorde failed");
+            return false;
+        }
+
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value, current items:",
+                                                   data.size(), "config value:", _power_conf_param.result_num, "Apply History Data");
+        emit progress_log_signal(info);
     }
 
     QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.result_num);
@@ -655,7 +663,6 @@ void client_proxy::handle_power_appl(ApplMessage* msg)
         DataXmlVec vec;
         bool ret = calc_power_appl_data(_union_sim_dat_rcv_vec, vec);
         doc = XmlUtil::generate_invoke_xml(ss_id, ps_id, "", appl_name, 1, vec, eMessage_confirm);
-        XmlUtil::generate_xml_file("define.xml", doc);
         tips += "invoke confirm";
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_request){

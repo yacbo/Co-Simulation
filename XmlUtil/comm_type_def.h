@@ -6,6 +6,7 @@
 #ifndef __COMM_TYPE_DEF_H__
 #define __COMM_TYPE_DEF_H__
 
+#include <set>
 #include <queue>
 #include <string>
 #include <vector>
@@ -13,6 +14,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <inttypes.h>
+using std::set;
 using std::queue;
 using std::string;
 using std::vector;
@@ -194,20 +196,20 @@ typedef enum E_SynchronizeType{
 
 //elec sim param conf
 typedef struct PowerConfParam{
-    string prj_name;
-    string case_name;
+    std::string prj_name;
+    std::string case_name;
     double sim_time;
     double sim_period;
     int32_t input_type;     //输入类型，如DGInfor
     int32_t result_type;    //结果类型，如BusInfor
     int32_t input_num;     //输入数据数目， 如39
     int32_t result_num;    //结果数据数目， 如10
-    string nodes_map;
+    std::string nodes_map;
 }PowerConfParam;
 
 //comm sim param conf
 typedef struct CommConfParam{
-    string comm_cmd;
+    std::string comm_cmd;
     int32_t comm_sim_handle_max_delay;
 }CommConfParam;
 
@@ -252,14 +254,15 @@ typedef struct UnionSimData{
 typedef vector<int> IntVec;
 typedef vector<long> LongVec;
 typedef vector<double> DblVec;
-typedef vector<string> StrVec;
+typedef vector<std::string> StrVec;
 typedef pair<int, int> IntPair;
 typedef vector<IntPair> PairVec;
+typedef set<int> SimpleIntSet;
 typedef unordered_set<int> IntSet;
-typedef unordered_set<string> StrSet;
+typedef unordered_set<std::string> StrSet;
 typedef unordered_map<int, int> IntMap;
-typedef unordered_map<int, string> IntStrMap;
-typedef unordered_map<string, int> StrIntMap;
+typedef unordered_map<int, std::string> IntStrMap;
+typedef unordered_map<std::string, int> StrIntMap;
 typedef unordered_map<int, IntPair> IntPairMap;
 typedef vector<UnionSimData> UnionSimDatVec;
 

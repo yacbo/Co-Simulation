@@ -22,7 +22,7 @@ private slots:
     void exit_service();
 
 private slots:
-    void rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, bool login);
+    void rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int dev_id, bool login);
     void rcv_progress_log_slot(QString log);
 
 private:

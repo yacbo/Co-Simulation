@@ -139,7 +139,7 @@ void SbsSoftUI::exit_service()
   }
 }
 
-void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, bool login)
+void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int dev_id, bool login)
 {
     if(login)
     {

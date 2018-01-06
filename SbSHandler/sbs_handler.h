@@ -16,7 +16,7 @@ public:
     virtual ~SbSHandler();
 
 signals:
-    void ui_login_signal(QString dev_name, QString dev_ip, int dev_port, bool login);
+    void ui_login_signal(QString dev_name, QString dev_ip, int dev_port, int dev_id, bool login);
     void progress_log_signal(QString log);
 
 public:

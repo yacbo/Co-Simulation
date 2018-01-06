@@ -95,7 +95,7 @@ void application_layer::quit()
      emit progress_log_signal(info);
 
      //向UI发送登录信息
-     emit ui_login_signal(net->_device_name.c_str(), dst_ip, tbl._dev_port, true);
+     emit ui_login_signal(net->_device_name.c_str(), dst_ip, tbl._dev_port, tbl._dev_id, true);
 
      //向全部中间件通知设备类型和ID
      IntMap::const_iterator it = _dev_type_id_tbl.cbegin();
@@ -151,7 +151,7 @@ void application_layer::quit()
      }
 
      //向UI发送登出信息
-     emit ui_login_signal(net->_device_name.c_str(), tbl._dev_ip.c_str(), tbl._dev_port, false);
+     emit ui_login_signal(net->_device_name.c_str(), tbl._dev_ip.c_str(), tbl._dev_port, tbl._dev_id, false);
      _dev_tbl.remove(net->_device_name.c_str());
 
      ESimDevType dev_type = XmlUtil::query_sim_dev_type(net->_device_name.c_str());
