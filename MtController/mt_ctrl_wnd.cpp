@@ -149,10 +149,12 @@ void MainWindow::config_Init_event()
     //初始化按钮.
    ui->pushButton->setEnabled(false);
    ui->pushButton_2->setEnabled(true);
-   ui->pushButton_3->setEnabled(true);
-   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:black;border:1px solid black;min-height:20;}");
-   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:white;border:1px solid black;min-height:20;}");
-   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:black;border:1px solid black;min-height:20;}");
+   ui->pushButton_3->setEnabled(false);
+
+   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+
    ui->lineEdit->setEnabled(false);
    ui->lineEdit_2->setEnabled(false);
    ui->lineEdit_3->setEnabled(false);
@@ -205,24 +207,31 @@ void MainWindow::config_Init_event()
 //开始仿真按钮事件.
 void MainWindow::start_simulation_event()
 { 
+    ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(false);
-    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->pushButton_3->setEnabled(true);
+
+
     ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}");
     ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}");
+    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
     _ms_handler->exec_sim_oper_cmd(eSimCmd_start_sim);
 }
 
 //停止仿真按钮事件.
 void MainWindow::stop_simulation_event(){
-    ui->pushButton_2->setEnabled(false);
-    ui->pushButton->setEnabled(true);
+    ui->pushButton->setEnabled(false);
+    ui->pushButton_2->setEnabled(true);
+    ui->pushButton_3->setEnabled(false);
+
     ui->lineEdit->setEnabled(true);
     ui->lineEdit_2->setEnabled(true);
     ui->lineEdit_3->setEnabled(true);
     ui->comboBox->setEnabled(true);
-    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
     ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
-    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
     //_ms_handler->exec_sim_oper_cmd(eSimCmd_stop_sim);
 }
 
