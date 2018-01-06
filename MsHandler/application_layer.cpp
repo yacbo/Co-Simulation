@@ -194,8 +194,6 @@ bool application_layer::config_comm_param(const PG_RTUI_Base* param)
     emit progress_log_signal(info);
 
     QDomDocument* doc = XmlUtil::create_PG_RTUI_xml(ss_id, ps_id, param);
-    delete param;
-
     if(!doc){
         info = LogUtil::Instance()->Output(MACRO_LOCAL, "create communication PG_RTUI xml failed");
         emit progress_log_signal(info);

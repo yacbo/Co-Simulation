@@ -171,8 +171,8 @@ void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int
     {
         //查找匹配字符串text的项目，并返回查找结果
         QList<QStandardItem*> tList = _login_model->findItems(dev_name);
-        //按照第一列的值查找
-        QStandardItem* tItem = tList.at(0);
+        //按照“设备名”列的值查找
+        QStandardItem* tItem = tList.at(1);
         _login_model->removeRow(tItem->row());//移除
         --_login_num;
     }
