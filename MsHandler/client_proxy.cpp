@@ -322,7 +322,7 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     return b_map_success;
 }
 
-string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
+string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& sim_time)
 {
     string stream;
     if(data.empty()){
@@ -333,6 +333,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data)
     QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", data.size());
     emit progress_log_signal(info);
 
+    sim_time = data[0].sim_time;
     stream = std::to_string(data[0].sim_time) + " ";
     for(int i=0; i<data.size(); ++i){
         switch (_power_conf_param.result_type) {
@@ -352,13 +353,13 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 {
     if(data.size() != _power_conf_param.result_num){
         UnionSimDatVec his_rec_vec;
-        if(!HisRecordMgr::instance()->load_recorde(_power_conf_param.result_type, his_rec_vec)){
-            LogUtil::Instance()->Output(MACRO_LOCAL, "load history recorde failed");
+        if(!HisRecordMgr::instance()->load_record(_power_conf_param.result_type, his_rec_vec)){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "load history record failed");
             return false;
         }
 
-        if(!HisRecordMgr::instance()->fill_recorde(_power_conf_param.result_type, his_rec_vec, data)){
-            LogUtil::Instance()->Output(MACRO_LOCAL, "fill recorde failed");
+        if(!HisRecordMgr::instance()->fill_record(_power_conf_param.result_type, his_rec_vec, data)){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "fill record failed");
             return false;
         }
 
@@ -370,9 +371,10 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
     QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.result_num);
     emit progress_log_signal(info);
 
+    int64_t sim_time;
     ProcEventParam param;
     param._bus_num = _power_conf_param.result_num;
-    param._in_out_info = stream_power_sim_data(data);
+    param._in_out_info = stream_power_sim_data(data, sim_time);
     param._type = (EPowerDataType)_power_conf_param.result_type;
 
     switch(_power_conf_param.result_type){
@@ -388,6 +390,10 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 
         XmlUtil::generate_xml_power_appl_data(tmp, data, vec);
         delete[] dvg_ret;
+
+        if(HisRecordMgr::instance()->write_record(sim_time, ePowerData_businfor, data)){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "write record, items:", data.size());
+        }
     }
     default: break;
     }

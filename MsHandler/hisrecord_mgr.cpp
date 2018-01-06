@@ -52,18 +52,18 @@ bool  HisRecordMgr::load_file_list(StrVec& vec)
     return true;
 }
 
-bool HisRecordMgr::load_recorde(int power_data_type, UnionSimDatVec& vec, int64_t sim_time)
+bool HisRecordMgr::load_record(int power_data_type, UnionSimDatVec& vec, int64_t sim_time)
 {
     bool ret = false;
     switch(power_data_type){
-    case ePowerData_businfor: ret = load_businfor_recorde(vec, sim_time); break;
+    case ePowerData_businfor: ret = load_businfor_record(vec, sim_time); break;
     default: break;
     }
 
     return ret;
 }
 
-bool HisRecordMgr::write_recorde(int64_t sim_time, int power_data_type, const UnionSimDatVec& vec)
+bool HisRecordMgr::write_record(int64_t sim_time, int power_data_type, const UnionSimDatVec& vec)
 {
     if(vec.size() <= 0){
         return false;
@@ -71,25 +71,25 @@ bool HisRecordMgr::write_recorde(int64_t sim_time, int power_data_type, const Un
 
     bool ret = false;
     switch(power_data_type){
-    case ePowerData_businfor: ret = write_businfor_recorde(sim_time, vec); break;
+    case ePowerData_businfor: ret = write_businfor_record(sim_time, vec); break;
     default: break;
     }
 
     return ret;
 }
 
-bool HisRecordMgr::fill_recorde(int power_data_type, const UnionSimDatVec& his, UnionSimDatVec& recorde)
+bool HisRecordMgr::fill_record(int power_data_type, const UnionSimDatVec& his, UnionSimDatVec& record)
 {
     bool ret = false;
     switch(power_data_type){
-    case ePowerData_businfor: ret = fill_businfor_recorde(his, recorde); break;
+    case ePowerData_businfor: ret = fill_businfor_record(his, record); break;
     default: break;
     }
 
     return ret;
 }
 
-bool HisRecordMgr::load_businfor_recorde(UnionSimDatVec& vec, int64_t sim_time)
+bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
 {
     string file_name;
     if(sim_time > 0){
@@ -139,7 +139,7 @@ bool HisRecordMgr::load_businfor_recorde(UnionSimDatVec& vec, int64_t sim_time)
     return true;
 }
 
-bool HisRecordMgr::write_businfor_recorde(int64_t sim_time, const UnionSimDatVec& vec)
+bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec& vec)
 {
     string file_name = std::to_string(sim_time) + _rec_name_postfix;;
     string rec_path = _rec_name_prefix + file_name;
@@ -177,7 +177,7 @@ bool HisRecordMgr::write_businfor_recorde(int64_t sim_time, const UnionSimDatVec
     return true;
 }
 
-bool HisRecordMgr::fill_businfor_recorde(const UnionSimDatVec& his, UnionSimDatVec& recorde)
+bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVec& record)
 {
     IntMap his_map;
     SimpleIntSet his_set, rec_set;
@@ -189,20 +189,20 @@ bool HisRecordMgr::fill_businfor_recorde(const UnionSimDatVec& his, UnionSimDatV
         his_set.insert(pbid->bus_id);
     }
 
-    for(int i=0; i<recorde.size(); ++i){
-        const UnionSimData& dat = recorde[i];
+    for(int i=0; i<record.size(); ++i){
+        const UnionSimData& dat = record[i];
         const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
         rec_set.insert(pbid->bus_id);
     }
 
-    IntVec diff_vec(his.size() > recorde.size() ? his.size() : recorde.size());
+    IntVec diff_vec(his.size() > record.size() ? his.size() : record.size());
     IntVec::iterator diff_end = std::set_difference(his_set.begin(), his_set.end(), rec_set.begin(), rec_set.end(), diff_vec.begin());
     int diff_num = diff_end - diff_vec.begin();
 
     for(int i=0; i<diff_num; ++i){
         int index = his_map[diff_vec[i]];
-        recorde.insert(recorde.begin() + index, UnionSimData());
-        memcpy(&recorde[index], &his[index], sizeof(UnionSimData));
+        record.insert(record.begin() + index, UnionSimData());
+        memcpy(&record[index], &his[index], sizeof(UnionSimData));
     }
 
     return true;

@@ -42,8 +42,8 @@ private:
 
 public:
     bool fetch_power_cfg_param(const DataXmlVec& vec);
-    string stream_power_sim_data(const UnionSimDatVec& data);
     bool map_power_comm_sim_data(UnionSimDatVec& ud);
+    string stream_power_sim_data(const UnionSimDatVec& data, int64_t& sim_time);
 
     bool calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec);
     void replace_power_sim_data(UnionSimData* data);
