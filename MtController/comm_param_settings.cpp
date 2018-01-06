@@ -25,6 +25,7 @@ comm_param_settings::comm_param_settings(unsigned int ip , MsHandler* msHandler,
     _ip = ip;
     _msHandler = msHandler;
     //this->setStyleSheet("background-image: url(:/bac.jpg)");
+    this->setStyleSheet("background-color:#444240;color:white");
     ui->setupUi(this);
     init();
 }
@@ -34,13 +35,13 @@ comm_param_settings::~comm_param_settings()
 }
 void comm_param_settings::paintEvent(QPaintEvent* pEvent)
 {
-    QPixmap _pBg;
-    _pBg.load(":/bac.jpg");
-    QPainter painter;
-    painter.begin(this);
-    QSize s =this->geometry().size();
-    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
-    painter.end();
+//    QPixmap _pBg;
+//    _pBg.load(":/bac.jpg");
+//    QPainter painter;
+//    painter.begin(this);
+//    QSize s =this->geometry().size();
+//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+//    painter.end();
 }
 void comm_param_settings::init()
 {
@@ -194,6 +195,19 @@ void comm_param_settings::init()
    model_t->setHeaderData(2,Qt::Horizontal,"信息");
    ui->tableView->setModel(model_t);
 
+   ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_3->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_4->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_5->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_6->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_7->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_8->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_9->setStyleSheet("color:white;border:1px solid black;");
+
+   ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
+   ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+   ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 /************业务配置.***********************/

@@ -49,6 +49,9 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="2,10">
                  <item>
                   <widget class="QLabel" name="label_3">
+                   <property name="styleSheet">
+                    <string notr="true">border:0px</string>
+                   </property>
                    <property name="text">
                     <string>  IP：</string>
                    </property>
@@ -76,6 +79,9 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="2,10">
                  <item>
                   <widget class="QLabel" name="label_4">
+                   <property name="styleSheet">
+                    <string notr="true">border:0px</string>
+                   </property>
                    <property name="text">
                     <string>Port：</string>
                    </property>
@@ -184,6 +190,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
                  <widget class="QLabel" name="label">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px}</string>
+                  </property>
                   <property name="text">
                    <string>时间推进步长(s)：</string>
                   </property>
@@ -198,6 +207,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,3">
                 <item>
                  <widget class="QLabel" name="label_2">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px}</string>
+                  </property>
                   <property name="text">
                    <string>通信协议：       </string>
                   </property>
@@ -223,6 +235,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_5">
                 <item>
                  <widget class="QLabel" name="label_5">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px}</string>
+                  </property>
                   <property name="text">
                    <string>联邦仿真时长(s)：</string>
                   </property>
@@ -237,6 +252,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
                  <widget class="QLabel" name="label_6">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px}</string>
+                  </property>
                   <property name="text">
                    <string>电力控制周期(s)：</string>
                   </property>
@@ -260,6 +278,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout">
                 <item>
                  <widget class="QLabel" name="label_7">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px;}</string>
+                  </property>
                   <property name="text">
                    <string>电力仿真配置文件：</string>
                   </property>
@@ -285,6 +306,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_8">
                 <item>
                  <widget class="QLabel" name="label_9">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px}</string>
+                  </property>
                   <property name="text">
                    <string>通信网络配置文件：</string>
                   </property>
@@ -306,6 +330,9 @@
                <layout class="QHBoxLayout" name="horizontalLayout_9">
                 <item>
                  <widget class="QLabel" name="label_10">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel{border:0px}</string>
+                  </property>
                   <property name="text">
                    <string>电力应用配置文件  </string>
                   </property>
@@ -392,7 +419,7 @@
      <x>0</x>
      <y>0</y>
      <width>1117</width>
-     <height>17</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_2">

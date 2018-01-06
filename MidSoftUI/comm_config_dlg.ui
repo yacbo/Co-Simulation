@@ -38,6 +38,9 @@
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <widget class="QGroupBox" name="groupBox">
+      <property name="styleSheet">
+       <string notr="true">QGroupBox{color:white;border:1px solid black;}</string>
+      </property>
       <property name="title">
        <string>通信软件网络配置</string>
       </property>
@@ -46,6 +49,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLabel" name="label">
+           <property name="styleSheet">
+            <string notr="true">QLabel{border:0px}</string>
+           </property>
            <property name="text">
             <string>通信软件IP：     </string>
            </property>
@@ -60,6 +66,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label_2">
+           <property name="styleSheet">
+            <string notr="true">QLabel{border:0px}</string>
+           </property>
            <property name="text">
             <string>通信配置Port：   </string>
            </property>
@@ -74,6 +83,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QLabel" name="label_4">
+           <property name="styleSheet">
+            <string notr="true">QLabel{border:0px}</string>
+           </property>
            <property name="text">
             <string>通信业务Port：   </string>
            </property>
@@ -88,6 +100,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="7,11">
          <item>
           <widget class="QLabel" name="label_3">
+           <property name="styleSheet">
+            <string notr="true">QLabel{border:0px}</string>
+           </property>
            <property name="text">
             <string>通信方式：</string>
            </property>
@@ -114,6 +129,9 @@
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_2">
+      <property name="styleSheet">
+       <string notr="true">QGroupBox{color:white;border:1px solid black;}</string>
+      </property>
       <property name="title">
        <string>远程主机网络配置</string>
       </property>
@@ -122,6 +140,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
           <widget class="QLabel" name="label_5">
+           <property name="styleSheet">
+            <string notr="true">QLabel{border:0px}</string>
+           </property>
            <property name="text">
             <string>远程主机IP：  </string>
            </property>
@@ -136,6 +157,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QLabel" name="label_6">
+           <property name="styleSheet">
+            <string notr="true">QLabel{border:0px}</string>
+           </property>
            <property name="text">
             <string>远程主机Port：</string>
            </property>
@@ -151,6 +175,9 @@
     </item>
     <item>
      <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>

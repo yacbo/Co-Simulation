@@ -275,6 +275,7 @@ public:
         label_37 = new QLabel(groupBox_6);
         label_37->setObjectName(QStringLiteral("label_37"));
         label_37->setMinimumSize(QSize(120, 0));
+        label_37->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_33->addWidget(label_37);
 
@@ -293,6 +294,7 @@ public:
         label_38 = new QLabel(groupBox_6);
         label_38->setObjectName(QStringLiteral("label_38"));
         label_38->setMinimumSize(QSize(120, 0));
+        label_38->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_26->addWidget(label_38);
 
@@ -309,6 +311,7 @@ public:
         label_40 = new QLabel(groupBox_6);
         label_40->setObjectName(QStringLiteral("label_40"));
         label_40->setMinimumSize(QSize(120, 0));
+        label_40->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_28->addWidget(label_40);
 
@@ -325,6 +328,7 @@ public:
         label_42 = new QLabel(groupBox_6);
         label_42->setObjectName(QStringLiteral("label_42"));
         label_42->setMinimumSize(QSize(120, 0));
+        label_42->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_30->addWidget(label_42);
 
@@ -341,6 +345,7 @@ public:
         label_39 = new QLabel(groupBox_6);
         label_39->setObjectName(QStringLiteral("label_39"));
         label_39->setMinimumSize(QSize(120, 0));
+        label_39->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_27->addWidget(label_39);
 
@@ -357,6 +362,7 @@ public:
         label_41 = new QLabel(groupBox_6);
         label_41->setObjectName(QStringLiteral("label_41"));
         label_41->setMinimumSize(QSize(120, 0));
+        label_41->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_29->addWidget(label_41);
 
@@ -373,6 +379,7 @@ public:
         label_43 = new QLabel(groupBox_6);
         label_43->setObjectName(QStringLiteral("label_43"));
         label_43->setMinimumSize(QSize(120, 0));
+        label_43->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_31->addWidget(label_43);
 
@@ -389,6 +396,7 @@ public:
         label_44 = new QLabel(groupBox_6);
         label_44->setObjectName(QStringLiteral("label_44"));
         label_44->setMinimumSize(QSize(120, 0));
+        label_44->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_37->addWidget(label_44);
 
@@ -404,11 +412,13 @@ public:
         horizontalLayout_38->setObjectName(QStringLiteral("horizontalLayout_38"));
         pushButton_15 = new QPushButton(groupBox_6);
         pushButton_15->setObjectName(QStringLiteral("pushButton_15"));
+        pushButton_15->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_38->addWidget(pushButton_15);
 
         pushButton_16 = new QPushButton(groupBox_6);
         pushButton_16->setObjectName(QStringLiteral("pushButton_16"));
+        pushButton_16->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_38->addWidget(pushButton_16);
 
@@ -432,11 +442,13 @@ public:
         horizontalLayout_32->setObjectName(QStringLiteral("horizontalLayout_32"));
         pushButton_13 = new QPushButton(groupBox_5);
         pushButton_13->setObjectName(QStringLiteral("pushButton_13"));
+        pushButton_13->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_32->addWidget(pushButton_13);
 
         pushButton_14 = new QPushButton(groupBox_5);
         pushButton_14->setObjectName(QStringLiteral("pushButton_14"));
+        pushButton_14->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_32->addWidget(pushButton_14);
 
@@ -461,6 +473,7 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         label = new QLabel(groupBox);
         label->setObjectName(QStringLiteral("label"));
+        label->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout->addWidget(label);
 
@@ -476,6 +489,7 @@ public:
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         label_2 = new QLabel(groupBox);
         label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_2->addWidget(label_2);
 
@@ -493,6 +507,7 @@ public:
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         label_3 = new QLabel(groupBox);
         label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_3->addWidget(label_3);
 
@@ -508,6 +523,7 @@ public:
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         label_4 = new QLabel(groupBox);
         label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_4->addWidget(label_4);
 
@@ -524,6 +540,7 @@ public:
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         label_5 = new QLabel(groupBox);
         label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_5->addWidget(label_5);
 
@@ -539,6 +556,7 @@ public:
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         label_6 = new QLabel(groupBox);
         label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_6->addWidget(label_6);
 
@@ -552,6 +570,7 @@ public:
 
         checkBox = new QCheckBox(groupBox);
         checkBox->setObjectName(QStringLiteral("checkBox"));
+        checkBox->setStyleSheet(QStringLiteral("border:0px;"));
 
         verticalLayout->addWidget(checkBox);
 
@@ -559,16 +578,19 @@ public:
         horizontalLayout_7->setObjectName(QStringLiteral("horizontalLayout_7"));
         pushButton = new QPushButton(groupBox);
         pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_7->addWidget(pushButton);
 
         pushButton_2 = new QPushButton(groupBox);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        pushButton_2->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_7->addWidget(pushButton_2);
 
         pushButton_3 = new QPushButton(groupBox);
         pushButton_3->setObjectName(QStringLiteral("pushButton_3"));
+        pushButton_3->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_7->addWidget(pushButton_3);
 
@@ -579,6 +601,7 @@ public:
         horizontalLayout_54->setObjectName(QStringLiteral("horizontalLayout_54"));
         label_26 = new QLabel(groupBox);
         label_26->setObjectName(QStringLiteral("label_26"));
+        label_26->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_54->addWidget(label_26);
 
@@ -589,6 +612,7 @@ public:
 
         pushButton_18 = new QPushButton(groupBox);
         pushButton_18->setObjectName(QStringLiteral("pushButton_18"));
+        pushButton_18->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_54->addWidget(pushButton_18);
 
@@ -608,6 +632,7 @@ public:
         label_7 = new QLabel(groupBox_2);
         label_7->setObjectName(QStringLiteral("label_7"));
         label_7->setMinimumSize(QSize(120, 0));
+        label_7->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_8->addWidget(label_7);
 
@@ -624,6 +649,7 @@ public:
         label_8 = new QLabel(groupBox_2);
         label_8->setObjectName(QStringLiteral("label_8"));
         label_8->setMinimumSize(QSize(120, 0));
+        label_8->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_9->addWidget(label_8);
 
@@ -640,6 +666,7 @@ public:
         label_9 = new QLabel(groupBox_2);
         label_9->setObjectName(QStringLiteral("label_9"));
         label_9->setMinimumSize(QSize(120, 0));
+        label_9->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_10->addWidget(label_9);
 
@@ -656,6 +683,7 @@ public:
         label_10 = new QLabel(groupBox_2);
         label_10->setObjectName(QStringLiteral("label_10"));
         label_10->setMinimumSize(QSize(120, 0));
+        label_10->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_11->addWidget(label_10);
 
@@ -672,6 +700,7 @@ public:
         label_11 = new QLabel(groupBox_2);
         label_11->setObjectName(QStringLiteral("label_11"));
         label_11->setMinimumSize(QSize(120, 0));
+        label_11->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_12->addWidget(label_11);
 
@@ -688,6 +717,7 @@ public:
         label_12 = new QLabel(groupBox_2);
         label_12->setObjectName(QStringLiteral("label_12"));
         label_12->setMinimumSize(QSize(120, 0));
+        label_12->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_13->addWidget(label_12);
 
@@ -704,6 +734,7 @@ public:
         label_13 = new QLabel(groupBox_2);
         label_13->setObjectName(QStringLiteral("label_13"));
         label_13->setMinimumSize(QSize(120, 0));
+        label_13->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_14->addWidget(label_13);
 
@@ -720,6 +751,7 @@ public:
         label_14 = new QLabel(groupBox_2);
         label_14->setObjectName(QStringLiteral("label_14"));
         label_14->setMinimumSize(QSize(120, 0));
+        label_14->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_15->addWidget(label_14);
 
@@ -739,6 +771,7 @@ public:
 
         checkBox_2 = new QCheckBox(groupBox_2);
         checkBox_2->setObjectName(QStringLiteral("checkBox_2"));
+        checkBox_2->setStyleSheet(QStringLiteral("border:0px;"));
 
         verticalLayout_2->addWidget(checkBox_2);
 
@@ -746,16 +779,19 @@ public:
         horizontalLayout_16->setObjectName(QStringLiteral("horizontalLayout_16"));
         pushButton_4 = new QPushButton(groupBox_2);
         pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
+        pushButton_4->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_16->addWidget(pushButton_4);
 
         pushButton_5 = new QPushButton(groupBox_2);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
+        pushButton_5->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_16->addWidget(pushButton_5);
 
         pushButton_6 = new QPushButton(groupBox_2);
         pushButton_6->setObjectName(QStringLiteral("pushButton_6"));
+        pushButton_6->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_16->addWidget(pushButton_6);
 
@@ -766,6 +802,7 @@ public:
         horizontalLayout_55->setObjectName(QStringLiteral("horizontalLayout_55"));
         label_27 = new QLabel(groupBox_2);
         label_27->setObjectName(QStringLiteral("label_27"));
+        label_27->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_55->addWidget(label_27);
 
@@ -776,6 +813,7 @@ public:
 
         pushButton_25 = new QPushButton(groupBox_2);
         pushButton_25->setObjectName(QStringLiteral("pushButton_25"));
+        pushButton_25->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_55->addWidget(pushButton_25);
 
@@ -801,6 +839,7 @@ public:
         label_15 = new QLabel(groupBox_3);
         label_15->setObjectName(QStringLiteral("label_15"));
         label_15->setMinimumSize(QSize(120, 0));
+        label_15->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_17->addWidget(label_15);
 
@@ -817,6 +856,7 @@ public:
         label_16 = new QLabel(groupBox_3);
         label_16->setObjectName(QStringLiteral("label_16"));
         label_16->setMinimumSize(QSize(120, 0));
+        label_16->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_18->addWidget(label_16);
 
@@ -833,6 +873,7 @@ public:
         label_17 = new QLabel(groupBox_3);
         label_17->setObjectName(QStringLiteral("label_17"));
         label_17->setMinimumSize(QSize(120, 0));
+        label_17->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_19->addWidget(label_17);
 
@@ -848,11 +889,13 @@ public:
         horizontalLayout_51->setObjectName(QStringLiteral("horizontalLayout_51"));
         radioButton = new QRadioButton(groupBox_3);
         radioButton->setObjectName(QStringLiteral("radioButton"));
+        radioButton->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_51->addWidget(radioButton);
 
         radioButton_2 = new QRadioButton(groupBox_3);
         radioButton_2->setObjectName(QStringLiteral("radioButton_2"));
+        radioButton_2->setStyleSheet(QStringLiteral("border:0px;"));
         radioButton_2->setChecked(true);
 
         horizontalLayout_51->addWidget(radioButton_2);
@@ -864,16 +907,19 @@ public:
         horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
         pushButton_7 = new QPushButton(groupBox_3);
         pushButton_7->setObjectName(QStringLiteral("pushButton_7"));
+        pushButton_7->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_20->addWidget(pushButton_7);
 
         pushButton_8 = new QPushButton(groupBox_3);
         pushButton_8->setObjectName(QStringLiteral("pushButton_8"));
+        pushButton_8->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_20->addWidget(pushButton_8);
 
         pushButton_9 = new QPushButton(groupBox_3);
         pushButton_9->setObjectName(QStringLiteral("pushButton_9"));
+        pushButton_9->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_20->addWidget(pushButton_9);
 
@@ -884,6 +930,7 @@ public:
         horizontalLayout_56->setObjectName(QStringLiteral("horizontalLayout_56"));
         label_28 = new QLabel(groupBox_3);
         label_28->setObjectName(QStringLiteral("label_28"));
+        label_28->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_56->addWidget(label_28);
 
@@ -894,6 +941,7 @@ public:
 
         pushButton_26 = new QPushButton(groupBox_3);
         pushButton_26->setObjectName(QStringLiteral("pushButton_26"));
+        pushButton_26->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_56->addWidget(pushButton_26);
 
@@ -913,6 +961,7 @@ public:
         label_18 = new QLabel(groupBox_4);
         label_18->setObjectName(QStringLiteral("label_18"));
         label_18->setMinimumSize(QSize(120, 0));
+        label_18->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_21->addWidget(label_18);
 
@@ -929,6 +978,7 @@ public:
         label_19 = new QLabel(groupBox_4);
         label_19->setObjectName(QStringLiteral("label_19"));
         label_19->setMinimumSize(QSize(120, 0));
+        label_19->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_22->addWidget(label_19);
 
@@ -945,6 +995,7 @@ public:
         label_20 = new QLabel(groupBox_4);
         label_20->setObjectName(QStringLiteral("label_20"));
         label_20->setMinimumSize(QSize(120, 0));
+        label_20->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_23->addWidget(label_20);
 
@@ -961,6 +1012,7 @@ public:
         label_21 = new QLabel(groupBox_4);
         label_21->setObjectName(QStringLiteral("label_21"));
         label_21->setMinimumSize(QSize(120, 0));
+        label_21->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_24->addWidget(label_21);
 
@@ -976,11 +1028,13 @@ public:
         horizontalLayout_52->setObjectName(QStringLiteral("horizontalLayout_52"));
         radioButton_3 = new QRadioButton(groupBox_4);
         radioButton_3->setObjectName(QStringLiteral("radioButton_3"));
+        radioButton_3->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_52->addWidget(radioButton_3);
 
         radioButton_4 = new QRadioButton(groupBox_4);
         radioButton_4->setObjectName(QStringLiteral("radioButton_4"));
+        radioButton_4->setStyleSheet(QStringLiteral("border:0px;"));
         radioButton_4->setChecked(true);
 
         horizontalLayout_52->addWidget(radioButton_4);
@@ -992,16 +1046,19 @@ public:
         horizontalLayout_25->setObjectName(QStringLiteral("horizontalLayout_25"));
         pushButton_10 = new QPushButton(groupBox_4);
         pushButton_10->setObjectName(QStringLiteral("pushButton_10"));
+        pushButton_10->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_25->addWidget(pushButton_10);
 
         pushButton_11 = new QPushButton(groupBox_4);
         pushButton_11->setObjectName(QStringLiteral("pushButton_11"));
+        pushButton_11->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_25->addWidget(pushButton_11);
 
         pushButton_12 = new QPushButton(groupBox_4);
         pushButton_12->setObjectName(QStringLiteral("pushButton_12"));
+        pushButton_12->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_25->addWidget(pushButton_12);
 
@@ -1012,6 +1069,7 @@ public:
         horizontalLayout_57->setObjectName(QStringLiteral("horizontalLayout_57"));
         label_29 = new QLabel(groupBox_4);
         label_29->setObjectName(QStringLiteral("label_29"));
+        label_29->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_57->addWidget(label_29);
 
@@ -1022,6 +1080,7 @@ public:
 
         pushButton_27 = new QPushButton(groupBox_4);
         pushButton_27->setObjectName(QStringLiteral("pushButton_27"));
+        pushButton_27->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_57->addWidget(pushButton_27);
 
@@ -1047,6 +1106,7 @@ public:
         label_55 = new QLabel(groupBox_8);
         label_55->setObjectName(QStringLiteral("label_55"));
         label_55->setMinimumSize(QSize(120, 0));
+        label_55->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_43->addWidget(label_55);
 
@@ -1063,6 +1123,7 @@ public:
         label_56 = new QLabel(groupBox_8);
         label_56->setObjectName(QStringLiteral("label_56"));
         label_56->setMinimumSize(QSize(120, 0));
+        label_56->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_44->addWidget(label_56);
 
@@ -1079,6 +1140,7 @@ public:
         label_57 = new QLabel(groupBox_8);
         label_57->setObjectName(QStringLiteral("label_57"));
         label_57->setMinimumSize(QSize(120, 0));
+        label_57->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_45->addWidget(label_57);
 
@@ -1095,6 +1157,7 @@ public:
         label_58 = new QLabel(groupBox_8);
         label_58->setObjectName(QStringLiteral("label_58"));
         label_58->setMinimumSize(QSize(120, 0));
+        label_58->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_46->addWidget(label_58);
 
@@ -1111,6 +1174,7 @@ public:
         label_59 = new QLabel(groupBox_8);
         label_59->setObjectName(QStringLiteral("label_59"));
         label_59->setMinimumSize(QSize(120, 0));
+        label_59->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_47->addWidget(label_59);
 
@@ -1127,6 +1191,7 @@ public:
         label_60 = new QLabel(groupBox_8);
         label_60->setObjectName(QStringLiteral("label_60"));
         label_60->setMinimumSize(QSize(120, 0));
+        label_60->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_48->addWidget(label_60);
 
@@ -1142,16 +1207,19 @@ public:
         horizontalLayout_49->setObjectName(QStringLiteral("horizontalLayout_49"));
         pushButton_22 = new QPushButton(groupBox_8);
         pushButton_22->setObjectName(QStringLiteral("pushButton_22"));
+        pushButton_22->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_49->addWidget(pushButton_22);
 
         pushButton_23 = new QPushButton(groupBox_8);
         pushButton_23->setObjectName(QStringLiteral("pushButton_23"));
+        pushButton_23->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_49->addWidget(pushButton_23);
 
         pushButton_24 = new QPushButton(groupBox_8);
         pushButton_24->setObjectName(QStringLiteral("pushButton_24"));
+        pushButton_24->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_49->addWidget(pushButton_24);
 
@@ -1162,6 +1230,7 @@ public:
         horizontalLayout_58->setObjectName(QStringLiteral("horizontalLayout_58"));
         label_30 = new QLabel(groupBox_8);
         label_30->setObjectName(QStringLiteral("label_30"));
+        label_30->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_58->addWidget(label_30);
 
@@ -1172,6 +1241,7 @@ public:
 
         pushButton_28 = new QPushButton(groupBox_8);
         pushButton_28->setObjectName(QStringLiteral("pushButton_28"));
+        pushButton_28->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_58->addWidget(pushButton_28);
 
@@ -1191,6 +1261,7 @@ public:
         label_52 = new QLabel(groupBox_7);
         label_52->setObjectName(QStringLiteral("label_52"));
         label_52->setMinimumSize(QSize(120, 0));
+        label_52->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_39->addWidget(label_52);
 
@@ -1207,6 +1278,7 @@ public:
         label_22 = new QLabel(groupBox_7);
         label_22->setObjectName(QStringLiteral("label_22"));
         label_22->setMinimumSize(QSize(120, 0));
+        label_22->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_34->addWidget(label_22);
 
@@ -1223,6 +1295,7 @@ public:
         label_23 = new QLabel(groupBox_7);
         label_23->setObjectName(QStringLiteral("label_23"));
         label_23->setMinimumSize(QSize(120, 0));
+        label_23->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_35->addWidget(label_23);
 
@@ -1241,6 +1314,7 @@ public:
         label_24 = new QLabel(groupBox_7);
         label_24->setObjectName(QStringLiteral("label_24"));
         label_24->setMinimumSize(QSize(120, 0));
+        label_24->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_36->addWidget(label_24);
 
@@ -1257,6 +1331,7 @@ public:
         label_25 = new QLabel(groupBox_7);
         label_25->setObjectName(QStringLiteral("label_25"));
         label_25->setMinimumSize(QSize(120, 0));
+        label_25->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_50->addWidget(label_25);
 
@@ -1273,6 +1348,7 @@ public:
         label_53 = new QLabel(groupBox_7);
         label_53->setObjectName(QStringLiteral("label_53"));
         label_53->setMinimumSize(QSize(120, 0));
+        label_53->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_40->addWidget(label_53);
 
@@ -1289,6 +1365,7 @@ public:
         label_54 = new QLabel(groupBox_7);
         label_54->setObjectName(QStringLiteral("label_54"));
         label_54->setMinimumSize(QSize(120, 0));
+        label_54->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_41->addWidget(label_54);
 
@@ -1304,16 +1381,19 @@ public:
         horizontalLayout_42->setObjectName(QStringLiteral("horizontalLayout_42"));
         pushButton_19 = new QPushButton(groupBox_7);
         pushButton_19->setObjectName(QStringLiteral("pushButton_19"));
+        pushButton_19->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_42->addWidget(pushButton_19);
 
         pushButton_20 = new QPushButton(groupBox_7);
         pushButton_20->setObjectName(QStringLiteral("pushButton_20"));
+        pushButton_20->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_42->addWidget(pushButton_20);
 
         pushButton_21 = new QPushButton(groupBox_7);
         pushButton_21->setObjectName(QStringLiteral("pushButton_21"));
+        pushButton_21->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_42->addWidget(pushButton_21);
 
@@ -1324,6 +1404,7 @@ public:
         horizontalLayout_59->setObjectName(QStringLiteral("horizontalLayout_59"));
         label_31 = new QLabel(groupBox_7);
         label_31->setObjectName(QStringLiteral("label_31"));
+        label_31->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_59->addWidget(label_31);
 
@@ -1334,6 +1415,7 @@ public:
 
         pushButton_29 = new QPushButton(groupBox_7);
         pushButton_29->setObjectName(QStringLiteral("pushButton_29"));
+        pushButton_29->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_59->addWidget(pushButton_29);
 
@@ -1371,11 +1453,13 @@ public:
         horizontalLayout_53->setObjectName(QStringLiteral("horizontalLayout_53"));
         pushButton_30 = new QPushButton(comm_param_settings);
         pushButton_30->setObjectName(QStringLiteral("pushButton_30"));
+        pushButton_30->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_53->addWidget(pushButton_30);
 
         pushButton_17 = new QPushButton(comm_param_settings);
         pushButton_17->setObjectName(QStringLiteral("pushButton_17"));
+        pushButton_17->setStyleSheet(QStringLiteral("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"));
 
         horizontalLayout_53->addWidget(pushButton_17);
 

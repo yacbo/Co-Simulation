@@ -44,6 +44,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>业务类型：</string>
               </property>
@@ -70,6 +73,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>客户端节点：  </string>
               </property>
@@ -89,6 +95,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>服务端节点：  </string>
@@ -110,6 +119,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>包数量：      </string>
               </property>
@@ -129,6 +141,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>包长度：      </string>
@@ -150,6 +165,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>间隔时间：    </string>
               </property>
@@ -169,6 +187,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>传输开始时间：</string>
@@ -190,6 +211,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>传输结束时间：</string>
               </property>
@@ -204,6 +228,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_38">
             <item>
              <widget class="QPushButton" name="pushButton_15">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>配置</string>
               </property>
@@ -211,6 +238,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_16">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -240,6 +270,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_32">
             <item>
              <widget class="QPushButton" name="pushButton_13">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>读取路由通道配置文件</string>
               </property>
@@ -247,6 +280,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_14">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>确认</string>
               </property>
@@ -283,6 +319,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QLabel" name="label">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>节点号：            </string>
               </property>
@@ -297,6 +336,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,6">
             <item>
              <widget class="QLabel" name="label_2">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>通信端口数目：      </string>
               </property>
@@ -311,6 +353,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLabel" name="label_3">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>状态(正常1/异常0)： </string>
               </property>
@@ -325,6 +370,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QLabel" name="label_4">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>工作带宽 (Hz)：     </string>
               </property>
@@ -346,6 +394,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QLabel" name="label_5">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>发射功率(dBm)：     </string>
               </property>
@@ -360,6 +411,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
              <widget class="QLabel" name="label_6">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>接受灵敏度(dBm)：   </string>
               </property>
@@ -372,6 +426,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox">
+            <property name="styleSheet">
+             <string notr="true">border:0px;</string>
+            </property>
             <property name="text">
              <string>只读</string>
             </property>
@@ -381,6 +438,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
              <widget class="QPushButton" name="pushButton">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>查看</string>
               </property>
@@ -388,6 +448,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_2">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>配置</string>
               </property>
@@ -395,6 +458,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_3">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -406,6 +472,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_54">
             <item>
              <widget class="QLabel" name="label_26">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>事件时间：</string>
               </property>
@@ -416,6 +485,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_18">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>添加事件</string>
               </property>
@@ -448,6 +520,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>源节点号：         </string>
               </property>
@@ -467,6 +542,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>目的节点号：       </string>
@@ -488,6 +566,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>转接头数目 (个) ： </string>
               </property>
@@ -507,6 +588,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>连接器数目 (个)：  </string>
@@ -528,6 +612,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>转接头损耗(dB/个)：</string>
               </property>
@@ -547,6 +634,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>连接器损耗(dB/个)：</string>
@@ -568,6 +658,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>链路损耗(dB/10km)：</string>
               </property>
@@ -587,6 +680,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>误码率：           </string>
@@ -613,6 +709,9 @@
           </item>
           <item>
            <widget class="QCheckBox" name="checkBox_2">
+            <property name="styleSheet">
+             <string notr="true">border:0px;</string>
+            </property>
             <property name="text">
              <string>只读</string>
             </property>
@@ -622,6 +721,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_16">
             <item>
              <widget class="QPushButton" name="pushButton_4">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>查看</string>
               </property>
@@ -629,6 +731,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_5">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>配置</string>
               </property>
@@ -636,6 +741,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_6">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -647,6 +755,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_55">
             <item>
              <widget class="QLabel" name="label_27">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>事件时间：</string>
               </property>
@@ -657,6 +768,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_25">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>添加事件</string>
               </property>
@@ -699,6 +813,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>故障节点号：     </string>
               </property>
@@ -718,6 +835,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>预设故障时间(s)：</string>
@@ -739,6 +859,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>延迟补偿(s)：    </string>
               </property>
@@ -753,6 +876,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_51">
             <item>
              <widget class="QRadioButton" name="radioButton">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>半实物</string>
               </property>
@@ -760,6 +886,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_2">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>非半实物</string>
               </property>
@@ -774,6 +903,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_20">
             <item>
              <widget class="QPushButton" name="pushButton_7">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>确认</string>
               </property>
@@ -781,6 +913,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_8">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -788,6 +923,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_9">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>恢复</string>
               </property>
@@ -799,6 +937,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_56">
             <item>
              <widget class="QLabel" name="label_28">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>事件时间：</string>
               </property>
@@ -809,6 +950,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_26">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>添加事件</string>
               </property>
@@ -841,6 +985,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>源节点号：       </string>
               </property>
@@ -860,6 +1007,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>目的节点号：     </string>
@@ -881,6 +1031,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>预设故障时间(s)：</string>
               </property>
@@ -901,6 +1054,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>延迟补偿(s)：    </string>
               </property>
@@ -915,6 +1071,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_52">
             <item>
              <widget class="QRadioButton" name="radioButton_3">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>半实物</string>
               </property>
@@ -922,6 +1081,9 @@
             </item>
             <item>
              <widget class="QRadioButton" name="radioButton_4">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>非半实物</string>
               </property>
@@ -936,6 +1098,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_25">
             <item>
              <widget class="QPushButton" name="pushButton_10">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>确认</string>
               </property>
@@ -943,6 +1108,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_11">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -950,6 +1118,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_12">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>恢复</string>
               </property>
@@ -961,6 +1132,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_57">
             <item>
              <widget class="QLabel" name="label_29">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>事件时间：</string>
               </property>
@@ -971,6 +1145,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_27">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>添加事件</string>
               </property>
@@ -1013,6 +1190,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>靶标节点号：       </string>
               </property>
@@ -1032,6 +1212,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>预设攻击时间(s)：  </string>
@@ -1053,6 +1236,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>目的地址：         </string>
               </property>
@@ -1072,6 +1258,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>下一跳地址：       </string>
@@ -1093,6 +1282,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>接口IP地址：       </string>
               </property>
@@ -1113,6 +1305,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>权值：             </string>
               </property>
@@ -1127,6 +1322,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_49">
             <item>
              <widget class="QPushButton" name="pushButton_22">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>确认</string>
               </property>
@@ -1134,6 +1332,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_23">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -1141,6 +1342,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_24">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>恢复</string>
               </property>
@@ -1152,6 +1356,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_58">
             <item>
              <widget class="QLabel" name="label_30">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>事件时间：</string>
               </property>
@@ -1162,6 +1369,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_28">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>添加事件</string>
               </property>
@@ -1194,6 +1404,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>攻击点号：     </string>
               </property>
@@ -1214,6 +1427,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>电力节点号：   </string>
               </property>
@@ -1233,6 +1449,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>数据类型：     </string>
@@ -1275,6 +1494,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>字节开始位置： </string>
               </property>
@@ -1294,6 +1516,9 @@
                 <width>120</width>
                 <height>0</height>
                </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
               </property>
               <property name="text">
                <string>修改量：       </string>
@@ -1315,6 +1540,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>预设攻击时间(s)</string>
               </property>
@@ -1335,6 +1563,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>攻 击 时 间 (s)</string>
               </property>
@@ -1349,6 +1580,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_42">
             <item>
              <widget class="QPushButton" name="pushButton_19">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>确认</string>
               </property>
@@ -1356,6 +1590,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_20">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>取消</string>
               </property>
@@ -1363,6 +1600,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_21">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>恢复</string>
               </property>
@@ -1374,6 +1614,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_59">
             <item>
              <widget class="QLabel" name="label_31">
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>事件时间：</string>
               </property>
@@ -1384,6 +1627,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_29">
+              <property name="styleSheet">
+               <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+              </property>
               <property name="text">
                <string>添加事件</string>
               </property>
@@ -1433,6 +1679,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_53">
          <item>
           <widget class="QPushButton" name="pushButton_30">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+           </property>
            <property name="text">
             <string>删除事件</string>
            </property>
@@ -1440,6 +1689,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButton_17">
+           <property name="styleSheet">
+            <string notr="true">QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}</string>
+           </property>
            <property name="text">
             <string>发送事件</string>
            </property>

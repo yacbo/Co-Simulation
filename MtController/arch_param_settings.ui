@@ -137,6 +137,9 @@
            <property name="text">
             <string>    电力仿真软件</string>
            </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
           </widget>
          </item>
          <item>

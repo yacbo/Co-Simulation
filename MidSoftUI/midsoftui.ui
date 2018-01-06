@@ -56,6 +56,9 @@
              </item>
              <item>
               <widget class="QComboBox" name="comboBox_2">
+               <property name="styleSheet">
+                <string notr="true">QComboBox{min-height:23;}</string>
+               </property>
                <item>
                 <property name="text">
                  <string>电力软件</string>
@@ -93,7 +96,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_3"/>
+              <widget class="QLineEdit" name="lineEdit_3">
+               <property name="styleSheet">
+                <string notr="true">QLineEdit{min-height:23;}</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -115,7 +122,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_4"/>
+              <widget class="QLineEdit" name="lineEdit_4">
+               <property name="styleSheet">
+                <string notr="true">QLineEdit{min-height:23;}</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -146,7 +157,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit"/>
+              <widget class="QLineEdit" name="lineEdit">
+               <property name="styleSheet">
+                <string notr="true">QLineEdit{min-height:23;}</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -168,7 +183,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEdit_2"/>
+              <widget class="QLineEdit" name="lineEdit_2">
+               <property name="styleSheet">
+                <string notr="true">QLineEdit{min-height:23;}</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -194,6 +213,9 @@
           </item>
           <item>
            <widget class="QComboBox" name="comboBox">
+            <property name="styleSheet">
+             <string notr="true">QComboBox{min-height:23;}</string>
+            </property>
             <item>
              <property name="text">
               <string>tcp</string>

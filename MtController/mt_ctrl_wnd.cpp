@@ -15,18 +15,19 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     commUI = nullptr;
     ui->setupUi(this);
-    this->setStyleSheet("background-image: url(:/bac.jpg)");
+    //this->setStyleSheet("background-image: url(:/bac.jpg)");
+    this->setStyleSheet("background-color:#444240;");
     init();
 }
 void MainWindow::paintEvent(QPaintEvent* pEvent)
 {
-    QPixmap _pBg;
-    _pBg.load(":/bac.jpg");
-    QPainter painter;
-    painter.begin(this);
-    QSize s =this->geometry().size();
-    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
-    painter.end();
+//    QPixmap _pBg;
+//    _pBg.load(":/bac.jpg");
+//    QPainter painter;
+//    painter.begin(this);
+//    QSize s =this->geometry().size();
+//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+//    painter.end();
 }
 MainWindow::~MainWindow()
 {
@@ -81,15 +82,20 @@ void MainWindow::init()
    //初始化tableView
    ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+   ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
    model = new QStandardItemModel();
    model->setColumnCount(2);  //设为两列.
 
    model->setHeaderData(0,Qt::Horizontal,"时间");
    model->setHeaderData(1,Qt::Horizontal,"信息");
    ui->tableView->setModel(model);
-
+   ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
    //禁用注销按钮
    ui->pushButton_5->setEnabled(false);
+
+   //初始化按钮
+    ui->pushButton_2->setEnabled(false);
+    ui->pushButton_3->setEnabled(false);
 
    //默认事件同步.
    ui->radioButton->setChecked(true);
@@ -98,6 +104,35 @@ void MainWindow::init()
    ui->lineEdit->setText("1");
    ui->lineEdit_2->setText("100");
    ui->lineEdit_3->setText("5");
+
+   ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_3->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_4->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_5->setStyleSheet("color:white;border:1px solid black;");
+   ui->groupBox_6->setStyleSheet("color:white;border:1px solid black;");
+
+   ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
+   ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+
+   ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
+   ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
+
+   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+
+   ui->label->setStyleSheet("border:0px");
+   ui->label_2->setStyleSheet("border:0px");
+   ui->label_3->setStyleSheet("border:0px");
+   ui->label_4->setStyleSheet("border:0px");
+   ui->label_5->setStyleSheet("border:0px");
+   ui->label_6->setStyleSheet("border:0px");
+   ui->label_7->setStyleSheet("border:0px");
+   ui->label_9->setStyleSheet("border:0px");
+   ui->label_10->setStyleSheet("border:0px");
+   ui->radioButton->setStyleSheet("border:0px");
+   ui->radioButton_2->setStyleSheet("border:0px");
 }
 
 //初始化按钮事件.
@@ -113,6 +148,11 @@ void MainWindow::config_Init_event()
     }
     //初始化按钮.
    ui->pushButton->setEnabled(false);
+   ui->pushButton_2->setEnabled(true);
+   ui->pushButton_3->setEnabled(true);
+   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:black;border:1px solid black;min-height:20;}");
+   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:white;border:1px solid black;min-height:20;}");
+   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:black;border:1px solid black;min-height:20;}");
    ui->lineEdit->setEnabled(false);
    ui->lineEdit_2->setEnabled(false);
    ui->lineEdit_3->setEnabled(false);
@@ -166,17 +206,23 @@ void MainWindow::config_Init_event()
 void MainWindow::start_simulation_event()
 { 
     ui->pushButton_2->setEnabled(false);
+    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}");
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}");
     _ms_handler->exec_sim_oper_cmd(eSimCmd_start_sim);
 }
 
 //停止仿真按钮事件.
 void MainWindow::stop_simulation_event(){
-    ui->pushButton_2->setEnabled(true);
+    ui->pushButton_2->setEnabled(false);
     ui->pushButton->setEnabled(true);
     ui->lineEdit->setEnabled(true);
     ui->lineEdit_2->setEnabled(true);
     ui->lineEdit_3->setEnabled(true);
     ui->comboBox->setEnabled(true);
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
     //_ms_handler->exec_sim_oper_cmd(eSimCmd_stop_sim);
 }
 
@@ -289,9 +335,11 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
           case eSimDev_sim_controller:
             if(ui->pushButton_4->isEnabled())//若控制端与SBS没连.
             {
-                //禁用注册按钮
+                //禁用注册按钮s
                 ui->pushButton_4->setEnabled(false);  //禁止注册按钮.
                 ui->pushButton_5->setEnabled(true);  //启用注销按钮.
+                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;}");
+                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;}");
                 ui->lineEdit_8->setEnabled(false);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(false); //SBS port输入禁用.
                 fm.setSbsSoftOnLine();  //SBS在线设置.
@@ -328,6 +376,8 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 //禁用注册按钮
                 ui->pushButton_4->setEnabled(true);  //启用注册按钮.
                 ui->pushButton_5->setEnabled(false);  //禁止注销按钮.
+                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;}");
+                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;}");
                 ui->lineEdit_8->setEnabled(true);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(true); //SBS port输入禁用.
                 fm.setSbsSoftOffLine();  //SBS离线设置.

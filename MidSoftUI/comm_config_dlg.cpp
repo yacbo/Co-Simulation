@@ -51,8 +51,10 @@ void comm_config_dlg::init()
     ui->lineEdit_4->setText("192.168.31.35");
     ui->lineEdit_5->setText("12321");
 
-    ui->groupBox_2->setStyleSheet("color:white;");//border:1px solid black;
-    ui->groupBox->setStyleSheet("color:white;");
+    ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
+    ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
+//QDalogButtonBox{border-radius:5px; color:white;border:1px solid black;min-height:20;}
+    ui->buttonBox->setStyleSheet("color:white;border:1px solid black;");
 }
 
 void comm_config_dlg::get_net_info(QString& ip, uint16_t& port, int& proto_type,uint16_t&port_business,QString& host_ip,uint16_t &host_port)

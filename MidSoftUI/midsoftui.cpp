@@ -18,7 +18,7 @@ MidSoftUI::MidSoftUI(QWidget *parent)
 //    QPalette pal;
 //    pal.setColor(QPalette::WindowText, QColor(0,0,255));
 //    this->setPalette(pal);
-    this->setStyleSheet("color:white;background-color:#444240;");
+    this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
     init();
 }
@@ -60,6 +60,7 @@ void MidSoftUI::init()
 
     ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     model = new QStandardItemModel();
     model->setColumnCount(2);  //设为两列.
     model->setHeaderData(0,Qt::Horizontal,"时间");
@@ -84,14 +85,26 @@ void MidSoftUI::init()
     //禁用注销按钮
     ui->unregisterButton->setEnabled(false);
 
-    ui->groupBox_4->setStyleSheet("color:white;");
-    ui->groupBox_3->setStyleSheet("color:white;");
-    ui->groupBox_2->setStyleSheet("color:white;");//border:1px solid black;
-    ui->groupBox->setStyleSheet("color:white;");
-    ui->tableView->setStyleSheet("color:white;");
+    ui->groupBox_4->setStyleSheet("color:white;border:1px solid black;");
+    ui->groupBox_3->setStyleSheet("color:white;border:1px solid black;");
+    ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");//border:1px solid black;
+    ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
 
-    ui->registerButton->setStyleSheet("color:white;background:#696969;");
-    ui->unregisterButton->setStyleSheet("color:black;background:#444240;");
+    ui->tableView->setStyleSheet("color:white;");
+    ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
+    ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+
+    ui->label_2->setStyleSheet("border:0px solid black;");
+    ui->label_3->setStyleSheet("border:0px solid black;");
+    ui->label_4->setStyleSheet("border:0px solid black;");
+    ui->label_5->setStyleSheet("border:0px solid black;");
+    ui->label_7->setStyleSheet("border:0px solid black;");
+    ui->label_8->setStyleSheet("border:0px solid black;");
+
 }
 
 void MidSoftUI::register_device()
@@ -190,8 +203,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
            ui->lineEdit_4->setEnabled(false);
            ui->comboBox->setEnabled(false);
            ui->comboBox_2->setEnabled(false);
-           ui->unregisterButton->setStyleSheet("color:white;background:#696969;");
-           ui->registerButton->setStyleSheet("color:black;background:#444240;");
+           ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+           ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
         }
 
         //若注销成功，注册按钮禁用,启用注销按钮.
@@ -205,8 +218,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
            ui->lineEdit_4->setEnabled(true);
            ui->comboBox->setEnabled(true);
            ui->comboBox_2->setEnabled(true);
-           ui->registerButton->setStyleSheet("color:white;background:#696969;");
-           ui->unregisterButton->setStyleSheet("color:black;background:#444240;");
+           ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+           ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
         }
     }
 }

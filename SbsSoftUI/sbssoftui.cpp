@@ -47,17 +47,20 @@ void SbsSoftUI::init()
 
     ui->tableView->horizontalHeader()->setStretchLastSection(true); //就是这个地方
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     _login_model = new QStandardItemModel();
-    _login_model->setColumnCount(3);  //设置3列.
-    _login_model->setHeaderData(0,Qt::Horizontal,"器件名称");
-    _login_model->setHeaderData(1,Qt::Horizontal,"器件地址");
-    _login_model->setHeaderData(2,Qt::Horizontal,"器件端口");
+    _login_model->setColumnCount(4);  //设置4列.
+    _login_model->setHeaderData(1,Qt::Horizontal,"器件名称");
+    _login_model->setHeaderData(2,Qt::Horizontal,"器件IP");
+    _login_model->setHeaderData(3,Qt::Horizontal,"器件端口");
+    _login_model->setHeaderData(0,Qt::Horizontal,"器件ID");
     ui->tableView->setModel(_login_model);
     //ui->tableView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     _login_num = 0;
 
     ui->tableView_2->horizontalHeader()->setStretchLastSection(true); //就是这个地方
     ui->tableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView_2->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     _log_model = new QStandardItemModel();
     _log_model->setColumnCount(2);  //设置3列.
     _log_model->setHeaderData(0,Qt::Horizontal,"时间");
@@ -81,12 +84,22 @@ void SbsSoftUI::init()
     ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
     ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
     ui->tableView->setStyleSheet("color:white;border:1px solid black;");
-    ui->tableView_2->setStyleSheet("color:white;border:1px solid black;");
+    ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
+    ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+    ui->tableView_2->setStyleSheet("color:white;border:1px solid black;");
+    ui->tableView_2->horizontalHeader()->setStyleSheet("color:black;");
+    ui->tableView_2->verticalHeader()->setStyleSheet("color:black;");
+    ui->tableView_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->pushButton->setFlat(true);
 
-    ui->pushButton->setStyleSheet("color:white;background:#696969;");
-    ui->pushButton_2->setStyleSheet("color:black;background:#444240;");
+    ui->label->setStyleSheet("border:0px;");
+    ui->label_2->setStyleSheet("border:0px;");
+    ui->label_3->setStyleSheet("border:0px;");
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+
 }
 
 void SbsSoftUI::start_service()
@@ -98,8 +111,8 @@ void SbsSoftUI::start_service()
     //禁用开始服务button
     ui->pushButton->setEnabled(false);
     //开启停止服务
-    ui->pushButton_2->setStyleSheet("color:white;background:#696969;");
-    ui->pushButton->setStyleSheet("color:black;background:#444240;");
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
     ui->pushButton_2->setEnabled(true);
 
 
@@ -126,8 +139,8 @@ void SbsSoftUI::exit_service()
 
       }
 
-      ui->pushButton->setStyleSheet("color:white;background:#696969;");
-      ui->pushButton_2->setStyleSheet("color:black;background:#444240;");
+      ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+      ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
       ui->pushButton->setEnabled(true);
       ui->pushButton_2->setEnabled(false);
       ui->lineEdit->setEnabled(true);
@@ -146,11 +159,12 @@ void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int
         //器件存在则不在打印信息到界面
         QList<QStandardItem*> tList = _login_model->findItems(dev_name);
         if(tList.size()>0) return;
-
-        _login_model->setItem(_login_num,0,new QStandardItem(dev_name));
-        _login_model->setItem(_login_num,1,new QStandardItem(dev_ip));
-        QString sport = QString::number(dev_port, 10);
-        _login_model->setItem(_login_num,2,new QStandardItem(sport));
+        QString s_dev_id= QString::number(dev_id, 10);
+        _login_model->setItem(_login_num,0,new QStandardItem(s_dev_id));
+        _login_model->setItem(_login_num,1,new QStandardItem(dev_name));
+        _login_model->setItem(_login_num,2,new QStandardItem(dev_ip));
+        QString s_port = QString::number(dev_port, 10);
+        _login_model->setItem(_login_num,3,new QStandardItem(s_port));
         ++_login_num;
     }
     else

@@ -6,7 +6,8 @@ arch_param_settings::arch_param_settings(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::arch_param_settings)
 {
-    this->setStyleSheet("background-image: url(:/bac.jpg)");
+    //this->setStyleSheet("background-image: url(:/bac.jpg)");
+    this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
     setSbsSoftOffLine();  //SBS离线设置.
     setElecSoftOffLine();  //电力离线设置.
@@ -21,19 +22,27 @@ arch_param_settings::~arch_param_settings()
 }
 void arch_param_settings::paintEvent(QPaintEvent* pEvent)
 {
-    QPixmap _pBg;
-    _pBg.load(":/bac.jpg");
-    QPainter painter;
-    painter.begin(this);
-    QSize s =this->geometry().size();
-    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
-    painter.end();
+//    QPixmap _pBg;
+//    _pBg.load(":/bac.jpg");
+//    QPainter painter;
+//    painter.begin(this);
+//    QSize s =this->geometry().size();
+//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+//    painter.end();
 }
 void arch_param_settings::init()
 {
     ui->comboBox->clear();
     ui->comboBox_2->clear();
     ui->comboBox_3->clear();
+    //ui->lineEdit_8->setStyleSheet("border:1px;");
+    ui->label_3->setStyleSheet("border:0px;");
+    ui->label_4->setStyleSheet("border:0px;");
+    ui->label_11->setStyleSheet("border:0px;");
+    ui->label_15->setStyleSheet("border:0px;");
+    ui->label_16->setStyleSheet("border:0px;");
+    ui->label_17->setStyleSheet("border:0px;");
+    ui->label_18->setStyleSheet("border:0px;");
 }
 void arch_param_settings::setComboBoxClear()
 {
