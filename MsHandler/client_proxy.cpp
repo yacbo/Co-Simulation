@@ -42,7 +42,6 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
     else if(type == eSimDev_power){
         _expect_msg_type = eSimCmd_start_sim;
         _expect_proc_type = eSubProcedure_sim_cmd;
-        _power_handler = new PowerHandler();
     }
     else if(type == eSimDev_power_appl){
 
@@ -1102,6 +1101,13 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
     }
 
     if(_dev_type == eSimDev_power_appl){
+        return;
+    }
+
+    _power_handler = new PowerHandler();
+    if(!_power_handler){
+        QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "alloc PowerHandler memory failed");
+        emit progress_log_signal(info);
         return;
     }
 
