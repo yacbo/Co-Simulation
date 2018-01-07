@@ -148,14 +148,14 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
         return false;
     }
 
-    out << std::setw(16) << "sim time"
-          << std::setw(10) << "power bus id"
-          << std::setw(10) << "comm src id"
-          << std::setw(10) << "ocmm dst id"
-          << std::setw(10) << "comm err type"
-          << std::setw(10) << "comm tr delay"
-          << std::setw(10) << "power voltage"
-          << std::setw(10) << "power angle";
+    out << std::setw(20) << "sim time"
+          << std::setw(20) << "power bus id"
+          << std::setw(20) << "comm src id"
+          << std::setw(20) << "ocmm dst id"
+          << std::setw(20) << "comm err type"
+          << std::setw(20) << "comm tr delay"
+          << std::setw(20) << "power voltage"
+          << std::setw(20) << "power angle";
 
     for(int i=0; i<vec.size(); ++i){
         const UnionSimData& dat = vec[i];
