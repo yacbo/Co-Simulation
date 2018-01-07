@@ -154,25 +154,40 @@ void SbsSoftUI::exit_service()
 
 void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int dev_id, bool login)
 {
+    QString s_dev_id= QString::number(dev_id, 10);
+
+    //查找匹配字符串text的项目，并返回查找结果
+    QList<QStandardItem*> tList = _login_model->findItems(s_dev_id);
+
     if(login)
     {
-        //器件存在则不在打印信息到界面
-        QList<QStandardItem*> tList = _login_model->findItems(dev_name);
-        if(tList.size()>0) return;
-        QString s_dev_id= QString::number(dev_id, 10);
+        //器件存在则不打印信息到界面
+        if(tList.size()>0)
+        {
+            return;
+        }
+
         _login_model->setItem(_login_num,0,new QStandardItem(s_dev_id));
+        _login_model->item(_login_num, 0)->setTextAlignment(Qt::AlignCenter);
         _login_model->setItem(_login_num,1,new QStandardItem(dev_name));
+        _login_model->item(_login_num, 1)->setTextAlignment(Qt::AlignCenter);
         _login_model->setItem(_login_num,2,new QStandardItem(dev_ip));
+        _login_model->item(_login_num, 2)->setTextAlignment(Qt::AlignCenter);
         QString s_port = QString::number(dev_port, 10);
         _login_model->setItem(_login_num,3,new QStandardItem(s_port));
+        _login_model->item(_login_num, 3)->setTextAlignment(Qt::AlignCenter);
         ++_login_num;
     }
     else
     {
-        //查找匹配字符串text的项目，并返回查找结果
-        QList<QStandardItem*> tList = _login_model->findItems(dev_name);
-        //按照“设备名”列的值查找
-        QStandardItem* tItem = tList.at(1);
+        //器件不存在
+        if(tList.size() == 0)
+        {
+            return;
+        }
+
+        //定位“设备id”列
+        QStandardItem* tItem = tList.at(0);
         _login_model->removeRow(tItem->row());//移除
         --_login_num;
     }
