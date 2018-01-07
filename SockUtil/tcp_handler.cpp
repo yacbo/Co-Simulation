@@ -90,10 +90,13 @@ bool TcpNetHandler::stop_service()
     bool ret = true;
     if(_sock_cli){
         _sock_cli->disconnectFromHost();
+        delete _sock_cli;
+        _sock_cli = nullptr;
     }
 
-    if(_sock_svr){
+    if(!_b_cli && _sock_svr){
         _sock_svr->close();
+        delete _sock_svr;
         _sock_svr = nullptr;
     }
 
@@ -182,7 +185,6 @@ void TcpNetHandler::disconnected()
 {
     if(_sock_cli){
         _sock_cli->close();
-        _sock_cli = nullptr;
     }
 
     _b_connected = false;
