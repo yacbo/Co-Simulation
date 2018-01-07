@@ -91,8 +91,10 @@ void MidSoftUI::init()
     ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
 
     ui->tableView->setStyleSheet("color:white;");
-    ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
-    ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+    //ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
+    //ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+    ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
+    ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");

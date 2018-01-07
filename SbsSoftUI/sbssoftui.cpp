@@ -96,7 +96,6 @@ void SbsSoftUI::init()
     ui->tableView_2->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
     ui->tableView_2->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
     ui->tableView_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //ui->pushButton->setFlat(true);
 
     ui->label->setStyleSheet("border:0px;");
     ui->label_2->setStyleSheet("border:0px;");

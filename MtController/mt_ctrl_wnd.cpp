@@ -114,6 +114,8 @@ void MainWindow::init()
 
    ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
    ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+   ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
+   ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
 
    ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
    ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
@@ -347,8 +349,8 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 //禁用注册按钮s
                 ui->pushButton_4->setEnabled(false);  //禁止注册按钮.
                 ui->pushButton_5->setEnabled(true);  //启用注销按钮.
-                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;}");
-                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;}");
+                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
+                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
                 ui->lineEdit_8->setEnabled(false);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(false); //SBS port输入禁用.
                 fm.setSbsSoftOnLine();  //SBS在线设置.
@@ -385,8 +387,8 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 //禁用注册按钮
                 ui->pushButton_4->setEnabled(true);  //启用注册按钮.
                 ui->pushButton_5->setEnabled(false);  //禁止注销按钮.
-                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;}");
-                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;}");
+                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
+                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
                 ui->lineEdit_8->setEnabled(true);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(true); //SBS port输入禁用.
                 fm.setSbsSoftOffLine();  //SBS离线设置.
