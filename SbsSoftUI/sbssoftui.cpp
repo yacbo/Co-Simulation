@@ -1,6 +1,8 @@
 #include "sbssoftui.h"
 #include "ui_sbssoftui.h"
 #include <QPainter>
+#include <QHeaderView>
+
 SbsSoftUI::SbsSoftUI(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::SbsSoftUI)
@@ -50,10 +52,10 @@ void SbsSoftUI::init()
     ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     _login_model = new QStandardItemModel();
     _login_model->setColumnCount(4);  //设置4列.
+    _login_model->setHeaderData(0,Qt::Horizontal,"器件ID");
     _login_model->setHeaderData(1,Qt::Horizontal,"器件名称");
     _login_model->setHeaderData(2,Qt::Horizontal,"器件IP");
     _login_model->setHeaderData(3,Qt::Horizontal,"器件端口");
-    _login_model->setHeaderData(0,Qt::Horizontal,"器件ID");
     ui->tableView->setModel(_login_model);
     //ui->tableView->horizontalHeader()->setDefaultAlignment(Qt::AlignCenter);
     _login_num = 0;
@@ -84,13 +86,15 @@ void SbsSoftUI::init()
     ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
     ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
     ui->tableView->setStyleSheet("color:white;border:1px solid black;");
-    ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
-    ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+    //ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
+    ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
+    ui->tableView->verticalHeader()->hide();
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     ui->tableView_2->setStyleSheet("color:white;border:1px solid black;");
-    ui->tableView_2->horizontalHeader()->setStyleSheet("color:black;");
-    ui->tableView_2->verticalHeader()->setStyleSheet("color:black;");
+    //ui->tableView_2->horizontalHeader()->setStyleSheet("color:black;");
+    ui->tableView_2->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
+    ui->tableView_2->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
     ui->tableView_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->pushButton->setFlat(true);
 
@@ -114,7 +118,6 @@ void SbsSoftUI::start_service()
     ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
     ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
     ui->pushButton_2->setEnabled(true);
-
 
     int port = 9999;
     if(!ui->lineEdit->text().isEmpty() && !ui->lineEdit->text().isNull())
