@@ -94,6 +94,7 @@ bool TcpNetHandler::stop_service()
 
     if(_sock_svr){
         _sock_svr->close();
+        _sock_svr = nullptr;
     }
 
     return true;
@@ -180,7 +181,7 @@ void TcpNetHandler::accept_connection()
 void TcpNetHandler::disconnected()
 {
     if(_sock_cli){
-        _sock_cli->deleteLater();
+        _sock_cli->close();
         _sock_cli = nullptr;
     }
 
