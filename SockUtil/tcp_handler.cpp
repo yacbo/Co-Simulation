@@ -4,6 +4,7 @@
 
 TcpNetHandler::TcpNetHandler() : NetHandlerBase()
 {
+    _b_cli = false;
     _sock_cli = nullptr;
     _sock_svr = nullptr;
     _b_connected = false;
@@ -87,8 +88,7 @@ bool TcpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
 
 bool TcpNetHandler::stop_service()
 {
-    bool ret = true;
-    if(_sock_cli){
+    if(_b_cli && _sock_cli){
         _sock_cli->disconnectFromHost();
         delete _sock_cli;
         _sock_cli = nullptr;
