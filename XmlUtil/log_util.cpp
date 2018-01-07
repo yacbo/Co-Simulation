@@ -52,11 +52,10 @@ void LogUtil::OutputMsg(QtMsgType type, const QString& msg)
         _log_file.open(QIODevice::WriteOnly | QIODevice::Append);
     }
 
-    _mutex.lock();
+    QMutexLocker lck(&_mutex);
     QTextStream log_stream(&_log_file);
     log_stream << message << "\r\n";
     _log_file.flush();
-    _mutex.unlock();
 }
 
 void LogUtil::InitTypeStrMap()

@@ -205,8 +205,8 @@ void comm_param_settings::init()
    ui->groupBox_8->setStyleSheet("color:white;border:1px solid black;");
    ui->groupBox_9->setStyleSheet("color:white;border:1px solid black;");
 
-   ui->tableView->horizontalHeader()->setStyleSheet("color:black;");
-   ui->tableView->verticalHeader()->setStyleSheet("color:black;");
+   ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
+   ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
