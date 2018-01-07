@@ -20,6 +20,7 @@ TcpNetHandler::TcpNetHandler(QTcpSocket* sock, RcvHandler handler, bool cli) : N
 {
     _b_cli = cli;
     _sock_cli = sock;
+    _sock_svr = nullptr;
     _b_connected = true;
     _rcv_handler = handler;
 
@@ -88,9 +89,11 @@ bool TcpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
 
 bool TcpNetHandler::stop_service()
 {
-    if(_b_cli && _sock_cli){
-        _sock_cli->disconnectFromHost();
-        delete _sock_cli;
+    if(_sock_cli){
+        if(_b_cli){
+            _sock_cli->disconnectFromHost();
+            delete _sock_cli;
+        }
         _sock_cli = nullptr;
     }
 
@@ -172,7 +175,7 @@ void TcpNetHandler::receive_data()
 void TcpNetHandler::accept_connection()
 {
     QTcpSocket* tmp_sock = _sock_svr->nextPendingConnection();
-    NetHandlerBase* cli_handler = new TcpNetHandler(tmp_sock, _rcv_handler);
+    NetHandlerBase* cli_handler = new TcpNetHandler(tmp_sock, _rcv_handler, false);
     init_signal_slots(tmp_sock, (TcpNetHandler*)cli_handler);
 
     quint16 dst_port = tmp_sock->peerPort();
