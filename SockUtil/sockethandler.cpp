@@ -6,7 +6,7 @@ SocketHandler::SocketHandler()
 
 }
 
-bool SocketHandler::InitSocket(const char* server_ip, int port)
+bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_port)
 {
     WSADATA wsd;
     if(WSAStartup(MAKEWORD(2,2),&wsd) != 0){
@@ -25,11 +25,19 @@ bool SocketHandler::InitSocket(const char* server_ip, int port)
           return false;
       }
 
+      _dev_port = dev_port;
+      _server_ip = server_ip;
+      _server_port = server_port;
+
       _server_addr.sin_family=AF_INET;
-      _server_addr.sin_port=htons(port);
+      _server_addr.sin_port=htons(server_port);
+      //_server_addr.sin_addr.S_un.S_addr=inet_addr();
       _server_addr.sin_addr.S_un.S_addr=htonl(INADDR_ANY);
 
       ret = bind(_sock_cli, (SOCKADDR*)&_server_addr, sizeof(SOCKADDR));
+      if(ret != NO_ERROR){
+          return false;
+      }
 
       QtConcurrent::run(this, &SocketHandler::RcvThread);
 }
@@ -59,7 +67,12 @@ void SocketHandler::RcvThread()
     while(true){
         memset(buf, 0, buf_size);
         int rcv_len = recvfrom(_sock_cli, buf, buf_size, 0, (SOCKADDR*)&_sender_addr, &addr_len);
+
         if(rcv_len > 0){
+            quint16 cli_port = ntohs(_sender_addr.sin_port);
+            QString cli_addr = inet_ntoa(_sender_addr.sin_addr);
+            emit new_net_handler(cli_addr, cli_port);
+
             _rcv_callback(buf, rcv_len);
         }
         else{

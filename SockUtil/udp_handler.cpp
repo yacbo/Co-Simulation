@@ -35,15 +35,16 @@ bool UdpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
 //            return false;
 //        }
 //       ret =  _sock_cli->bind(QHostAddress::AnyIPv4, _server_port);
-        _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port);
+        ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port);
     }
-    else{                                                              //作服务端
-        ret = _sock_cli->bind(port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    else{
+        ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port);//作服务端
+        //ret = _sock_cli->bind(port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     }
 
-    ret = connect(_sock_cli, &QUdpSocket::readyRead, this, &UdpNetHandler::receive_data);
+    //ret = connect(_sock_cli, &QUdpSocket::readyRead, this, &UdpNetHandler::receive_data);
 
-    return true;
+    return ret;
 }
 
 bool UdpNetHandler::stop_service()
@@ -90,6 +91,7 @@ bool UdpNetHandler::register_rcv_callback(RcvHandler handler)
 {
     _rcv_handler = handler;
     _hanlder.RegisterRcvCallback(handler);
+    connect(&_hanlder, &SocketHandler::new_net_handler, this, &UdpNetHandler::new_net_handler_slot);
     return true;
 }
 
@@ -116,6 +118,22 @@ void UdpNetHandler::receive_data()
          //处理接收的数据
          _rcv_handler(datagram.toStdString().c_str(), datagram.length());
      }
+}
+
+void UdpNetHandler::new_net_handler_slot(QString cli_ip, quint16 cli_port)
+{
+    if(_b_cli){
+        return;
+    }
+
+    IpPortMap::const_iterator it = _cli_conn_tbl.find(cli_ip);
+    if(it != _cli_conn_tbl.cend()){
+        return;
+    }
+
+    _cli_conn_tbl[cli_ip] = cli_port;
+
+    emit new_net_handler(cli_ip,  cli_port, eProtocol_udp, this);
 }
 
 

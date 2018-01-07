@@ -13,8 +13,11 @@ class SocketHandler : public QObject
 public:
     SocketHandler();
 
+signals:
+    void new_net_handler(QString ip, quint16 port);
+
 public:
-    bool InitSocket(const char* server_ip, int port);
+    bool InitSocket(const char* server_ip, int server_port, int dev_port);
     long Send(const char* ip, int port, const char* data, int len);
     void RegisterRcvCallback(RcvCallback cb);
 
@@ -26,6 +29,11 @@ private:
     SOCKADDR_IN _server_addr;
     SOCKADDR_IN _sender_addr;
     RcvCallback _rcv_callback;
+
+private:
+    QString _server_ip;
+    quint16 _server_port;
+    quint16 _dev_port;
 };
 
 #endif // SOCKETHANDLER_H

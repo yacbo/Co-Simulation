@@ -26,6 +26,7 @@ signals:
 
 public slots:
     void receive_data();
+    void new_net_handler_slot(QString ip, quint16 port);
 
 private:
     typedef QMap<QString, uint16_t> IpPortMap;
