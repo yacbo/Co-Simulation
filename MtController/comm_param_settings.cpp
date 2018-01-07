@@ -25,7 +25,7 @@ comm_param_settings::comm_param_settings(unsigned int ip , MsHandler* msHandler,
     _ip = ip;
     _msHandler = msHandler;
     //this->setStyleSheet("background-image: url(:/bac.jpg)");
-    this->setStyleSheet("background-color:#444240;color:white");
+    this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
     init();
 }
@@ -208,6 +208,36 @@ void comm_param_settings::init()
    ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
    ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+   ui->pushButton_15->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_16->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_13->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_14->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_2->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_3->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_4->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_5->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_6->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_25->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_7->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_8->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_9->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_26->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_10->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_11->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_12->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_27->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_22->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_23->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_24->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_28->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_19->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_20->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_21->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_29->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_30->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_17->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 }
 
 /************业务配置.***********************/

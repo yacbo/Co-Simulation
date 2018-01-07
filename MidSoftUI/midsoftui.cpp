@@ -18,7 +18,7 @@ MidSoftUI::MidSoftUI(QWidget *parent)
 //    QPalette pal;
 //    pal.setColor(QPalette::WindowText, QColor(0,0,255));
 //    this->setPalette(pal);
-    this->setStyleSheet("background-color:#444240;");
+    this->setStyleSheet("background-color:#444240;color:white");
     ui->setupUi(this);
     init();
 }
@@ -97,8 +97,8 @@ void MidSoftUI::init()
     ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-    ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+    ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
     ui->label_2->setStyleSheet("border:0px solid black;");
     ui->label_3->setStyleSheet("border:0px solid black;");
@@ -168,8 +168,8 @@ void MidSoftUI::unregister_device()
             qInfo(info.c_str());
         }
     }
-    ui->registerButton->setStyleSheet("color:white;background:#696969;");
-    ui->unregisterButton->setStyleSheet("color:black;background:#444240;");
+    ui->registerButton->setStyleSheet("color:white;background:#696969;" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->unregisterButton->setStyleSheet("color:black;background:#444240;" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 }
 
 void MidSoftUI::combox_select_event(int a)
@@ -205,8 +205,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
            ui->lineEdit_4->setEnabled(false);
            ui->comboBox->setEnabled(false);
            ui->comboBox_2->setEnabled(false);
-           ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-           ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+           ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+           ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
         }
 
         //若注销成功，注册按钮禁用,启用注销按钮.
@@ -220,8 +220,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
            ui->lineEdit_4->setEnabled(true);
            ui->comboBox->setEnabled(true);
            ui->comboBox_2->setEnabled(true);
-           ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-           ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+           ui->registerButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+           ui->unregisterButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
         }
     }
 }

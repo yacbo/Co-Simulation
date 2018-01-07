@@ -166,6 +166,7 @@ public:
         horizontalLayout_12->setObjectName(QStringLiteral("horizontalLayout_12"));
         label_3 = new QLabel(groupBox_4);
         label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setStyleSheet(QStringLiteral("border:0px"));
 
         horizontalLayout_12->addWidget(label_3);
 
@@ -188,6 +189,7 @@ public:
         horizontalLayout_13->setObjectName(QStringLiteral("horizontalLayout_13"));
         label_4 = new QLabel(groupBox_4);
         label_4->setObjectName(QStringLiteral("label_4"));
+        label_4->setStyleSheet(QStringLiteral("border:0px"));
 
         horizontalLayout_13->addWidget(label_4);
 
@@ -215,6 +217,12 @@ public:
 
         pushButton_4 = new QPushButton(groupBox_4);
         pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
+        pushButton_4->setStyleSheet(QLatin1String("QPushButton:hover{\n"
+"    background-color:#CCCCCC;\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    background-color:#888888;\n"
+"}"));
 
         horizontalLayout_11->addWidget(pushButton_4);
 
@@ -224,6 +232,12 @@ public:
 
         pushButton_5 = new QPushButton(groupBox_4);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
+        pushButton_5->setStyleSheet(QLatin1String("QPushButton:hover{\n"
+"    background-color:#CCCCCC\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    background-color:#888888\n"
+"}"));
 
         horizontalLayout_11->addWidget(pushButton_5);
 
@@ -278,6 +292,7 @@ public:
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         label = new QLabel(groupBox_5);
         label->setObjectName(QStringLiteral("label"));
+        label->setStyleSheet(QStringLiteral("QLabel{border:0px}"));
 
         horizontalLayout_3->addWidget(label);
 
@@ -294,6 +309,7 @@ public:
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         label_2 = new QLabel(groupBox_5);
         label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setStyleSheet(QStringLiteral("QLabel{border:0px}"));
 
         horizontalLayout_4->addWidget(label_2);
 
@@ -312,6 +328,7 @@ public:
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         label_5 = new QLabel(groupBox_5);
         label_5->setObjectName(QStringLiteral("label_5"));
+        label_5->setStyleSheet(QStringLiteral("QLabel{border:0px}"));
 
         horizontalLayout_5->addWidget(label_5);
 
@@ -328,6 +345,7 @@ public:
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         label_6 = new QLabel(groupBox_5);
         label_6->setObjectName(QStringLiteral("label_6"));
+        label_6->setStyleSheet(QStringLiteral("QLabel{border:0px}"));
 
         horizontalLayout_6->addWidget(label_6);
 
@@ -353,6 +371,7 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         label_7 = new QLabel(groupBox_6);
         label_7->setObjectName(QStringLiteral("label_7"));
+        label_7->setStyleSheet(QStringLiteral("QLabel{border:0px;}"));
 
         horizontalLayout->addWidget(label_7);
 
@@ -374,6 +393,7 @@ public:
         horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
         label_9 = new QLabel(groupBox_6);
         label_9->setObjectName(QStringLiteral("label_9"));
+        label_9->setStyleSheet(QStringLiteral("QLabel{border:0px}"));
 
         horizontalLayout_8->addWidget(label_9);
 
@@ -395,6 +415,7 @@ public:
         horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
         label_10 = new QLabel(groupBox_6);
         label_10->setObjectName(QStringLiteral("label_10"));
+        label_10->setStyleSheet(QStringLiteral("QLabel{border:0px}"));
 
         horizontalLayout_9->addWidget(label_10);
 
@@ -477,7 +498,7 @@ public:
         MainWindow->setStatusBar(statusBar);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1117, 17));
+        menuBar->setGeometry(QRect(0, 0, 1117, 22));
         menu_2 = new QMenu(menuBar);
         menu_2->setObjectName(QStringLiteral("menu_2"));
         MainWindow->setMenuBar(menuBar);

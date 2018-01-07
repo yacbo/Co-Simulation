@@ -117,12 +117,12 @@ void MainWindow::init()
    ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
    ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
 
-   ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
-   ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
+   ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
-   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
-   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
    ui->label->setStyleSheet("border:0px");
    ui->label_2->setStyleSheet("border:0px");
@@ -153,9 +153,9 @@ void MainWindow::config_Init_event()
    ui->pushButton_2->setEnabled(true);
    ui->pushButton_3->setEnabled(false);
 
-   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
-   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
    ui->lineEdit->setEnabled(false);
    ui->lineEdit_2->setEnabled(false);
@@ -214,9 +214,9 @@ void MainWindow::start_simulation_event()
     ui->pushButton_3->setEnabled(true);
 
 
-    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}");
-    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}");
-    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:balck;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
     _ms_handler->exec_sim_oper_cmd(eSimCmd_start_sim);
 }
 
@@ -231,9 +231,9 @@ void MainWindow::stop_simulation_event(){
     ui->lineEdit_3->setEnabled(true);
     ui->comboBox->setEnabled(true);
 
-    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
-    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
     //_ms_handler->exec_sim_oper_cmd(eSimCmd_stop_sim);
 }
 
@@ -349,8 +349,8 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 //禁用注册按钮s
                 ui->pushButton_4->setEnabled(false);  //禁止注册按钮.
                 ui->pushButton_5->setEnabled(true);  //启用注销按钮.
-                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
-                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
+                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
                 ui->lineEdit_8->setEnabled(false);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(false); //SBS port输入禁用.
                 fm.setSbsSoftOnLine();  //SBS在线设置.
@@ -387,8 +387,8 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 //禁用注册按钮
                 ui->pushButton_4->setEnabled(true);  //启用注册按钮.
                 ui->pushButton_5->setEnabled(false);  //禁止注销按钮.
-                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}");
-                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}");
+                ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+                ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
                 ui->lineEdit_8->setEnabled(true);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(true); //SBS port输入禁用.
                 fm.setSbsSoftOffLine();  //SBS离线设置.

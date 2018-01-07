@@ -21,6 +21,9 @@ using std::vector;
 using std::pair;
 using std::unordered_set;
 using std::unordered_map;
+#define MACRO_CSS_BUTTON_ORI "QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}"
+#define MACRO_CSS_BUTTON_HOVER "QPushButton:hover{background-color:#828282}"
+#define MACRO_CSS_BUTTON_PRESS "QPushButton:pressed{background-color:#2C2C2C}"
 
 typedef enum E_SimDevType{
     eSimDev_undef               = -1,

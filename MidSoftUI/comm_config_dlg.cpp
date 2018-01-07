@@ -9,7 +9,7 @@ comm_config_dlg::comm_config_dlg(QWidget *parent) :
 {
     //this->setStyleSheet("background-image: url(:/bac.jpg)");
      this->setFixedSize( 360,325);
-    this->setStyleSheet("background-color:#444240;");
+    this->setStyleSheet("background-color:#444240;color:white");
     ui->setupUi(this);
     init();
 }

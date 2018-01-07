@@ -14,7 +14,7 @@
    <string>软总线服务器</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../MidSoftUI/minsoft.qrc">
+   <iconset resource="sbs.qrc">
     <normaloff>:/power_32.png</normaloff>:/power_32.png</iconset>
   </property>
   <property name="autoFillBackground">
@@ -166,6 +166,14 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton:hover{
+    background-color:#CCCCCC
+}
+QPushButton:pressed{
+    background-color:#888888
+}</string>
+         </property>
          <property name="text">
           <string>启动服务</string>
          </property>
@@ -186,6 +194,14 @@
        </item>
        <item>
         <widget class="QPushButton" name="pushButton_2">
+         <property name="styleSheet">
+          <string notr="true">QPushButton:hover{
+    background-color:#CCCCCC
+}
+QPushButton:pressed{
+    background-color:#888888
+}</string>
+         </property>
          <property name="text">
           <string>停止服务</string>
          </property>
@@ -212,7 +228,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../MidSoftUI/minsoft.qrc"/>
+  <include location="sbs.qrc"/>
  </resources>
  <connections/>
 </ui>

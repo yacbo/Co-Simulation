@@ -100,8 +100,8 @@ void SbsSoftUI::init()
     ui->label->setStyleSheet("border:0px;");
     ui->label_2->setStyleSheet("border:0px;");
     ui->label_3->setStyleSheet("border:0px;");
-    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
 }
 
@@ -114,9 +114,10 @@ void SbsSoftUI::start_service()
     //禁用开始服务button
     ui->pushButton->setEnabled(false);
     //开启停止服务
-    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
     ui->pushButton_2->setEnabled(true);
+    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+    ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+
 
     int port = 9999;
     if(!ui->lineEdit->text().isEmpty() && !ui->lineEdit->text().isNull())
@@ -140,11 +141,11 @@ void SbsSoftUI::exit_service()
       {
 
       }
-
-      ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}");
-      ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}");
       ui->pushButton->setEnabled(true);
       ui->pushButton_2->setEnabled(false);
+      ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+      ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+
       ui->lineEdit->setEnabled(true);
       ui->comboBox->setEnabled(true);
       //停止服务的时候，清除"连接的设备"的日志.

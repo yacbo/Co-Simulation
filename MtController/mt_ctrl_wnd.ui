@@ -111,6 +111,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_4">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
                  <property name="text">
                   <string>注册</string>
                  </property>
@@ -131,6 +134,9 @@
                </item>
                <item>
                 <widget class="QPushButton" name="pushButton_5">
+                 <property name="styleSheet">
+                  <string notr="true"/>
+                 </property>
                  <property name="text">
                   <string>注销</string>
                  </property>
@@ -419,7 +425,7 @@
      <x>0</x>
      <y>0</y>
      <width>1117</width>
-     <height>18</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_2">
