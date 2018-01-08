@@ -285,10 +285,10 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     QDateTime date;
     double phy_time = date.currentDateTime().toSecsSinceEpoch();
 
-    for(int i=0; i<_power_conf_param.dwstm_num; ++i){
-        IntPairMap::const_iterator it = _bus_comm_id_tbl.find(_dwstm_info[i]->bus_id);
+    for(int i=0; i<_power_conf_param.upstm_num; ++i){
+        IntPairMap::const_iterator it = _bus_comm_id_tbl.find(_upstm_info[i]->bus_id);
         if(it == _bus_comm_id_tbl.cend()){
-            info = QString::number(_dwstm_info[i]->bus_id);
+            info = QString::number(_upstm_info[i]->bus_id);
             tips = QString("bus id: %1 not found").arg(info);
             b_map_success = false;
             break;
@@ -301,9 +301,9 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
         data.comm_dat.src_id = comm.first;
         data.comm_dat.dst_id = comm.second;
 
-        switch(_power_conf_param.dwstm_type){
+        switch(_power_conf_param.upstm_type){
         case ePowerData_businfor:{
-            const PowerBusInforData* d = (const PowerBusInforData*)_dwstm_info[i];
+            const PowerBusInforData* d = (const PowerBusInforData*)_upstm_info[i];
             data.sim_time = d->cur_sim_time;
             memcpy(data.power_dat, d, sizeof(PowerBusInforData));
             break;
@@ -315,7 +315,7 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     }
 
     tips = b_map_success ? "successfully" : tips;
-    info  = LogUtil::Instance()->Output(MACRO_LOCAL, "map total", _power_conf_param.dwstm_num, "data items", tips.toStdString());
+    info  = LogUtil::Instance()->Output(MACRO_LOCAL, "map total", _power_conf_param.upstm_num, "data items", tips.toStdString());
     emit progress_log_signal(info);
 
     return b_map_success;
@@ -1132,7 +1132,7 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
 
     if(_power_conf_param.dwstm_type == ePowerData_dginfor){
         _dwstm_info.resize(_power_conf_param.dwstm_num);
-        for(int i=0; i<_power_conf_param.upstm_num; ++i){
+        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
             _dwstm_info[i] = new PowerDGInforData();
             _dwstm_info[i]->data_type = ePowerData_dginfor;
         }
