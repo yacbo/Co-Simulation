@@ -62,7 +62,8 @@ private:
     static QString _local_ip;
     RcvHandler _rcv_handler;
     EProtocolType _protocol_type;
-    NetHandlerBase* _tcp_sock_server;
+
+    NetHandlerBase* _sock_server;
 };
 
 #endif // SOCK_UTIL_H

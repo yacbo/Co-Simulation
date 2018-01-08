@@ -6,17 +6,18 @@
 
 SockUtil::SockUtil()
 {
-   _tcp_sock_server = nullptr;
-   _protocol_type = eProtocol_undef;
+   _sock_server = nullptr;
    _rcv_handler = nullptr;
+   _protocol_type = eProtocol_undef;
+
 }
 
 SockUtil::~SockUtil()
 {
-    if(_tcp_sock_server){
-        _tcp_sock_server->stop_service();
-        delete _tcp_sock_server;
-        _tcp_sock_server = nullptr;
+    if(_sock_server){
+        _sock_server->stop_service();
+        delete _sock_server;
+        _sock_server = nullptr;
     }
 
     NetSockMap::iterator it_o = _device_sock_map.begin();
@@ -66,15 +67,15 @@ bool SockUtil::start_trans_service(const QString& ip, uint16_t port, EProtocolTy
     //注册接收回调函数
     handler_ptr->register_rcv_callback(_rcv_handler);
 
-    //如果采用tcp协议并作为服务器启动，则注意存储来自客户端的连接
+    //如果作为服务器启动，则注意存储来自客户端的连接
     if(!cli){
         if(protocol == eProtocol_tcp){
             connect((TcpNetHandler*)handler_ptr,  &TcpNetHandler::new_net_handler, this, &SockUtil::add_new_net_handler);
-            _tcp_sock_server = handler_ptr;
         }
         else if(protocol == eProtocol_udp){
             connect((UdpNetHandler*)handler_ptr,  &UdpNetHandler::new_net_handler, this, &SockUtil::add_new_net_handler);
         }
+        _sock_server = handler_ptr;
     }
     else{  //存储socket服务, tcp客户端或udp通信
         QString id = QString("%1:%2").arg(ip).arg(port);
@@ -157,8 +158,11 @@ uint8_t SockUtil::stop_trans_service()
 
 bool SockUtil::stop_sbs_service()
 {
-    TcpNetHandler* hndl = (TcpNetHandler*)_tcp_sock_server;
-    return hndl->stop_service();
+    if(!_sock_server){
+        return true;
+    }
+
+    return _sock_server->stop_service();
 }
 
 uint8_t SockUtil::query_trans_service_count(const QString& ip, uint16_t port)

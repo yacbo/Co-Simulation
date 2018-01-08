@@ -29,14 +29,20 @@ bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_p
       _server_ip = server_ip;
       _server_port = server_port;
 
-      _server_addr.sin_family=AF_INET;
-      _server_addr.sin_port=htons(server_port);
-      //_server_addr.sin_addr.S_un.S_addr=inet_addr();
-      _server_addr.sin_addr.S_un.S_addr=htonl(INADDR_ANY);
+      _local_addr.sin_family=AF_INET;
+      _local_addr.sin_addr.S_un.S_addr=htonl(INADDR_ANY);
+      _local_addr.sin_port=htons(dev_port == 0 ? server_port : dev_port);
 
-      ret = bind(_sock_cli, (SOCKADDR*)&_server_addr, sizeof(SOCKADDR));
+      ret = bind(_sock_cli, (SOCKADDR*)&_local_addr, sizeof(SOCKADDR));
       if(ret != NO_ERROR){
           return false;
+      }
+
+      int src_addr_len = sizeof(SOCKADDR);
+      ret = getsockname(_sock_cli, (sockaddr*)&_src_addr, &src_addr_len);
+      if(ret == NO_ERROR){
+          quint16 cli_port = ntohs(_src_addr.sin_port);
+          QString cli_addr = inet_ntoa(_src_addr.sin_addr);
       }
 
       QtConcurrent::run(this, &SocketHandler::RcvThread);
@@ -49,28 +55,28 @@ void SocketHandler::RegisterRcvCallback(RcvCallback cb)
 
 long SocketHandler::Send(const char* ip, int port, const char* data, int len)
 {
-    SOCKADDR_IN addr;
-    addr.sin_family=AF_INET;
-    addr.sin_port=htons(port);
-    addr.sin_addr.S_un.S_addr=inet_addr(ip);
+    SOCKADDR_IN dst_addr;
+    dst_addr.sin_family=AF_INET;
+    dst_addr.sin_port=htons(port);
+    dst_addr.sin_addr.S_un.S_addr=inet_addr(ip);
 
-    return sendto(_sock_cli, data, len, 0, (SOCKADDR*)&addr, sizeof(SOCKADDR));
+    return sendto(_sock_cli, data, len, 0, (SOCKADDR*)&dst_addr, sizeof(SOCKADDR));
 }
 
 void SocketHandler::RcvThread()
 {
     int ret = 0;
-    int addr_len = sizeof(SOCKADDR);
     const int buf_size = 1024 * 10;
     char buf[buf_size] = {0};
+    int src_addr_len = sizeof(SOCKADDR);
 
     while(true){
         memset(buf, 0, buf_size);
-        int rcv_len = recvfrom(_sock_cli, buf, buf_size, 0, (SOCKADDR*)&_sender_addr, &addr_len);
+        int rcv_len = recvfrom(_sock_cli, buf, buf_size, 0,  (sockaddr*)&_src_addr, &src_addr_len);
 
         if(rcv_len > 0){
-            quint16 cli_port = ntohs(_sender_addr.sin_port);
-            QString cli_addr = inet_ntoa(_sender_addr.sin_addr);
+            quint16 cli_port = ntohs(_src_addr.sin_port);
+            QString cli_addr = inet_ntoa(_src_addr.sin_addr);
             emit new_net_handler(cli_addr, cli_port);
 
             _rcv_callback(buf, rcv_len);

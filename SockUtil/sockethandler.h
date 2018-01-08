@@ -26,8 +26,8 @@ private:
 
 private:
     SOCKET _sock_cli;
-    SOCKADDR_IN _server_addr;
-    SOCKADDR_IN _sender_addr;
+    SOCKADDR_IN _src_addr;
+    SOCKADDR_IN _local_addr;
     RcvCallback _rcv_callback;
 
 private:

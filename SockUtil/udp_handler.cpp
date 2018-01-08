@@ -22,19 +22,20 @@ bool UdpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
     _server_ip = ip;
     _server_port = port;
 
-    _sock_cli = new QUdpSocket(this);
-    if(!_sock_cli){
-        return false;
-    }
+//    _sock_cli = new QUdpSocket(this);
+//    if(!_sock_cli){
+//        return false;
+//    }
 
     bool ret = true;
 
     if(cli){                                                          //作客户端
-//        _sock_cli->connectToHost(QHostAddress(_server_ip), _server_port);
-//        if(!_sock_cli->waitForConnected()){
-//            return false;
-//        }
-//       ret =  _sock_cli->bind(QHostAddress::AnyIPv4, _server_port);
+        //       ret =  _sock_cli->bind(QHostAddress::AnyIPv4, dev_port);
+       //        _sock_cli->connectToHost(QHostAddress(_server_ip), _server_port);
+       //        if(!_sock_cli->waitForConnected()){
+        //        return false;
+        //       }
+
         ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port);
     }
     else{
@@ -53,11 +54,10 @@ bool UdpNetHandler::stop_service()
     if(_sock_cli){
         if(_b_cli){
             _sock_cli->disconnectFromHost();
-            ret =  _sock_cli->waitForDisconnected();
         }
 
         _sock_cli->close();
-        _sock_cli->deleteLater();
+        delete _sock_cli;
         _sock_cli = nullptr;
     }
 
@@ -74,17 +74,21 @@ bool UdpNetHandler::send_data(const char* data, int len, const char* ip, int por
     }
 
     //服务端发送
-    if(!ip){
-        return false;
-    }
+//    if(!ip){
+//        return false;
+//    }
 
-    IpPortMap::const_iterator it = _cli_conn_tbl.find(ip);
-    if(it == _cli_conn_tbl.cend()){
-        return false;
-    }
+//    IpPortMap::const_iterator it = _cli_conn_tbl.find(ip);
+//    if(it == _cli_conn_tbl.cend()){
+//        return false;
+//    }
 
-    uint16_t snd_port = it.value();
-    return _sock_cli->writeDatagram(data,  len,  QHostAddress(ip), snd_port) == len;
+//    uint16_t snd_port = it.value();
+//    return _sock_cli->writeDatagram(data,  len,  QHostAddress(ip), snd_port) == len;
+
+    int snd_len = _hanlder.Send(ip, port, data, len);
+    return snd_len == len;
+
 }
 
 bool UdpNetHandler::register_rcv_callback(RcvHandler handler)
@@ -126,12 +130,13 @@ void UdpNetHandler::new_net_handler_slot(QString cli_ip, quint16 cli_port)
         return;
     }
 
-    IpPortMap::const_iterator it = _cli_conn_tbl.find(cli_ip);
+    QString id = QString("%1:%2").arg(cli_ip).arg(cli_port);
+    IpPortMap::const_iterator it = _cli_conn_tbl.find(id);
     if(it != _cli_conn_tbl.cend()){
         return;
     }
 
-    _cli_conn_tbl[cli_ip] = cli_port;
+    _cli_conn_tbl[id] = cli_port;
 
     emit new_net_handler(cli_ip,  cli_port, eProtocol_udp, this);
 }

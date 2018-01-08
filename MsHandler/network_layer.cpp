@@ -148,7 +148,7 @@ void network_layer::snd_lower_thread()
         bool ret = _sock_layer_ptr->send_data(ip, port.toUShort(), packet, pkt_len);
         delete[] packet;
 
-        LogUtil::Instance()->Output(MACRO_LOCAL, "send data", MACRO_SUCFAIL(ret), "length:", pkt_len);
+        LogUtil::Instance()->Output(MACRO_LOCAL, "send data", MACRO_SUCFAIL(ret), "length:", pkt_len, "dst ip:", ip.toStdString(), "dst port:", port.toUShort());
     }
 }
 
