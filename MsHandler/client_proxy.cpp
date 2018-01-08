@@ -335,7 +335,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
     sim_time = data[0].sim_time;
     stream = std::to_string(data[0].sim_time) + " ";
     for(int i=0; i<data.size(); ++i){
-        switch (_power_conf_param.dwstm_type) {
+        switch (_power_conf_param.upstm_type) {
         case ePowerData_businfor:{
             PowerBusInforData* d = (PowerBusInforData*)data[i].power_dat;
             stream += std::to_string(d->bus_volt) + " " + std::to_string(d->bus_angle) + " ";
