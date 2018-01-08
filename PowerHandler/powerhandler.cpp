@@ -72,7 +72,7 @@ bool PowerHandler::InitHandler(const char* prj_name, const char* case_name, doub
     return true;
 }
 
-int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSRDataVec& bus_infor)
+int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, const PowerSDDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSUDataVec& bus_infor)
 {
     int err = 0;
     Application* app = _instance->GetApplication();
@@ -295,7 +295,7 @@ int PowerHandler::ExportCalculateResult(Application* app, const char *filename)
 /// @return     0 if calculation was successful
 ///                   1 on error
 //--------------------------------------------------------------------------------
-int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dgInfor, double simtime)
+int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type, const PowerSDDataVec& dgInfor, double simtime)
 {
     DataObject* prj = app->GetActiveProject();
     if (!prj) {

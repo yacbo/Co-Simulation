@@ -69,15 +69,15 @@ client_proxy::~client_proxy()
         delete _power_handler;
     }
 
-    if(_input_info.size()){
-        for(int i=0; i<_power_conf_param.input_num; ++i){
-            delete _input_info[i];
+    if(_upstm_info.size()){
+        for(int i=0; i<_power_conf_param.upstm_num; ++i){
+            delete _upstm_info[i];
         }
     }
 
-    if(_result_info.size()){
-        for(int i=0; i<_power_conf_param.result_num; ++i){
-            delete _result_info[i];
+    if(_dwstm_info.size()){
+        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
+            delete _dwstm_info[i];
         }
     }
 }
@@ -285,10 +285,10 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     QDateTime date;
     double phy_time = date.currentDateTime().toSecsSinceEpoch();
 
-    for(int i=0; i<_power_conf_param.result_num; ++i){
-        IntPairMap::const_iterator it = _bus_comm_id_tbl.find(_result_info[i]->bus_id);
+    for(int i=0; i<_power_conf_param.dwstm_num; ++i){
+        IntPairMap::const_iterator it = _bus_comm_id_tbl.find(_dwstm_info[i]->bus_id);
         if(it == _bus_comm_id_tbl.cend()){
-            info = QString::number(_result_info[i]->bus_id);
+            info = QString::number(_dwstm_info[i]->bus_id);
             tips = QString("bus id: %1 not found").arg(info);
             b_map_success = false;
             break;
@@ -301,9 +301,9 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
         data.comm_dat.src_id = comm.first;
         data.comm_dat.dst_id = comm.second;
 
-        switch(_power_conf_param.result_type){
+        switch(_power_conf_param.dwstm_type){
         case ePowerData_businfor:{
-            const PowerBusInforData* d = (const PowerBusInforData*)_result_info[i];
+            const PowerBusInforData* d = (const PowerBusInforData*)_dwstm_info[i];
             data.sim_time = d->cur_sim_time;
             memcpy(data.power_dat, d, sizeof(PowerBusInforData));
             break;
@@ -315,7 +315,7 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     }
 
     tips = b_map_success ? "successfully" : tips;
-    info  = LogUtil::Instance()->Output(MACRO_LOCAL, "map total", _power_conf_param.result_num, "data items", tips.toStdString());
+    info  = LogUtil::Instance()->Output(MACRO_LOCAL, "map total", _power_conf_param.dwstm_num, "data items", tips.toStdString());
     emit progress_log_signal(info);
 
     return b_map_success;
@@ -335,7 +335,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
     sim_time = data[0].sim_time;
     stream = std::to_string(data[0].sim_time) + " ";
     for(int i=0; i<data.size(); ++i){
-        switch (_power_conf_param.result_type) {
+        switch (_power_conf_param.dwstm_type) {
         case ePowerData_businfor:{
             PowerBusInforData* d = (PowerBusInforData*)data[i].power_dat;
             stream += std::to_string(d->bus_volt) + " " + std::to_string(d->bus_angle) + " ";
@@ -350,54 +350,74 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
 
 bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 {
-    if(data.size() != _power_conf_param.result_num){
+    if(data.size() != _power_conf_param.upstm_num){
         UnionSimDatVec his_rec_vec;
-        if(!HisRecordMgr::instance()->load_record(_power_conf_param.result_type, his_rec_vec)){
+        if(!HisRecordMgr::instance()->load_record(_power_conf_param.upstm_type, his_rec_vec)){
             LogUtil::Instance()->Output(MACRO_LOCAL, "load history record failed");
             return false;
         }
 
-        if(!HisRecordMgr::instance()->fill_record(_power_conf_param.result_type, his_rec_vec, data)){
+        if(!HisRecordMgr::instance()->fill_record(_power_conf_param.upstm_type, his_rec_vec, data)){
             LogUtil::Instance()->Output(MACRO_LOCAL, "fill record failed");
             return false;
         }
 
         QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value, current items:",
-                                                   data.size(), "config value:", _power_conf_param.result_num, "Apply History Data");
+                                                   data.size(), "config value:", _power_conf_param.upstm_num, "Apply History Data");
         emit progress_log_signal(info);
     }
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.result_num);
+    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.upstm_num);
     emit progress_log_signal(info);
 
     int64_t sim_time;
     ProcEventParam param;
-    param._bus_num = _power_conf_param.result_num;
+    param._bus_num = _power_conf_param.upstm_num;
     param._in_out_info = stream_power_sim_data(data, sim_time);
-    param._type = (EPowerDataType)_power_conf_param.result_type;
+    param._type = (EPowerDataType)_power_conf_param.upstm_type;
 
-    switch(_power_conf_param.result_type){
+    switch(_power_conf_param.upstm_type){
     case ePowerData_businfor:{
-        double* dvg_ret = new double[_power_conf_param.result_num];
-        memset(dvg_ret, 0, sizeof(double) * _power_conf_param.result_num);
+        double* dvg_ret = new double[_power_conf_param.upstm_num];
+        memset(dvg_ret, 0, sizeof(double) * _power_conf_param.upstm_num);
         _decision_alth->execute_event_proc_algorithm(&param, dvg_ret);
 
+        if(HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data)){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "write record, items:", data.size());
+        }
+
+        const int offset = _power_conf_param.upstm_num - _power_conf_param.dwstm_num;
+
+        UnionSimDatVec::iterator it = data.begin();
+        data.erase(it, it + offset - 1);
+        exchange_comm_node_src_dst_id(data, _power_conf_param.upstm_type);
+
         DblVec tmp;
-        for(int i=0; i<_power_conf_param.result_num; ++i){
-            tmp.push_back(dvg_ret[i]);
+        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
+            tmp.push_back(dvg_ret[i + offset]);
         }
 
         XmlUtil::generate_xml_power_appl_data(tmp, data, vec);
         delete[] dvg_ret;
-
-        if(HisRecordMgr::instance()->write_record(sim_time, ePowerData_businfor, data)){
-            LogUtil::Instance()->Output(MACRO_LOCAL, "write record, items:", data.size());
-        }
     }
     default: break;
     }
 
     return true;
+}
+
+void client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
+{
+    switch(type){
+    case ePowerData_businfor:{
+        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
+            UnionSimData& udi = data[i];
+            std::swap(udi.comm_dat.src_id, udi.comm_dat.dst_id);
+        }
+        break;
+    }
+    default: break;
+    }
 }
 
 void client_proxy::reset_power_input_data()
@@ -408,11 +428,10 @@ void client_proxy::reset_power_input_data()
         return;
     }
 
-    int index = _dbl_vec.size() - _power_conf_param.input_num;
-    for(int i=index; i<_dbl_vec.size(); ++i){
-        switch (_power_conf_param.input_type) {
+    for(int i=0; i<_dbl_vec.size(); ++i){
+        switch (_power_conf_param.dwstm_type) {
         case ePowerData_dginfor:{
-            PowerDGInforData* di = (PowerDGInforData*)_input_info[i - index];
+            PowerDGInforData* di = (PowerDGInforData*)_dwstm_info[i];
             PowerBusInforData* bi = (PowerBusInforData*)_union_sim_dat_rcv_vec[i].power_dat;
 
             di->dv = _dbl_vec[i];
@@ -531,12 +550,12 @@ void client_proxy::handle_power(ApplMessage* msg)
         emit progress_log_signal(info);
 
         _power_sim_started = true;
-        ret = _power_handler->Execute(_power_conf_param.input_num,
-                                                           (EPowerDataType)_power_conf_param.input_type,
-                                                          _input_info,
-                                                          _power_conf_param.result_num,
-                                                          (EPowerDataType)_power_conf_param.result_type,
-                                                          _result_info);
+        ret = _power_handler->Execute(_power_conf_param.dwstm_num,
+                                                           (EPowerDataType)_power_conf_param.dwstm_type,
+                                                          _dwstm_info,
+                                                          _power_conf_param.upstm_num,
+                                                          (EPowerDataType)_power_conf_param.upstm_type,
+                                                          _upstm_info);
         if(ret < 0){
             _power_handler->ExitHandler();
             info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute Over, power software has closed");
@@ -593,12 +612,12 @@ void client_proxy::handle_power(ApplMessage* msg)
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){
         if(_power_init_success){
            reset_power_input_data();
-           ret = _power_handler->Execute(_power_conf_param.input_num,
-                                                              (EPowerDataType)_power_conf_param.input_type,
-                                                             _input_info,
-                                                             _power_conf_param.result_num,
-                                                             (EPowerDataType)_power_conf_param.result_type,
-                                                             _result_info);
+           ret = _power_handler->Execute(_power_conf_param.dwstm_num,
+                                                              (EPowerDataType)_power_conf_param.dwstm_type,
+                                                             _dwstm_info,
+                                                             _power_conf_param.upstm_num,
+                                                             (EPowerDataType)_power_conf_param.upstm_type,
+                                                             _upstm_info);
 
            if(ret == 0){
                doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_communication], eSubProcedure_session_begin, eMessage_request);
@@ -1111,20 +1130,20 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
         return;
     }
 
-    if(_power_conf_param.input_type == ePowerData_dginfor){
-        _input_info.resize(_power_conf_param.input_num);
-        for(int i=0; i<_power_conf_param.input_num; ++i){
-            _input_info[i] = new PowerDGInforData();
-            _input_info[i]->data_type = ePowerData_dginfor;
+    if(_power_conf_param.dwstm_type == ePowerData_dginfor){
+        _dwstm_info.resize(_power_conf_param.dwstm_num);
+        for(int i=0; i<_power_conf_param.upstm_num; ++i){
+            _dwstm_info[i] = new PowerDGInforData();
+            _dwstm_info[i]->data_type = ePowerData_dginfor;
         }
     }
 
-    if(_power_conf_param.result_type == ePowerData_businfor){
-        _result_info.resize(_power_conf_param.result_num);
-        for(int i=0; i<_power_conf_param.result_num; ++i){
-            _result_info[i] = new PowerBusInforData();
-            _result_info[i]->data_length = sizeof(PowerBusInforData);
-            _result_info[i]->data_type = ePowerData_businfor;
+    if(_power_conf_param.upstm_type == ePowerData_businfor){
+        _upstm_info.resize(_power_conf_param.upstm_num);
+        for(int i=0; i<_power_conf_param.upstm_num; ++i){
+            _upstm_info[i] = new PowerBusInforData();
+            _upstm_info[i]->data_length = sizeof(PowerBusInforData);
+            _upstm_info[i]->data_type = ePowerData_businfor;
         }
     }
 

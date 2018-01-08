@@ -45,6 +45,7 @@ public:
     bool map_power_comm_sim_data(UnionSimDatVec& ud);
     string stream_power_sim_data(const UnionSimDatVec& data, int64_t& sim_time);
 
+    void exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type);
     bool calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec);
     void replace_power_sim_data(UnionSimData* data);
     void reset_power_input_data();
@@ -92,8 +93,8 @@ private:
     application_layer* _appl_layer;
 
 private:
-    PowerSIDataVec _input_info;
-    PowerSRDataVec _result_info;
+    PowerSUDataVec _upstm_info;
+    PowerSDDataVec _dwstm_info;
 
 private:
     EProxyState _proxy_status;                                        //客户代理状态

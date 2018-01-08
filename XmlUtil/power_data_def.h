@@ -18,32 +18,32 @@ typedef struct PowerDataBase{
     uint32_t bus_id;                       //母线编号.
 }PowerDataBase;
 
-//电力仿真输入数据
-typedef struct PowerSimInputData : public PowerDataBase{
-    EPowerDataType data_type;
-}PowerSimInputData;
-
-//电力仿真结果数据
-typedef struct PowerSimResultData : public PowerDataBase{
+//电力仿真上行数据
+typedef struct PowerSimUpStmData : public PowerDataBase{
     int data_length;
     double cur_sim_time;
     EPowerDataType data_type;
-}PowerSimResultData;
+}PowerSimUpStmData;
+
+//电力仿真下行数据
+typedef struct PowerSimDwStmData : public PowerDataBase{
+    EPowerDataType data_type;
+}PowerSimDwStmtData;
 
 //DGInfor
-typedef struct PowerDGInforData : public PowerSimInputData{
+typedef struct PowerDGInforData : public PowerSimDwStmData{
     double dv;
     double time_diff;
 }PowerDGInforData;
 
 //BusInfor
-typedef struct PowerBusInforData : public PowerSimResultData{
+typedef struct PowerBusInforData : public PowerSimUpStmData{
     double bus_volt;                     //母线电压.
     double bus_angle;                   //母线幅角.
 }PowerDvgData;
 
-typedef std::vector<PowerSimInputData*> PowerSIDataVec;
-typedef std::vector<PowerSimResultData*> PowerSRDataVec;
+typedef std::vector<PowerSimUpStmData*> PowerSUDataVec;
+typedef std::vector<PowerSimDwStmData*> PowerSDDataVec;
 
 #pragma pack(pop)
 

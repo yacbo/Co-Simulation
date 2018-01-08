@@ -203,10 +203,10 @@ typedef struct PowerConfParam{
     std::string case_name;
     double sim_time;
     double sim_period;
-    int32_t input_type;     //输入类型，如DGInfor
-    int32_t result_type;    //结果类型，如BusInfor
-    int32_t input_num;     //输入数据数目， 如39
-    int32_t result_num;    //结果数据数目， 如10
+    int32_t upstm_type;     //上行类型，如DGInfor
+    int32_t dwstm_type;    //下行类型，如BusInfor
+    int32_t upstm_num;     //上行数据数目， 如39
+    int32_t dwstm_num;    //下行数据数目， 如10
     std::string nodes_map;
 }PowerConfParam;
 

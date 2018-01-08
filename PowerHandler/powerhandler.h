@@ -28,7 +28,7 @@ public:
 
 public:
     bool InitHandler(const char* prj_name, const char* case_name, double sim_time, double sim_period);
-    int Execute(int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSRDataVec& bus_infor);
+    int Execute(int dg_num, EPowerDataType dg_type, const PowerSDDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSUDataVec& bus_infor);
     double QueryCurSimTime(bool realtime = false);
     void ExitHandler();
 
@@ -40,7 +40,7 @@ private:
     int CalculateTransient(Application* app, double simutime);
     int ExportCalculateResult(Application* app, const char *filename);
 
-    int SetEvents(Application* app, int dg_num, EPowerDataType dg_type, const PowerSIDataVec& dgInfor, double simtime);
+    int SetEvents(Application* app, int dg_num, EPowerDataType dg_type, const PowerSDDataVec& dgInfor, double simtime);
 
 private:
     bool ReadSimRet(const char* filename, SStrVec& mat);
