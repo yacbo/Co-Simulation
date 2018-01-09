@@ -25,8 +25,10 @@ private:
 
 private:
     bool load_file_list(StrVec& vec);
+    bool check_folder(const string& folder);
 
 private:
+    const string _rec_base_dir;
     const string _rec_name_prefix;
     const string _rec_name_postfix;
 

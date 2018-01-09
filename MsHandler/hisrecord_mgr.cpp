@@ -5,12 +5,14 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
-
+#include <QDir>
+#include <QCoreApplication>
 #include "hisrecord_mgr.h"
 #include "power_data_def.h"
 
 HisRecordMgr::HisRecordMgr()
-    : _rec_name_prefix("./sim-rec/his-rec-")
+    : _rec_base_dir(QCoreApplication::applicationDirPath().toStdString())
+    , _rec_name_prefix("/sim-rec/his-rec-")
     , _rec_name_postfix(".rec")
 {
     load_file_list(_file_list_vec);
@@ -27,14 +29,28 @@ HisRecordMgr* HisRecordMgr::instance()
     return &mgr;
 }
 
-bool  HisRecordMgr::load_file_list(StrVec& vec)
+bool HisRecordMgr::check_folder(const string& folder)
 {
-    struct _finddata_t file;
-    const char* folder = "./sim-rec";
+    QString path(folder.c_str());
+    QDir dir(path);
+    if(dir.exists()){
+      return true;
+    }
+
+    //创建多级目录
+    return dir.mkpath(path);
+}
+
+bool HisRecordMgr::load_file_list(StrVec& vec)
+{
+    string folder = _rec_base_dir + "/sim-rec";
+    check_folder(folder);
+
     const char* local_dir = ".";
     const char* parent_dir = "..";
 
-    long hndl = _findfirst( folder, &file);
+    struct _finddata_t file;
+    long hndl = _findfirst( folder.c_str(), &file);
     if ( hndl < 0 ){
         return false;
     }
@@ -102,7 +118,7 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
         return false;
     }
 
-    string rec_path = _rec_name_prefix + file_name;
+    string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
     std::ifstream in(rec_path);
     if(in.fail()){
         return false;
@@ -142,7 +158,7 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
 bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec& vec)
 {
     string file_name = std::to_string(sim_time) + _rec_name_postfix;;
-    string rec_path = _rec_name_prefix + file_name;
+    string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
     std::ofstream out(rec_path);
     if(out.fail()){
         return false;
