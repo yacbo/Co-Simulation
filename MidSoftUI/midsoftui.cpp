@@ -5,6 +5,7 @@
 #include "comm_config_dlg.h"
 #include "xml_util.h"
 #include <QPainter>
+#include "log_util.h"
 MidSoftUI::MidSoftUI(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::MidSoftUI)
@@ -197,6 +198,9 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
         //若注册成功，注册按钮禁用,启用注销按钮.
         if(ui->registerButton->isEnabled() && login)
         {
+           //操作日志
+           LogUtil::Instance()->Output(MACRO_LOCAL, "[register]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+
            ui->registerButton->setEnabled(false);  //注册按钮禁用.
            ui->unregisterButton->setEnabled(true);//注销按钮启用.
            ui->lineEdit->setEnabled(false);  //sbs ip输入禁用.
@@ -212,6 +216,9 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
         //若注销成功，注册按钮禁用,启用注销按钮.
         if(ui->unregisterButton->isEnabled() && !login)
         {
+           //操作日志
+           LogUtil::Instance()->Output(MACRO_LOCAL, "[unregister]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+
            ui->registerButton->setEnabled(true);  //注册按钮启用.
            ui->unregisterButton->setEnabled(false);//注销按钮禁用.
            ui->lineEdit->setEnabled(true);  //sbs ip输入启用.
@@ -225,7 +232,6 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
         }
     }
 }
-
 
 void MidSoftUI::progress_log_slots(QString log)
 {

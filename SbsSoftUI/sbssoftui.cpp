@@ -2,6 +2,7 @@
 #include "ui_sbssoftui.h"
 #include <QPainter>
 #include <QHeaderView>
+#include "log_util.h"
 
 SbsSoftUI::SbsSoftUI(QWidget *parent) :
     QDialog(parent),
@@ -107,7 +108,8 @@ void SbsSoftUI::init()
 
 void SbsSoftUI::start_service()
 {
-    //禁用lineEdit，port
+
+     //禁用lineEdit，port
     ui->lineEdit->setEnabled(false);
     //禁用combox
     ui->comboBox->setEnabled(false);
@@ -130,6 +132,9 @@ void SbsSoftUI::start_service()
      {
 
      }
+
+     //操作日志
+      LogUtil::Instance()->Output(MACRO_LOCAL, "[start_service]"," localhost:",ui->lineEdit_2->text().toStdString()," Port:",ui->lineEdit->text().toStdString()," ProtocolType:",ui->comboBox->currentText().toStdString());
 }
 
 //停止服务事件
@@ -151,6 +156,9 @@ void SbsSoftUI::exit_service()
       //停止服务的时候，清除"连接的设备"的日志.
       _login_num = 0;
       _login_model->removeRows(0,_login_model->rowCount());
+
+      //操作日志
+       LogUtil::Instance()->Output(MACRO_LOCAL, "[exit_service]"," localhost:",ui->lineEdit_2->text().toStdString()," Port:",ui->lineEdit->text().toStdString()," ProtocolType:",ui->comboBox->currentText().toStdString());
 
   }
 }
@@ -180,6 +188,10 @@ void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int
         _login_model->setItem(_login_num,3,new QStandardItem(s_port));
         _login_model->item(_login_num, 3)->setTextAlignment(Qt::AlignCenter);
         ++_login_num;
+
+        //操作日志 记录连接的器件
+         QString log = LogUtil::Instance()->Output(MACRO_LOCAL, "[online device]"," dev_id:",s_dev_id.toStdString()," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port);
+         rcv_progress_log_slot(log);//打印到界面
     }
     else
     {
@@ -188,8 +200,10 @@ void SbsSoftUI::rcv_reg_slot(QString dev_name, QString dev_ip, int dev_port, int
         {
             return;
         }
-
-        //定位“设备id”列
+        //操作日志 记录删除连接的器件
+         QString log = LogUtil::Instance()->Output(MACRO_LOCAL, "[offline device]"," dev_id:",s_dev_id.toStdString()," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port);
+         rcv_progress_log_slot(log);//打印到界面
+         //定位“设备id”列
         QStandardItem* tItem = tList.at(0);
         _login_model->removeRow(tItem->row());//移除
         --_login_num;
