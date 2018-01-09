@@ -382,14 +382,12 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         memset(dvg_ret, 0, sizeof(double) * _power_conf_param.upstm_num);
         _decision_alth->execute_event_proc_algorithm(&param, dvg_ret);
 
-        if(HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data)){
-            LogUtil::Instance()->Output(MACRO_LOCAL, "write record, items:", data.size());
-        }
-
         const int offset = _power_conf_param.upstm_num - _power_conf_param.dwstm_num;
+        bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
+        LogUtil::Instance()->Output(MACRO_LOCAL, "write record, items:", data.size(), MACRO_SUCFAIL(ret));
 
         UnionSimDatVec::iterator it = data.begin();
-        data.erase(it, it + offset - 1);
+        data.erase(it, it + offset);
         exchange_comm_node_src_dst_id(data, _power_conf_param.upstm_type);
 
         DblVec tmp;
