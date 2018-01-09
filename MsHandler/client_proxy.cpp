@@ -140,7 +140,7 @@ void client_proxy::rcv_upper_msg_callback(const char* data, int len)
             if(proc_type != eSubProcedure_undef){
                 QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], proc_type, eMessage_request);
                 emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
-                info = QString("rcv communication sim data items:").arg(_union_sim_dat_rcv_vec.size());
+                info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv communication sim data items:", _union_sim_dat_rcv_vec.size());
             }
             else{
                 info = LogUtil::Instance()->Output(MACRO_LOCAL, "not set dst device type when forward the received communication sim data");
@@ -350,10 +350,11 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
 
 bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 {
+    QString info;
     if(data.size() != _power_conf_param.upstm_num){
         UnionSimDatVec his_rec_vec;
         if(!HisRecordMgr::instance()->load_record(_power_conf_param.upstm_type, his_rec_vec)){
-            LogUtil::Instance()->Output(MACRO_LOCAL, "load history record failed");
+            info = LogUtil::Instance()->Output(MACRO_LOCAL, "load history record failed, current data items:", data.size(), "config items:", _power_conf_param.upstm_num);
             return false;
         }
 
@@ -362,12 +363,12 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
             return false;
         }
 
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value, current items:",
-                                                   data.size(), "config value:", _power_conf_param.upstm_num, "Apply History Data");
+        info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value, current items:",
+                                                   data.size(), "config items:", _power_conf_param.upstm_num, "Apply History Data");
         emit progress_log_signal(info);
     }
 
-    QString info  = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.upstm_num);
+    info = LogUtil::Instance()->Output(MACRO_LOCAL, "total data items:", _power_conf_param.upstm_num);
     emit progress_log_signal(info);
 
     int64_t sim_time;
@@ -602,7 +603,8 @@ void client_proxy::handle_power(ApplMessage* msg)
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_confirm){
         XmlUtil::parse_xml_power_appl_data(msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_rcv_vec);
         doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_communication], eSubProcedure_session_end, eMessage_request);
-        tips += "session end, request";
+        tips += QString("invoke, confirm, rcv data items: %1 ").arg(_union_sim_dat_rcv_vec.size());
+        tips += "start session end, request";
 
         _expect_msg_type = eMessage_confirm;
         _expect_proc_type = eSubProcedure_session_end;
@@ -821,6 +823,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
         DataXmlVec vec;
         XmlUtil::generate_xml_power_sim_data(_union_sim_dat_rcv_vec, vec);
         doc = XmlUtil::generate_snd_data_xml(ss_id, ps_id, appl_name, 1, vec, eMessage_request);
+        tips += QString("send data, request, items: %1").arg(_union_sim_dat_rcv_vec.size());
         tips += "send data, request";
 
         _expect_msg_type = eMessage_confirm;
