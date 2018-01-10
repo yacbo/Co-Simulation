@@ -37,6 +37,7 @@ private:
     bool relay_handle(SessionMessageBody* sess_msg);
     void handle_msg(SessionMessageBody* sess_msg);
     bool forward_power_cfg_param_to_power_appl(const PowerConfParam& param);
+    bool forward_power_cfg_param_to_communication(const PowerConfParam& param);
 
 private:
     QDomDocument* handle_cfg_comm_param(SessionMessageBody* sess_msg);

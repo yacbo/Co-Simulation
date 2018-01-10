@@ -3,6 +3,7 @@
 #include <fstream>
 #include <QNetworkInterface>
 #include "xml_util.h"
+#include "power_data_def.h"
 
 XmlUtil::XmlUtil()
 {
@@ -1221,64 +1222,72 @@ bool XmlUtil::load_PowerSimConfParam_cfg(const char* cfg_path, PowerConfParam& d
         }
     }
 
-    if(cfg_par_vec.size() < 8){
+    if(cfg_par_vec.size() < 9){
         return false;
     }
 
-    data.prj_name = cfg_par_vec[0];
-    data.case_name = cfg_par_vec[1];
-    data.sim_time = std::stod(cfg_par_vec[2]);
-    data.sim_period = std::stod(cfg_par_vec[3]);
-    data.dwstm_type = std::stoi(cfg_par_vec[4]);
-    data.upstm_type = std::stoi(cfg_par_vec[5]);
-    data.dwstm_num = std::stoi(cfg_par_vec[6]);
-    data.upstm_num = std::stoi(cfg_par_vec[7]);
+    const int map_index = 9;
+    data.prj_type = std::stoi(cfg_par_vec[0]);
+    data.prj_name = cfg_par_vec[1];
+    data.case_name = cfg_par_vec[2];
+    data.sim_time = std::stod(cfg_par_vec[3]);
+    data.sim_period = std::stod(cfg_par_vec[4]);
+    data.dwstm_type = std::stoi(cfg_par_vec[5]);
+    data.upstm_type = std::stoi(cfg_par_vec[6]);
+    data.dwstm_num = std::stoi(cfg_par_vec[7]);
+    data.upstm_num = std::stoi(cfg_par_vec[8]);
 
-    if(cfg_par_vec.size() > 8){
-        string nodes_map_tbl;
-        for(int i=5; i<cfg_par_vec.size(); ++i){
-            nodes_map_tbl += cfg_par_vec[i] + " ";
-        }
-
-        QByteArray d = QByteArray::fromRawData(nodes_map_tbl.c_str(), nodes_map_tbl.length());
-        QByteArray cd = qCompress(d, 5);
-        QByteArray encd = cd.toBase64();
-        QByteArray decd = QByteArray::fromBase64(encd);
-        QByteArray ud = qUncompress(decd);
-        data.nodes_map = nodes_map_tbl;
+    string dwnodes_map_tbl, upnodes_map_tbl;
+    int dw_end_index = map_index + data.dwstm_num;
+    for(int i=map_index; i<dw_end_index; ++i){
+        dwnodes_map_tbl += cfg_par_vec[i] + " ";
     }
+
+    int up_end_index = dw_end_index + data.upstm_num;
+    for(int i=dw_end_index; i<up_end_index; ++i){
+        upnodes_map_tbl += cfg_par_vec[i] + " ";
+    }
+
+    data.dwnodes_map = dwnodes_map_tbl;
+    data.upnodes_map = upnodes_map_tbl;
 
     return true;
 }
 
 bool  XmlUtil::parse_PowerSimConfParam_xml(const DataXmlVec& vec, PowerConfParam& data)
 {
-    VariableMsgDataBody* var_prj_name = (VariableMsgDataBody*)vec[0];
+    VariableMsgDataBody* var_prj_type = (VariableMsgDataBody*)vec[0];
+    data.prj_type = std::stoi(var_prj_type->_var_value);
+
+    VariableMsgDataBody* var_prj_name = (VariableMsgDataBody*)vec[1];
     data.prj_name = var_prj_name->_var_value;
 
-    VariableMsgDataBody* var_case_name = (VariableMsgDataBody*)vec[1];
+    VariableMsgDataBody* var_case_name = (VariableMsgDataBody*)vec[2];
     data.case_name = var_case_name->_var_value;
 
-    VariableMsgDataBody* var_sim_time = (VariableMsgDataBody*)vec[2];
+    VariableMsgDataBody* var_sim_time = (VariableMsgDataBody*)vec[3];
     data.sim_time = std::stod(var_sim_time->_var_value);
 
-    VariableMsgDataBody* var_sim_period = (VariableMsgDataBody*)vec[3];
+    VariableMsgDataBody* var_sim_period = (VariableMsgDataBody*)vec[4];
     data.sim_period = std::stod(var_sim_period->_var_value);
 
-    VariableMsgDataBody* var_dwstm_type= (VariableMsgDataBody*)vec[4];
+    VariableMsgDataBody* var_dwstm_type= (VariableMsgDataBody*)vec[5];
     data.dwstm_type = std::stoi(var_dwstm_type->_var_value);
 
-    VariableMsgDataBody* var_upstm_type= (VariableMsgDataBody*)vec[5];
+    VariableMsgDataBody* var_upstm_type= (VariableMsgDataBody*)vec[6];
     data.upstm_type = std::stoi(var_upstm_type->_var_value);
 
-    VariableMsgDataBody* var_dwstm_num= (VariableMsgDataBody*)vec[6];
+    VariableMsgDataBody* var_dwstm_num= (VariableMsgDataBody*)vec[7];
     data.dwstm_num = std::stoi(var_dwstm_num->_var_value);
 
-    VariableMsgDataBody* var_upstm_num= (VariableMsgDataBody*)vec[7];
+    VariableMsgDataBody* var_upstm_num= (VariableMsgDataBody*)vec[8];
     data.upstm_num = std::stoi(var_upstm_num->_var_value);
 
-    VariableMsgDataBody* var_nodes_map = (VariableMsgDataBody*)vec[8];
-    data.nodes_map = var_nodes_map->_var_value;
+    VariableMsgDataBody* var_dwnodes_map = (VariableMsgDataBody*)vec[9];
+    data.dwnodes_map = var_dwnodes_map->_var_value;
+
+    VariableMsgDataBody* var_upnodes_map = (VariableMsgDataBody*)vec[10];
+    data.upnodes_map = var_upnodes_map->_var_value;
 
     return true;
 }
@@ -1293,6 +1302,12 @@ QDomDocument* XmlUtil::generate_PowerSimConfParam_xml(int ss_id, int ps_id, cons
     proc_body->_msg_name = "PowerSimConfParam";
     proc_body->_proc_type = eSubProcedure_cfg_power_data;
     proc_body->_msg_type = eMessage_notify;
+
+    VariableMsgDataBody* var_prj_type = new VariableMsgDataBody();
+    var_prj_type->_var_name = "prj_type";
+    var_prj_type->_var_type = eData_string;
+    var_prj_type->_var_value = std::to_string(data->prj_type);
+    proc_body->_data_vector.push_back(var_prj_type);
 
     VariableMsgDataBody* var_prj_name = new VariableMsgDataBody();
     var_prj_name->_var_name = "prj_name";
@@ -1331,22 +1346,28 @@ QDomDocument* XmlUtil::generate_PowerSimConfParam_xml(int ss_id, int ps_id, cons
     proc_body->_data_vector.push_back(var_upstm_type);
 
     VariableMsgDataBody* var_dwstm_num= new VariableMsgDataBody();
-    var_dwstm_num->_var_name = "input num";
+    var_dwstm_num->_var_name = "dw num";
     var_dwstm_num->_var_type = eData_int32;
     var_dwstm_num->_var_value = std::to_string(data->dwstm_num);
     proc_body->_data_vector.push_back(var_dwstm_num);
 
     VariableMsgDataBody* var_upstm_num= new VariableMsgDataBody();
-    var_upstm_num->_var_name = "result num";
+    var_upstm_num->_var_name = "up num";
     var_upstm_num->_var_type = eData_int32;
     var_upstm_num->_var_value = std::to_string(data->upstm_num);
     proc_body->_data_vector.push_back(var_upstm_num);
 
-    VariableMsgDataBody* var_nodes_map= new VariableMsgDataBody();
-    var_nodes_map->_var_name = "nodes_map";
-    var_nodes_map->_var_type = eData_string;
-    var_nodes_map->_var_value = data->nodes_map;
-    proc_body->_data_vector.push_back(var_nodes_map);
+    VariableMsgDataBody* var_dwnodes_map= new VariableMsgDataBody();
+    var_dwnodes_map->_var_name = "dwnodes_map";
+    var_dwnodes_map->_var_type = eData_string;
+    var_dwnodes_map->_var_value = data->dwnodes_map;
+    proc_body->_data_vector.push_back(var_dwnodes_map);
+
+    VariableMsgDataBody* var_upnodes_map= new VariableMsgDataBody();
+    var_upnodes_map->_var_name = "upnodes_map";
+    var_upnodes_map->_var_type = eData_string;
+    var_upnodes_map->_var_value = data->upnodes_map;
+    proc_body->_data_vector.push_back(var_upnodes_map);
 
     SessionMessageBody* sess_body = new SessionMessageBody();
     sess_body->_id_i2u = ss_id;
@@ -1730,7 +1751,7 @@ void XmlUtil::generate_xml_power_sim_data(const UnionSimDatVec& data, DataXmlVec
     }
 }
 
-void XmlUtil::parse_xml_power_appl_data(const DataXmlVec& vec, DblVec& data, UnionSimDatVec& us_data)
+void XmlUtil::parse_xml_power_appl_data(int type, const DataXmlVec& vec, DblVec& data, UnionSimDatVec& us_data)
 {
     data.clear();
     us_data.clear();
@@ -1740,41 +1761,59 @@ void XmlUtil::parse_xml_power_appl_data(const DataXmlVec& vec, DblVec& data, Uni
     }
 
     DataXmlVec& xml_vec = const_cast<DataXmlVec&>(vec);
-    VariableMsgDataBody* var = (VariableMsgDataBody*)xml_vec.back();
-    xml_vec.pop_back();
+    switch(type){
+    case ePowerPrj_avr_ctrl_39:{
+        VariableMsgDataBody* var = (VariableMsgDataBody*)xml_vec.back();
+        xml_vec.pop_back();
 
-    parse_xml_power_sim_data(xml_vec, us_data);
+        parse_xml_power_sim_data(xml_vec, us_data);
 
-    QByteArray d_base64 = QByteArray::fromRawData(var->_var_value.c_str(), var->_var_value.length());
-    QByteArray d = QByteArray::fromBase64(d_base64);
+        QByteArray d_base64 = QByteArray::fromRawData(var->_var_value.c_str(), var->_var_value.length());
+        QByteArray d = QByteArray::fromBase64(d_base64);
 
-    double dvg;
-    const int db_size = sizeof(double);
-    for(int i=0; i<d.length(); i+=db_size){
-        memcpy(&dvg, d.data() + i, db_size);
-        data.push_back(dvg);
+        double dvg;
+        const int db_size = sizeof(double);
+        for(int i=0; i<d.length(); i+=db_size){
+            memcpy(&dvg, d.data() + i, db_size);
+            data.push_back(dvg);
+        }
+
+        break;
+    }
+    case ePowerPrj_psse_jiangsu:{
+        parse_xml_power_sim_data(xml_vec, us_data);
+        break;
+    }
+    default: break;
     }
 }
 
-void XmlUtil::generate_xml_power_appl_data(const DblVec& data, const UnionSimDatVec& us_data, DataXmlVec& vec)
+void XmlUtil::generate_xml_power_appl_data(int type, const DblVec& data, const UnionSimDatVec& us_data, DataXmlVec& vec)
 {
     vec.clear();
     generate_xml_power_sim_data(us_data, vec);
 
-    char dvg[1024 * 100] = {0};
-    const int db_size = sizeof(double);
+    switch(type){
+    case ePowerPrj_avr_ctrl_39:{
+        char dvg[1024 * 100] = {0};
+        const int db_size = sizeof(double);
 
-    for(int i=0; i<data.size(); ++i){
-        memcpy(dvg + i *db_size, &data[i], db_size);
+        for(int i=0; i<data.size(); ++i){
+            memcpy(dvg + i *db_size, &data[i], db_size);
+        }
+
+        int dvg_size = db_size * data.size();
+        QByteArray d = QByteArray::fromRawData(dvg, dvg_size);
+        VariableMsgDataBody* var = new VariableMsgDataBody();
+        var->_var_name = "dvg";
+        var->_var_type = eData_string;
+        var->_var_value = d.toBase64().toStdString();
+        vec.push_back(var);
+        break;
     }
-
-    int dvg_size = db_size * data.size();
-    QByteArray d = QByteArray::fromRawData(dvg, dvg_size);
-    VariableMsgDataBody* var = new VariableMsgDataBody();
-    var->_var_name = "dvg";
-    var->_var_type = eData_string;
-    var->_var_value = d.toBase64().toStdString();
-    vec.push_back(var);
+    case ePowerPrj_psse_jiangsu: break;
+    default: break;
+    }
 }
 
 QByteArray XmlUtil::_comm_sim_conf_data;

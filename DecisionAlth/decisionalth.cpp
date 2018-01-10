@@ -24,8 +24,12 @@ void DecisionAlth::execute_event_proc_algorithm(const ProcEventParam* param, voi
     AlgorithmUtil* util = new AlgorithmUtil();
     ProcEventParam* ev_p = const_cast<ProcEventParam*>(param);
     switch(ev_p->_type){
-    case ePowerData_businfor:{
+    case ePowerPrj_avr_ctrl_39:{
         ev_p->_handle_success = util->Alth_Calculate_dVg(ev_p->_in_out_info.c_str(), ev_p->_bus_num,  (double*)customData);
+        break;
+    }
+    case ePowerPrj_psse_jiangsu:{
+        ev_p->_handle_success = util->Alth_Calculate_CtrlOrder(ev_p->_in_out_info.c_str(), (char*)customData);
         break;
     }
     default: break;

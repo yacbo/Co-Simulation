@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string.h>
 #include "powerhandler.h"
+using std::string;
 
 PowerHandler::PowerHandler()
 {
@@ -20,7 +21,7 @@ PowerHandler::~PowerHandler()
     }
 }
 
-bool PowerHandler::InitHandler(const char* prj_name, const char* case_name, double sim_time, double sim_period)
+bool PowerHandler::InitHandler(EPowerPrjType prj_type, const char* prj_name, const char* case_name, double sim_time, double sim_period)
 {
     _instance = _api_fixture->GetInstance();      //ApiFixture is responsible for creation/destruction api instance
     if (!_instance) {
@@ -59,10 +60,31 @@ bool PowerHandler::InitHandler(const char* prj_name, const char* case_name, doub
     DataObjVec folders = Utils::GetChildren(events, "EvtParam");
 
     DataObjVec::iterator it = folders.begin();
-    for (; it != folders.end(); ++it) {
-        DataObject* folder = *it;
-        folder->DeleteObject();
+    switch(prj_type){
+    case ePowerPrj_avr_ctrl_39:{
+        for (; it != folders.end(); ++it) {
+            DataObject* folder = *it;
+            folder->DeleteObject();
+        }
+        break;
     }
+    case ePowerPrj_psse_jiangsu: {
+        for (; it != folders.end(); ++it) {
+            DataObject* folder = *it;
+            string EvtSwitchName = folder->GetAttributeString("loc_name")->GetString();
+            if(EvtSwitchName.compare("切机")==0)
+            {
+                folder->DeleteObject();
+            }
+        }
+        break;
+    }
+    default: break;
+    }
+
+    _prj_type = prj_type;
+    _prj_case = case_name;
+    _prj_name = prj_name;
 
     _sim_time = sim_time;
     _sim_period = sim_period;
@@ -72,7 +94,7 @@ bool PowerHandler::InitHandler(const char* prj_name, const char* case_name, doub
     return true;
 }
 
-int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, const PowerSDDataVec& dg_infor, int bus_num, EPowerDataType bus_type, const PowerSUDataVec& bus_infor)
+int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, int su_num, EPowerDataType su_type, const PowerSUDataVec& su_data)
 {
     int err = 0;
     Application* app = _instance->GetApplication();
@@ -82,13 +104,23 @@ int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, const PowerSDDataV
         return -1;
     }
 
-    _cur_time = _sim_period * _sim_count++;
+    switch(_prj_type){
+    case ePowerPrj_avr_ctrl_39: _cur_time = _sim_period * _sim_count++; break;
+    case ePowerPrj_psse_jiangsu: _cur_time = _sim_count == 1 ? _sim_period : _sim_time - _sim_period;
+    default: break;
+    }
+
     if(_cur_time >= _sim_time){  //exit simulation
         return -2;
     }
 
     double simutime = _cur_time;
-    err = SetEvents(app, dg_num, dg_type, dg_infor, simutime);
+    switch(_prj_type){
+    case ePowerPrj_avr_ctrl_39: err = SetAVREvents(app, sd_num, sd_type, sd_data, simutime); break;
+    case ePowerPrj_psse_jiangsu: err = SetPsseJSEvents(app, sd_num, sd_type, sd_data, simutime); break;
+    default:  err = 1; break;
+    }
+
     if(err > 0){
         //std::cout << "Execute, error: SetEvents" << std::endl;
         return -3;
@@ -113,15 +145,30 @@ int PowerHandler::Execute(int dg_num, EPowerDataType dg_type, const PowerSDDataV
         return -6;
     }
 
-    if(bus_type == ePowerData_businfor){
-        int current = mat.size();
-        for (int i = 0; i < bus_num; i++){
-            PowerBusInforData* info = (PowerBusInforData*)bus_infor[i];
+    const int end_line = mat.size() - 1;
+
+    switch(_prj_type){
+    case ePowerPrj_avr_ctrl_39:{
+        for (int i = 0; i < su_num; i++){
+            PowerBusInforData* info = (PowerBusInforData*)su_data[i];
             info->bus_id = i + 1;
             info->cur_sim_time = _cur_time;
-            info->bus_volt = (double)atof(mat[current - 1][2 * i + 1].c_str());
-            info->bus_angle = (double)atof(mat[current - 1][2 * i + 2].c_str());
+            info->bus_volt = (double)atof(mat[end_line][2 * i + 1].c_str());
+            info->bus_angle = (double)atof(mat[end_line][2 * i + 2].c_str());
         }
+        break;
+    }
+    case ePowerPrj_psse_jiangsu:{
+        PowerOperData* info = (PowerOperData*)su_data[0];
+        info->bus_id=40900;
+        info->cur_sim_time = (double)atof(mat[end_line][0].c_str());
+        strcpy_s(info->lne1_name, mat[end_line][1].c_str());
+        info->lne1_power = (double)atof(mat[end_line][2].c_str());
+        strcpy_s(info->lne2_name, mat[end_line][3].c_str());
+        info->lne2_power= (double)atof(mat[end_line][4].c_str());
+        break;
+    }
+    default: break;
     }
 
     //std::cout << "Execute, success: Execute" << std::endl;
@@ -219,6 +266,18 @@ DataObject* PowerHandler::GetAvrObject(DataObject* prj,  const char *avrname, co
     return d_avr;
 }
 
+DataObject* PowerHandler::GetGenerateObject(DataObject* prj, const char *gname, const char *gridname)
+{
+    DataObject* myg = nullptr;
+    DataObject* networkmodel = GetChild(prj, "Network Model");
+    DataObject* networkdata = GetChild(networkmodel, "Network Data");
+    DataObject* mygrid = GetChild(networkdata, gridname);
+
+    myg = GetChild(mygrid, gname);
+
+    return myg;
+}
+
 //--------------------------------------------------------------------------------
 /// Performs a transient calculation for active project.
 ///
@@ -295,7 +354,7 @@ int PowerHandler::ExportCalculateResult(Application* app, const char *filename)
 /// @return     0 if calculation was successful
 ///                   1 on error
 //--------------------------------------------------------------------------------
-int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type, const PowerSDDataVec& dgInfor, double simtime)
+int PowerHandler::SetAVREvents(Application* app, int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, double simtime)
 {
     DataObject* prj = app->GetActiveProject();
     if (!prj) {
@@ -307,21 +366,21 @@ int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type
     ValueGuard intEvt(app->Execute("GetCaseObject", &int_evt));
     DataObject* events = intEvt->GetDataObject();
 
-    const int obj_num = dg_num;
+    const int obj_num = sd_num;
     DataObject* paramevent[10];
     DataObject* dslavr[10];
 
     char avr[32] = {0}, pp[32] = {0};
-    for(int i=0; i<dg_num - 1; ++i){
+    for(int i=0; i<sd_num - 1; ++i){
         sprintf_s(avr, "AVR 0%d", i + 1);
         sprintf_s(pp, "Power Plant 0%d", i + 1);
         dslavr[i] = GetAvrObject(prj, avr, pp);
     }
-    dslavr[dg_num - 1] = GetAvrObject(prj, "AVR 10", "Power Plant 10");
+    dslavr[sd_num - 1] = GetAvrObject(prj, "AVR 10", "Power Plant 10");
 
     int error = 0;
     char avrparam[32] = {0};
-    for(int i=0; i<dg_num; ++i){
+    for(int i=0; i<sd_num; ++i){
         sprintf_s(avrparam, "avrparam%d", i + 1);
         paramevent[i] = events->CreateObject("EvtParam", avrparam);
         paramevent[i]->SetAttributeObject("p_target", dslavr[i], &error);
@@ -329,16 +388,45 @@ int PowerHandler::SetEvents(Application* app, int dg_num, EPowerDataType dg_type
     }
 
     double etime = simtime;
-    for (int i = 0; i < dg_num; ++i){
+    for (int i = 0; i < sd_num; ++i){
         paramevent[i]->SetAttributeDouble("hrtime", 0, &error);                //这边时间为当前仿真时刻+通信时延
         paramevent[i]->SetAttributeDouble("mtime", 0, &error);                 //这边时间为当前仿真时刻+通信时延
         paramevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
 
-        if(dg_type == ePowerData_dginfor){
-            const PowerDGInforData* dg_infor = (const PowerDGInforData*)dgInfor[i];
-            paramevent[i]->SetAttributeDouble("value", dg_infor->dv, &error); //这边值为发电机机端电压调整量
+        if(sd_type == ePowerData_dginfor){
+            const PowerDGInforData* dg_data = (const PowerDGInforData*)sd_data[i];
+            paramevent[i]->SetAttributeDouble("value", dg_data->dv, &error); //这边值为发电机机端电压调整量
         }
     }
+
+    return error;
+}
+
+int PowerHandler::SetPsseJSEvents(Application* app, int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, double simtime)
+{
+    DataObject* prj = app->GetActiveProject();
+    if (!prj) {
+        return 1;
+    }
+    //run a Result Export
+    Value int_evt("IntEvt");
+    ValueGuard intEvt(app->Execute("GetCaseObject", &int_evt));
+    DataObject* events = intEvt->GetDataObject();
+
+    int error = 0;
+    const PowerCtrlOrderData* ctrl_order = (const PowerCtrlOrderData*)sd_data[0];
+
+    const char* Gname = ctrl_order->gname;
+    DataObject* Gplant = GetGenerateObject(prj, Gname, "20 江苏");
+    DataObject* SwityhEvent = events->CreateObject("EvtSwitch", "切机");
+
+    SwityhEvent->SetAttributeObject("p_target", Gplant, &error);
+    double etime = ctrl_order->comm_trans_time+simtime;//假定0s时刻发生短路故障
+    SwityhEvent->SetAttributeDouble("hrtime", 0, &error);//这边时间为当前仿真时刻+通信时延
+    SwityhEvent->SetAttributeDouble("mtime", 0, &error);//这边时间为当前仿真时刻+通信时延
+    SwityhEvent->SetAttributeDouble("time", etime, &error);//这边时间为当前仿真时刻+通信时延
+    SwityhEvent->SetAttributeInt("i_switch", ctrl_order->flag, &error);//这边值为发电机是否投运
+    SwityhEvent->SetAttributeInt("i_allph", 1, &error);
 
     return error;
 }

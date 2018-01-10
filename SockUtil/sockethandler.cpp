@@ -3,6 +3,13 @@
 
 SocketHandler::SocketHandler()
 {
+    _b_quit = false;
+    _rcv_buf.clear();
+    _need_rcv_xml_len = 0;
+}
+
+SocketHandler::~SocketHandler()
+{
 
 }
 
@@ -53,6 +60,12 @@ void SocketHandler::RegisterRcvCallback(RcvCallback cb)
     _rcv_callback = cb;
 }
 
+void SocketHandler::Quit()
+{
+    _b_quit = true;
+    QThread::msleep(200);
+}
+
 long SocketHandler::Send(const char* ip, int port, const char* data, int len)
 {
     SOCKADDR_IN dst_addr;
@@ -66,23 +79,55 @@ long SocketHandler::Send(const char* ip, int port, const char* data, int len)
 void SocketHandler::RcvThread()
 {
     int ret = 0;
-    const int buf_size = 1024 * 10;
+    const int buf_size = 1024 * 100;
     char buf[buf_size] = {0};
     int src_addr_len = sizeof(SOCKADDR);
 
-    while(true){
+    while(!_b_quit){
         memset(buf, 0, buf_size);
         int rcv_len = recvfrom(_sock_cli, buf, buf_size, 0,  (sockaddr*)&_src_addr, &src_addr_len);
+        if(rcv_len <= 0){
+            ret = WSAGetLastError();
+            continue;
+        }
 
-        if(rcv_len > 0){
+        _rcv_buf.append(buf, rcv_len);
+        if(_need_rcv_xml_len == 0){
+            memcpy(&_need_rcv_xml_len, _rcv_buf.data() + 1, sizeof(_need_rcv_xml_len));
+        }
+
+        int buf_len = _rcv_buf.length();
+        const char* buf = _rcv_buf.data();
+        int handle_len = _need_rcv_xml_len + 1 + 4 + 4;
+
+        while(buf_len >= handle_len){
             quint16 cli_port = ntohs(_src_addr.sin_port);
             QString cli_addr = inet_ntoa(_src_addr.sin_addr);
             emit new_net_handler(cli_addr, cli_port);
 
-            _rcv_callback(buf, rcv_len);
-        }
-        else{
-            ret = WSAGetLastError();
+            _rcv_callback(buf, handle_len);
+
+            buf += handle_len;
+            buf_len -= handle_len;
+
+            if(buf_len > 0){               //剩余一部分数据
+                if(buf_len >= 5){         //可以定位消息长度.
+                    memcpy(&_need_rcv_xml_len, buf + 1, sizeof(_need_rcv_xml_len));
+                    handle_len = _need_rcv_xml_len + 1 + 4 + 4;
+                }
+
+                if(buf_len < 5 || buf_len < handle_len){   //不能定位消息长度或者不是一个完整的数据包.
+                    QByteArray tmp = _rcv_buf.right(buf_len);
+                    _need_rcv_xml_len = 0;
+                    _rcv_buf = tmp;
+                    break;
+                }
+            }
+            else{                                //数据是一个完整的数据包.
+                _need_rcv_xml_len = 0;
+                _rcv_buf.clear();
+                break;
+            }
         }
     }
 }

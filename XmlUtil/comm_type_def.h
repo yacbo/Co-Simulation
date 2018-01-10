@@ -199,6 +199,7 @@ typedef enum E_SynchronizeType{
 
 //elec sim param conf
 typedef struct PowerConfParam{
+    int prj_type;                //项目类型
     std::string prj_name;
     std::string case_name;
     double sim_time;
@@ -207,7 +208,8 @@ typedef struct PowerConfParam{
     int32_t dwstm_type;    //下行类型，如BusInfor
     int32_t upstm_num;     //上行数据数目， 如39
     int32_t dwstm_num;    //下行数据数目， 如10
-    std::string nodes_map;
+    std::string upnodes_map;
+    std::string dwnodes_map;
 }PowerConfParam;
 
 //comm sim param conf

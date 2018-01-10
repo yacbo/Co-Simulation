@@ -18,7 +18,7 @@ struct ProcEventParam
     bool _handle_success;
 
     DataXmlVec _param;              //待处理参数
-    EPowerDataType _type;         //参数类型
+    EPowerPrjType _type;           //参数类型
 };
 
 struct MsDeviceTable

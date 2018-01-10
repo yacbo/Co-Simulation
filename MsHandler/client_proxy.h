@@ -45,7 +45,7 @@ public:
     bool map_power_comm_sim_data(UnionSimDatVec& ud);
     string stream_power_sim_data(const UnionSimDatVec& data, int64_t& sim_time);
 
-    void exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type);
+    bool exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type);
     bool calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec);
     void replace_power_sim_data(UnionSimData* data);
     void reset_power_input_data();
@@ -89,7 +89,9 @@ private:
     bool _power_init_success;
     PowerConfParam _power_conf_param;
 
-    IntPairMap _bus_comm_id_tbl;
+    IntPairMap _up_comm_id_tbl;
+    IntPairMap _dw_comm_id_tbl;
+
     application_layer* _appl_layer;
 
 private:

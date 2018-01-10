@@ -255,20 +255,35 @@ bool client_proxy::fetch_power_cfg_param(const DataXmlVec& vec)
     }
 
     //power comm node map
-    IntVec ids; string resp;
-    std::istringstream parser(_power_conf_param.nodes_map);
-    while(parser >> resp){
-        ids.push_back(std::stoi(resp));
+    IntVec up_ids, dw_ids; string resp;
+    std::istringstream up_parser(_power_conf_param.upnodes_map);
+    while(up_parser >> resp){
+        up_ids.push_back(std::stoi(resp));
     }
 
-    if(ids.size() % 3 != 0){
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "fetch data failed", "total node map items:", ids.size());
+     std::istringstream dw_parser(_power_conf_param.dwnodes_map);
+     while(dw_parser >> resp){
+         dw_ids.push_back(std::stoi(resp));
+     }
+
+    if(up_ids.size() % 3 != 0){
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "fetch data failed", "total upstream node map items:", up_ids.size());
         emit progress_log_signal(info);
         return false;
     }
 
-    for(int i=0; i<ids.size(); i+=3){
-       _bus_comm_id_tbl[ids[i]] = std::make_pair(ids[i+1], ids[i+2]);
+    if(dw_ids.size() % 3 != 0){
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "fetch data failed", "total downstream node map items:", dw_ids.size());
+        emit progress_log_signal(info);
+        return false;
+    }
+
+    for(int i=0; i<up_ids.size(); i+=3){
+       _up_comm_id_tbl[up_ids[i]] = std::make_pair(up_ids[i+1], up_ids[i+2]);
+    }
+
+    for(int i=0; i<dw_ids.size(); i+=3){
+       _dw_comm_id_tbl[dw_ids[i]] = std::make_pair(dw_ids[i+1], dw_ids[i+2]);
     }
 
     return true;
@@ -286,8 +301,8 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
     double phy_time = date.currentDateTime().toSecsSinceEpoch();
 
     for(int i=0; i<_power_conf_param.upstm_num; ++i){
-        IntPairMap::const_iterator it = _bus_comm_id_tbl.find(_upstm_info[i]->bus_id);
-        if(it == _bus_comm_id_tbl.cend()){
+        IntPairMap::const_iterator it = _up_comm_id_tbl.find(_upstm_info[i]->bus_id);
+        if(it == _up_comm_id_tbl.cend()){
             info = QString::number(_upstm_info[i]->bus_id);
             tips = QString("bus id: %1 not found").arg(info);
             b_map_success = false;
@@ -307,6 +322,11 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
             data.sim_time = d->cur_sim_time;
             memcpy(data.power_dat, d, sizeof(PowerBusInforData));
             break;
+        }
+        case ePowerData_poweroper:{
+            const PowerOperData* d = (const PowerOperData*)_upstm_info[i];
+            data.sim_time = d->cur_sim_time;
+            memcpy(data.power_dat, d, sizeof(PowerOperData));
         }
         default: break;
         }
@@ -341,6 +361,11 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
             stream += std::to_string(d->bus_volt) + " " + std::to_string(d->bus_angle) + " ";
             break;
         }
+        case ePowerData_poweroper:{
+            PowerOperData* d = (PowerOperData*)data[i].power_dat;
+            stream += std::to_string(d->lne1_power) + " " + std::to_string(d->lne2_power) + " ";
+            break;
+        }
         default: break;
         }
     }
@@ -359,7 +384,7 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         }
 
         if(!HisRecordMgr::instance()->fill_record(_power_conf_param.upstm_type, his_rec_vec, data)){
-            LogUtil::Instance()->Output(MACRO_LOCAL, "fill record failed");
+            info = LogUtil::Instance()->Output(MACRO_LOCAL, "fill record failed");
             return false;
         }
 
@@ -375,7 +400,7 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
     ProcEventParam param;
     param._bus_num = _power_conf_param.upstm_num;
     param._in_out_info = stream_power_sim_data(data, sim_time);
-    param._type = (EPowerDataType)_power_conf_param.upstm_type;
+    param._type = (EPowerPrjType)_power_conf_param.prj_type;
 
     switch(_power_conf_param.upstm_type){
     case ePowerData_businfor:{
@@ -385,19 +410,45 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 
         const int offset = _power_conf_param.upstm_num - _power_conf_param.dwstm_num;
         bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
-        LogUtil::Instance()->Output(MACRO_LOCAL, "write record, items:", data.size(), MACRO_SUCFAIL(ret));
+        LogUtil::Instance()->Output(MACRO_LOCAL, "write businfor record, items:", data.size(), MACRO_SUCFAIL(ret));
 
         UnionSimDatVec::iterator it = data.begin();
         data.erase(it, it + offset);
-        exchange_comm_node_src_dst_id(data, _power_conf_param.upstm_type);
+        exchange_comm_node_src_dst_id(data, _power_conf_param.prj_type);
 
         DblVec tmp;
         for(int i=0; i<_power_conf_param.dwstm_num; ++i){
             tmp.push_back(dvg_ret[i + offset]);
         }
 
-        XmlUtil::generate_xml_power_appl_data(tmp, data, vec);
+        XmlUtil::generate_xml_power_appl_data(_power_conf_param.prj_type, tmp, data, vec);
         delete[] dvg_ret;
+    }
+    case ePowerData_poweroper:{
+        char v_ret[128] = {0};
+        _decision_alth->execute_event_proc_algorithm(&param, v_ret);
+        bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
+        LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
+
+        exchange_comm_node_src_dst_id(data, _power_conf_param.prj_type);
+
+        const int size_int = sizeof(int);
+        const int size_2int = size_int << 1;
+
+        UnionSimData& ud = data[0];
+        PowerCtrlOrderData* d = (PowerCtrlOrderData*)ud.power_dat;
+        memcpy(&d->flag, v_ret, size_int);
+        memcpy(&d->bus_id, v_ret + size_int, size_int);
+        memcpy(d->gname, v_ret + size_2int, sizeof(d->gname));
+
+        d->comm_beg_id = ud.comm_dat.src_id;
+        d->comm_end_id = ud.comm_dat.dst_id;
+        d->comm_fault_type = ud.comm_dat.err_type;
+        d->comm_trans_time = ud.comm_dat.trans_delay;
+
+        DblVec tmp;
+        XmlUtil::generate_xml_power_appl_data(_power_conf_param.prj_type, tmp, data, vec);
+        break;
     }
     default: break;
     }
@@ -405,37 +456,58 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
     return true;
 }
 
-void client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
+bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
 {
-    switch(type){
-    case ePowerData_businfor:{
-        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
-            UnionSimData& udi = data[i];
-            std::swap(udi.comm_dat.src_id, udi.comm_dat.dst_id);
+    int bus_id = -1;
+    bool ret = true;
+
+    for(int i=0; i<_power_conf_param.dwstm_num; ++i){
+        UnionSimData& udi = data[i];
+
+        switch(type){
+        case ePowerPrj_avr_ctrl_39: {const PowerBusInforData* d = (const PowerBusInforData*)udi.power_dat; bus_id = d->bus_id; break;}
+        case ePowerPrj_psse_jiangsu: {const PowerOperData* d = (const PowerOperData*)udi.power_dat; bus_id = d->bus_id; break;}
+        default: break;
         }
-        break;
+
+        IntPairMap::const_iterator it = _dw_comm_id_tbl.find(bus_id);
+        if(it == _dw_comm_id_tbl.end()){
+            QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "not found bus id:", bus_id);
+            emit progress_log_signal(info);
+            ret = false;
+            break;
+        }
+
+        const IntPair& ids = it->second;
+        udi.comm_dat.src_id = ids.first;
+        udi.comm_dat.dst_id = ids.second;
     }
-    default: break;
-    }
+
+    return ret;
 }
 
 void client_proxy::reset_power_input_data()
 {
-    if(_dbl_vec.size() != _union_sim_dat_rcv_vec.size()){
+    if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && _dbl_vec.size() != _union_sim_dat_rcv_vec.size()){
         QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "double data items:", _dbl_vec.size(), "rcv sim data items:", _union_sim_dat_rcv_vec.size(), "not equal");
         emit progress_log_signal(info);
         return;
     }
 
-    for(int i=0; i<_dbl_vec.size(); ++i){
-        switch (_power_conf_param.dwstm_type) {
-        case ePowerData_dginfor:{
+    for(int i=0; i<_union_sim_dat_rcv_vec.size(); ++i){
+        switch (_power_conf_param.prj_type) {
+        case ePowerPrj_avr_ctrl_39:{
             PowerDGInforData* di = (PowerDGInforData*)_dwstm_info[i];
             PowerBusInforData* bi = (PowerBusInforData*)_union_sim_dat_rcv_vec[i].power_dat;
-
             di->dv = _dbl_vec[i];
             di->bus_id = bi->bus_id;
             di->time_diff = _union_sim_dat_rcv_vec[i].comm_dat.trans_delay;
+            break;
+        }
+        case ePowerPrj_psse_jiangsu:{
+            PowerCtrlOrderData* ei = (PowerCtrlOrderData*)_dwstm_info[i];
+            PowerCtrlOrderData* ci = (PowerCtrlOrderData*)_union_sim_dat_rcv_vec[i].power_dat;
+            memcpy(ei, ci, sizeof(PowerCtrlOrderData));
             break;
         }
         default: break;
@@ -601,7 +673,7 @@ void client_proxy::handle_power(ApplMessage* msg)
         _expect_proc_type = eSubProcedure_invoke;
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_confirm){
-        XmlUtil::parse_xml_power_appl_data(msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_rcv_vec);
+        XmlUtil::parse_xml_power_appl_data(_power_conf_param.prj_type, msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_rcv_vec);
         doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_communication], eSubProcedure_session_end, eMessage_request);
         tips += QString("invoke, confirm, rcv data items: %1 ").arg(_union_sim_dat_rcv_vec.size());
         tips += "start session end, request";
@@ -838,7 +910,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
         _expect_proc_type = eSubProcedure_invoke;
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_confirm){
-        XmlUtil::parse_xml_power_appl_data(msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_snd_vec);
+        XmlUtil::parse_xml_power_appl_data(_power_conf_param.prj_type, msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_snd_vec);
         _dst_dev_type = eSimDev_power;
 
         snd_upper_to_comm();
@@ -848,7 +920,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){
         DataXmlVec vec;
-        XmlUtil::generate_xml_power_appl_data(_dbl_vec, _union_sim_dat_rcv_vec, vec);
+        XmlUtil::generate_xml_power_appl_data(_power_conf_param.prj_type, _dbl_vec, _union_sim_dat_rcv_vec, vec);
 
         IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
         ss_id = dev_type_id_tbl[eSimDev_communication];
@@ -1120,7 +1192,7 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
         return;
     }
 
-    if(_dev_type == eSimDev_power_appl){
+    if(_dev_type != eSimDev_power){
         return;
     }
 
@@ -1131,25 +1203,28 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
         return;
     }
 
-    if(_power_conf_param.dwstm_type == ePowerData_dginfor){
-        _dwstm_info.resize(_power_conf_param.dwstm_num);
-        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
-            _dwstm_info[i] = new PowerDGInforData();
-            _dwstm_info[i]->data_type = ePowerData_dginfor;
+    _dwstm_info.resize(_power_conf_param.dwstm_num);
+    for(int i=0; i<_power_conf_param.dwstm_num; ++i){
+         _dwstm_info[i]->data_type = (EPowerDataType)_power_conf_param.dwstm_type;
+        switch(_power_conf_param.dwstm_type){
+        case ePowerData_dginfor: _dwstm_info[i] = new PowerDGInforData(); break;
+        case ePowerData_ctrlorder: _dwstm_info[i] = new PowerCtrlOrderData(); break;
+        default: break;
         }
     }
 
-    if(_power_conf_param.upstm_type == ePowerData_businfor){
-        _upstm_info.resize(_power_conf_param.upstm_num);
-        for(int i=0; i<_power_conf_param.upstm_num; ++i){
-            _upstm_info[i] = new PowerBusInforData();
-            _upstm_info[i]->data_length = sizeof(PowerBusInforData);
-            _upstm_info[i]->data_type = ePowerData_businfor;
+    _upstm_info.resize(_power_conf_param.upstm_num);
+    for(int i=0; i<_power_conf_param.upstm_num; ++i){
+        _upstm_info[i]->data_type = (EPowerDataType)_power_conf_param.upstm_type;
+        switch(_power_conf_param.upstm_type){
+        case ePowerData_businfor: _upstm_info[i] = new PowerBusInforData(); _upstm_info[i]->data_length = sizeof(PowerBusInforData); break;
+        case ePowerData_poweroper: _upstm_info[i] = new PowerOperData(); _upstm_info[i]->data_length = sizeof(PowerOperData); break;
         }
     }
 
     //_dev_type == eSimDev_power
-    _power_init_success = _power_handler->InitHandler(_power_conf_param.prj_name.c_str(),
+    _power_init_success = _power_handler->InitHandler((EPowerPrjType)_power_conf_param.prj_type,
+                                                                                        _power_conf_param.prj_name.c_str(),
                                                                                         _power_conf_param.case_name.c_str(),
                                                                                         _power_conf_param.sim_time,
                                                                                         _power_conf_param.sim_period);

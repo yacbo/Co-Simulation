@@ -206,7 +206,7 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
     int ps_id = sess_msg->_id_u2i;
     int proc_type = sess_msg->_procedure_msg_body->_proc_type;
 
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward power config data", "ss_id", ss_id, "ps_id", ps_id, "proc_type:", proc_type);
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward power config data", "ss_id", ss_id, "ps_id", ps_id, "proc_type:", parse_type(proc_type));
     emit progress_log_signal(info);
 
     QDomDocument* doc = nullptr;
@@ -214,6 +214,7 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
     if(XmlUtil::parse_PowerSimConfParam_xml(sess_msg->_procedure_msg_body->_data_vector, power_cfg_data)){
         doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &power_cfg_data);
         forward_power_cfg_param_to_power_appl(power_cfg_data);            //forward to power appl
+        forward_power_cfg_param_to_communication(power_cfg_data);       //forward to communication
     }
     else{
         LogUtil::Instance()->Output(MACRO_LOCAL, "parse power config data failed");
@@ -224,7 +225,7 @@ QDomDocument* session_layer::handle_cfg_power_param(SessionMessageBody* sess_msg
 
 bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& param)
 {
-    LogUtil::Instance()->Output(MACRO_LOCAL);
+    LogUtil::Instance()->Output(MACRO_LOCAL, "forward power cfg param to power application");
 
     IntMap::const_iterator it_id = _session_type_id_tbl.find(eSimDev_power_appl);
     if(it_id == _session_type_id_tbl.cend()){
@@ -234,7 +235,7 @@ bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& 
 
     IntStrMap::const_iterator it_ip = _session_id_ip_tbl.find(it_id->second);
     if(it_ip == _session_id_ip_tbl.cend()){
-        LogUtil::Instance()->Output(MACRO_LOCAL, "not found valid ip of power");
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found valid ip of power application");
         return false;
     }
 
@@ -253,6 +254,41 @@ bool session_layer::forward_power_cfg_param_to_power_appl(const PowerConfParam& 
     emit snd_lower_signal(doc, dst.toString(), port.toUShort());
 
     QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward power sim config parameter to power application",
+                                               "ss_id", ss_id, "ps_id", ps_id, "proc_type", parse_type(eSubProcedure_cfg_power_data));
+    emit progress_log_signal(info);
+}
+
+bool session_layer::forward_power_cfg_param_to_communication(const PowerConfParam& param)
+{
+    LogUtil::Instance()->Output(MACRO_LOCAL, "forward power cfg param to communication");
+
+    IntMap::const_iterator it_id = _session_type_id_tbl.find(eSimDev_communication);
+    if(it_id == _session_type_id_tbl.cend()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found communication");
+        return false;
+    }
+
+    IntStrMap::const_iterator it_ip = _session_id_ip_tbl.find(it_id->second);
+    if(it_ip == _session_id_ip_tbl.cend()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found valid ip of communication");
+        return false;
+    }
+
+    int ss_id = 10000;
+    int ps_id = it_id->second;
+    QDomDocument* doc = XmlUtil::generate_PowerSimConfParam_xml(ss_id, ps_id, &param);
+    if(!doc){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "generate power sim config parameter xml failed");
+        return false;
+    }
+
+    QStringList id = QString(it_ip->second.c_str()).split(':');
+    QString ip = id.at(0);
+    QString port = id.at(1);
+    QHostAddress dst(ip.toULong());
+    emit snd_lower_signal(doc, dst.toString(), port.toUShort());
+
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "forward power sim config parameter to communication",
                                                "ss_id", ss_id, "ps_id", ps_id, "proc_type", parse_type(eSubProcedure_cfg_power_data));
     emit progress_log_signal(info);
 }

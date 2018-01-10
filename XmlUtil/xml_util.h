@@ -124,8 +124,8 @@ public:
     static void parse_xml_power_sim_data(const DataXmlVec& vec, UnionSimDatVec& data);
     static void generate_xml_power_sim_data(const UnionSimDatVec& data, DataXmlVec& vec);
 
-    static void parse_xml_power_appl_data(const DataXmlVec& vec, DblVec& data, UnionSimDatVec& us_data);
-    static void generate_xml_power_appl_data(const DblVec& data, const UnionSimDatVec& us_data, DataXmlVec& vec);
+    static void parse_xml_power_appl_data(int type, const DataXmlVec& vec, DblVec& data, UnionSimDatVec& us_data);
+    static void generate_xml_power_appl_data(int type, const DblVec& data, const UnionSimDatVec& us_data, DataXmlVec& vec);
 
     //通信仿真事件配置
     static void add_CommSimEventConf_data(const QByteArray& d);
