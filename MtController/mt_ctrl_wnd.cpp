@@ -9,6 +9,7 @@
 #include "comm_param_settings.h"
 #include "xml_util.h"
 #include <QPainter>
+#include "log_util.h"
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -148,6 +149,10 @@ void MainWindow::config_Init_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
+
+    //初始化事件记录
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[Init_event]");
+
     //初始化按钮.
    ui->pushButton->setEnabled(false);
    ui->pushButton_2->setEnabled(true);
@@ -209,6 +214,9 @@ void MainWindow::config_Init_event()
 //开始仿真按钮事件.
 void MainWindow::start_simulation_event()
 { 
+    //开始仿真事件记录
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[start_simulation_event]");
+
     ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(false);
     ui->pushButton_3->setEnabled(true);
@@ -222,6 +230,10 @@ void MainWindow::start_simulation_event()
 
 //停止仿真按钮事件.
 void MainWindow::stop_simulation_event(){
+
+    //停止仿真事件记录
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[stop_simulation_event]");
+
     ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(true);
     ui->pushButton_3->setEnabled(false);
@@ -246,11 +258,7 @@ void MainWindow::register_device()
         return;
     }
     //打印开始注册.
-    QDateTime current_date_time = QDateTime::currentDateTime();
-    QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
-    model->setItem(n,0,new QStandardItem(current_date));
-    model->setItem(n,1,new QStandardItem("starting register..."));
-    n++;
+    progress_log_slots("starting register...");
 
     string SBSipStr = ui->lineEdit_8->text().toStdString();
     int SBSport = ui->lineEdit_9->text().toInt();
@@ -273,22 +281,15 @@ void MainWindow::register_device()
 void MainWindow::unregister_device()
 {
     //打印开始注销.
-    QDateTime current_date_time = QDateTime::currentDateTime();
-    QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
-    model->setItem(n,0,new QStandardItem(current_date));
-    model->setItem(n,1,new QStandardItem("eSimDev_sim_controller starting unregister..."));
-    n++;
+    progress_log_slots("eSimDev_sim_controller starting unregister...");
+
     const IntMap& devIds = _ms_handler->get_dev_id_map();
     IntMap::const_iterator it =  devIds.find(eSimDev_sim_controller);
     if(it != devIds.cend()){
         int dev_id = it->second;
         bool ret = _ms_handler->unregister(DevNamesSet[eSimDev_sim_controller],dev_id, ui->lineEdit_8->text().toStdString().c_str());
         if(!ret){
-            QDateTime current_date = QDateTime::currentDateTime();
-            QString date = current_date.toString("yyyy-MM-dd hh:mm:ss");
-            model->setItem(n,0,new QStandardItem(date));
-            model->setItem(n,1,new QStandardItem("unregister fail."));
-            n++;
+            progress_log_slots("unregister fail.");
             string info = "unregister fail";
             qInfo(info.c_str());
         }
@@ -334,14 +335,17 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
           case eSimDev_power:
             fm.setElecSoftOnLine();
             fm.setComboBoxCurrentText(dev_name);
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[device online]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             break;
           case eSimDev_communication:
             fm.setCommSoftOnLine();
             fm.setComboBoxCurrentText(dev_name);
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[device online]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             break;
           case eSimDev_power_appl:
             fm.setElecAppSoftOnLine();
             fm.setComboBoxCurrentText(dev_name);
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[device online]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             break;
           case eSimDev_sim_controller:
             if(ui->pushButton_4->isEnabled())//若控制端与SBS没连.
@@ -355,11 +359,9 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 ui->lineEdit_9->setEnabled(false); //SBS port输入禁用.
                 fm.setSbsSoftOnLine();  //SBS在线设置.
                 //
-                QDateTime current_date = QDateTime::currentDateTime();
-                QString date = current_date.toString("yyyy-MM-dd hh:mm:ss");
-                model->setItem(n,0,new QStandardItem(date));
-                model->setItem(n,1,new QStandardItem("MainWindow:login_singal_slots, sim_controller register successfully."));
-                n++;
+                progress_log_slots("MainWindow:login_singal_slots, sim_controller register successfully.");
+
+                LogUtil::Instance()->Output(MACRO_LOCAL, "[sim_controller register success]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port);
             }
           break;
           deafult: break;
@@ -372,14 +374,17 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
         case eSimDev_power:
             fm.setElecSoftOffLine();
             fm.setComboBoxCurrentTextClear(dev_name);
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[device offline]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             break;
         case eSimDev_communication:
             fm.setCommSoftOffLine();
             fm.setComboBoxCurrentTextClear(dev_name);
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[device offline]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             break;
         case eSimDev_power_appl:
             fm.setElecAppSoftOffLine();
             fm.setComboBoxCurrentTextClear(dev_name);
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[device offline]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             break;
         case eSimDev_sim_controller:
             if(!(ui->pushButton_4->isEnabled()))//若控制端与sbs相连.
@@ -397,11 +402,9 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 fm.setElecAppSoftOffLine();
                 fm.setComboBoxClear();
                 //
-                QDateTime current_date = QDateTime::currentDateTime();
-                QString date = current_date.toString("yyyy-MM-dd hh:mm:ss");
-                model->setItem(n,0,new QStandardItem(date));
-                model->setItem(n,1,new QStandardItem("eSimDev_sim_controller unregister OK."));
-                n++;
+                progress_log_slots("eSimDev_sim_controller unregister OK.");
+
+                LogUtil::Instance()->Output(MACRO_LOCAL, "[sim_controller unregister success]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port);
             }
             break;
         }

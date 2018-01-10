@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sstream>
 #include <QPainter>
+#include "log_util.h"
 bool flagSendGetInterface =false;
 
 comm_param_settings::comm_param_settings(unsigned int ip , MsHandler* msHandler,QWidget *parent) :
@@ -251,6 +252,7 @@ void comm_param_settings::business_config_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
+
     PG_RTUI_AddCBR data;
     data.clientAddr.ip_addr =_ip;//ip uInt32_t型
     data.clientAddr.port = 65500;//port  uInt32_t型
@@ -273,6 +275,9 @@ void comm_param_settings::business_config_event()
     strcpy(data.endTime,lineEdit41Str.data());
     //发送数据给qualnet通信软件
     _msHandler->config_comm_param(&data);
+
+    //业务配置记录
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[business_config_event]");
 }
 void comm_param_settings::business_config_cancel_event(){
     ui->lineEdit_35->setText("");
@@ -282,6 +287,8 @@ void comm_param_settings::business_config_cancel_event(){
     ui->lineEdit_42->setText("");
     ui->lineEdit_43->setText("");
     ui->lineEdit_44->setText("");
+    //业务配置记录
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[business_config_cancel_event]");
 }
 
 /***********************************业务通道配置.*****************/
@@ -289,6 +296,8 @@ void comm_param_settings::business_channel_config_event()
 {
     //1.读取文本
     _path = QFileDialog::getOpenFileName(this, tr("Open Xml File"), "", "*.txt", 0);
+    //业务通道配置
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[business_channel_config_event]");
 }
 
 void comm_param_settings::business_channel_confirm_event()
@@ -343,6 +352,8 @@ void comm_param_settings::business_channel_confirm_event()
     //current_cloud_id_list.push_back(QString::fromStdString("strline"));//再次往list中添加数据
     model->setStringList(current_cloud_id_list);//往listView中添加数据
     ui->listView->setModel(model);
+    //业务通道配置
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[business_channel_confirm_event]");
 }
 
 /**************通信节点参数管理.*******************/
@@ -368,6 +379,8 @@ void comm_param_settings::comm_note_para_read_event()
         //发送数据给qualnet通信软件
         _msHandler->config_comm_param(&data1);
     }
+    //通信节点参数管理
+    LogUtil::Instance()->Output(MACRO_LOCAL, "[comm_note_para_read_event]");
 }
 
 void comm_param_settings::comm_note_para_config_event()
