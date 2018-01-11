@@ -188,7 +188,7 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
 
     out.close();
 
-    _file_list_vec.push_back(file_name);
+    _file_list_vec.push_back(rec_path);
 
     return true;
 }

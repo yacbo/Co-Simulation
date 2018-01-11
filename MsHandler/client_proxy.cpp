@@ -423,6 +423,7 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 
         XmlUtil::generate_xml_power_appl_data(_power_conf_param.prj_type, tmp, data, vec);
         delete[] dvg_ret;
+        break;
     }
     case ePowerData_poweroper:{
         char v_ret[128] = {0};
