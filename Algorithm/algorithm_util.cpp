@@ -38,3 +38,30 @@ bool AlgorithmUtil::Alth_Calculate_dVg(const char* sim_data,  int bus_num, doubl
 
     return ret;
 }
+
+bool AlgorithmUtil::Alth_Calculate_CtrlOrder(const char* sim_data, char* order_ret)
+{
+    std::string tmp;
+    StrVec data_vec;
+    std::istringstream istr(sim_data);
+    while(istr >> tmp){
+        data_vec.push_back(tmp);
+    }
+
+    const int size_int = sizeof(int);
+    const int size_2int = size_int << 1;
+    double lne1_power = atof(data_vec[0].c_str());
+    double lne2_power = atof(data_vec[1].c_str());
+
+    int flag = 0;
+    int exe_sta_bus_id = 40861;
+    char gname[32] = {"sym_40861_1"};
+
+    if(lne1_power < 0.001 && lne2_power < 0.001){
+        memcpy(order_ret, &flag, size_int);
+        memcpy(order_ret + size_int, &exe_sta_bus_id, size_int);
+        memcpy(order_ret + size_2int,  gname, sizeof(gname));
+    }
+
+    return true;
+}
