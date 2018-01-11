@@ -171,19 +171,21 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
           << std::setw(20) << "comm err type"
           << std::setw(20) << "comm tr delay"
           << std::setw(20) << "power voltage"
-          << std::setw(20) << "power angle";
+          << std::setw(20) << "power angle"
+          << std::endl;
 
     for(int i=0; i<vec.size(); ++i){
         const UnionSimData& dat = vec[i];
         const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
-        out << dat.sim_time
-              << pbid->bus_id
-              << dat.comm_dat.src_id
-              << dat.comm_dat.dst_id
-              << dat.comm_dat.err_type
-              << dat.comm_dat.trans_delay
-              << pbid->bus_volt
-              << pbid->bus_angle;
+        out << std::setw(20) << dat.sim_time
+              << std::setw(20) << pbid->bus_id
+              << std::setw(20) << dat.comm_dat.src_id
+              << std::setw(20) << dat.comm_dat.dst_id
+              << std::setw(20) << dat.comm_dat.err_type
+              << std::setw(20) << dat.comm_dat.trans_delay
+              << std::setw(20) << pbid->bus_volt
+              << std::setw(20) << pbid->bus_angle
+              << std::endl;
     }
 
     out.close();
