@@ -1205,21 +1205,22 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
 
     _dwstm_info.resize(_power_conf_param.dwstm_num);
     for(int i=0; i<_power_conf_param.dwstm_num; ++i){
-         _dwstm_info[i]->data_type = (EPowerDataType)_power_conf_param.dwstm_type;
         switch(_power_conf_param.dwstm_type){
         case ePowerData_dginfor: _dwstm_info[i] = new PowerDGInforData(); break;
         case ePowerData_ctrlorder: _dwstm_info[i] = new PowerCtrlOrderData(); break;
         default: break;
         }
+        _dwstm_info[i]->data_type = (EPowerDataType)_power_conf_param.dwstm_type;
     }
 
     _upstm_info.resize(_power_conf_param.upstm_num);
     for(int i=0; i<_power_conf_param.upstm_num; ++i){
-        _upstm_info[i]->data_type = (EPowerDataType)_power_conf_param.upstm_type;
         switch(_power_conf_param.upstm_type){
         case ePowerData_businfor: _upstm_info[i] = new PowerBusInforData(); _upstm_info[i]->data_length = sizeof(PowerBusInforData); break;
         case ePowerData_poweroper: _upstm_info[i] = new PowerOperData(); _upstm_info[i]->data_length = sizeof(PowerOperData); break;
+        default: break;
         }
+        _upstm_info[i]->data_type = (EPowerDataType)_power_conf_param.upstm_type;
     }
 
     //_dev_type == eSimDev_power

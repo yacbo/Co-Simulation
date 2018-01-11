@@ -185,11 +185,11 @@ void MainWindow::config_Init_event()
 
    if(ui->radioButton->isChecked())
    {
-       usc_param.syn_type = (ESynchronizeType) 0 ; //事件同步
+       usc_param.syn_type = eSynch_event; //事件同步
    }
-   if(ui->radioButton_2->isChecked())
+   else if(ui->radioButton_2->isChecked())
    {
-       usc_param.syn_type = (ESynchronizeType) 1 ; //时间同步
+       usc_param.syn_type = eSynch_time ; //时间同步
    }
    usc_param.proto_type =(EProtocolType)ui->comboBox->currentIndex();
 
