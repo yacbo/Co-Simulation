@@ -61,6 +61,8 @@ bool UdpNetHandler::stop_service()
         _sock_cli = nullptr;
     }
 
+    _hanlder.Quit();
+
     return ret;
 }
 
