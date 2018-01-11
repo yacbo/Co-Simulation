@@ -19,7 +19,7 @@ signals:
 
 public:
     void Quit();
-    bool InitSocket(const char* server_ip, int server_port, int dev_port);
+    bool InitSocket(const char* server_ip, int server_port, int dev_port, bool brcv_pg_rtui = false);
     long Send(const char* ip, int port, const char* data, int len);
     void RegisterRcvCallback(RcvCallback cb);
 
@@ -39,6 +39,7 @@ private:
 
 private:
     bool _b_quit;
+    bool _b_rcv_pg_rtui;
     QByteArray _rcv_buf;
     uint16_t _need_rcv_xml_len;
 };

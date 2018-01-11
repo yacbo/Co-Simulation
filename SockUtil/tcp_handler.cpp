@@ -39,7 +39,7 @@ void TcpNetHandler::init_signal_slots(QTcpSocket* sign_obj, TcpNetHandler* slot_
     connect(sign_obj, &QTcpSocket::disconnected, slot_obj, &TcpNetHandler::disconnected);
  }
 
-bool TcpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli)
+bool TcpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli, bool pg_rtui)
 {
     _b_cli = cli;
     bool ret = true;

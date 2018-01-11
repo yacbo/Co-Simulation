@@ -19,7 +19,7 @@ public:
   * @parame cli: 是否作为客户端启动，若作为客户端，参数ip指远端服务器IP
   * @return true/false: 成功/失败
   */
-    virtual bool start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli = true);
+    virtual bool start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli = true, bool pg_rtui = false);
 
     /**
   * @brief 停止网络传输功能

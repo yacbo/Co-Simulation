@@ -13,7 +13,7 @@ SocketHandler::~SocketHandler()
 
 }
 
-bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_port)
+bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_port, bool brcv_pg_rtui)
 {
     WSADATA wsd;
     if(WSAStartup(MAKEWORD(2,2),&wsd) != 0){
@@ -52,6 +52,8 @@ bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_p
           QString cli_addr = inet_ntoa(_src_addr.sin_addr);
       }
 
+      _b_rcv_pg_rtui = brcv_pg_rtui;
+
       QtConcurrent::run(this, &SocketHandler::RcvThread);
 }
 
@@ -79,6 +81,8 @@ long SocketHandler::Send(const char* ip, int port, const char* data, int len)
 void SocketHandler::RcvThread()
 {
     int ret = 0;
+    uint16_t pg_rtui_len = 0;
+    const int pg_len_offset = 8;
     const int buf_size = 1024 * 100;
     char buf[buf_size] = {0};
     int src_addr_len = sizeof(SOCKADDR);
@@ -88,6 +92,11 @@ void SocketHandler::RcvThread()
         int rcv_len = recvfrom(_sock_cli, buf, buf_size, 0,  (sockaddr*)&_src_addr, &src_addr_len);
         if(rcv_len <= 0){
             ret = WSAGetLastError();
+            continue;
+        }
+
+        if(_b_rcv_pg_rtui){
+            _rcv_callback(buf, rcv_len);
             continue;
         }
 

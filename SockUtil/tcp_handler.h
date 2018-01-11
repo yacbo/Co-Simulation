@@ -14,7 +14,7 @@ public:
     virtual ~TcpNetHandler();
 
 public:
-    bool start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli = true);
+    bool start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli = true, bool pg_rtui  = false);
     bool stop_service();
 
     bool send_data(const char* data, int len, const char* ip = nullptr, int port = 0);
@@ -34,6 +34,7 @@ private:
 private:
     bool _b_cli;                           //是否客户端标识
     bool _b_connected;             //是否处于连接状态标识
+    bool _b_rcv_pg_rtui;           //是否仅接收pg_rtui数据
 
 private:
     uint16_t _server_port;

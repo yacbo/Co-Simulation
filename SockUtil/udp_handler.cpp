@@ -12,7 +12,7 @@ UdpNetHandler:: ~UdpNetHandler()
     stop_service();
 }
 
-bool UdpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli)
+bool UdpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli, bool pg_rtui)
 {
     if(_sock_cli){
        return true;
@@ -36,10 +36,10 @@ bool UdpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
         //        return false;
         //       }
 
-        ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port);
+        ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port, pg_rtui);
     }
     else{
-        ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port);//作服务端
+        ret = _hanlder.InitSocket(_server_ip.toStdString().c_str(), _server_port, dev_port, pg_rtui);//作服务端
         //ret = _sock_cli->bind(port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     }
 

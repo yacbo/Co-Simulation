@@ -15,7 +15,7 @@ public:
     virtual ~UdpNetHandler();
 
 public:
-    bool start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli = true);
+    bool start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli = true, bool pg_rtui = false);
     bool stop_service();
 
     bool send_data(const char* data, int len, const char* ip = nullptr, int port = 0);

@@ -562,8 +562,8 @@ bool client_proxy::start_sock_service(const QString& comm_ip, uint16_t comm_port
     _comm_tbl._comm_host_ip = host_ip.toStdString();
     _comm_tbl._comm_host_port = host_port;
 
-    bool ret_1 = _sock_util_ptr->start_trans_service(comm_ip, comm_port, type, 0);  //启用comm_port
-    bool ret_2 = _sock_util_ptr->start_trans_service(comm_ip, bs_port, type, 0);        //启用bs_port
+    bool ret_1 = _sock_util_ptr->start_trans_service(comm_ip, comm_port, type, 0, true, true);  //0表示启用comm_port
+    bool ret_2 = _sock_util_ptr->start_trans_service(comm_ip, bs_port, type, 0, true, true);        //0表示启用bs_port
     bool ret_3 = _sock_remote_ptr->start_trans_service(host_ip, host_port, eProtocol_tcp, dev_port);
 
     bool ret = ret_1 && ret_2;

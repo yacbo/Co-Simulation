@@ -32,7 +32,7 @@ public:
   * @param cli: true指创建客户端，false指创建服务器端
   * @return true/false: 启动成功或失败
   */
-    bool start_trans_service(const QString& ip, uint16_t port, EProtocolType protocol, uint16_t dev_port, bool cli = true);
+    bool start_trans_service(const QString& ip, uint16_t port, EProtocolType protocol, uint16_t dev_port, bool cli = true, bool pg_rtui = false);
     bool stop_trans_service(const QString& ip, quint16 port, EProtocolType protocol);
     uint8_t stop_trans_service(const QString& ip, quint16 port);
     uint8_t stop_trans_service();

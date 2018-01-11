@@ -11,7 +11,7 @@ NetHandlerBase::~NetHandlerBase()
 
 }
 
-bool NetHandlerBase::start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli)
+bool NetHandlerBase::start_service(const char* ip, uint16_t port, uint16_t dev_port, bool cli, bool pg_rtui)
 {
     return true;
 }

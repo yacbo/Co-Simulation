@@ -36,7 +36,7 @@ void SockUtil::register_rcv_callback(RcvHandler handler)
     _rcv_handler = handler;
 }
 
-bool SockUtil::start_trans_service(const QString& ip, uint16_t port, EProtocolType protocol, uint16_t dev_port, bool cli)
+bool SockUtil::start_trans_service(const QString& ip, uint16_t port, EProtocolType protocol, uint16_t dev_port, bool cli, bool pg_rtui)
 {
     if(!_rcv_handler || ip.isEmpty()){
         return false;
@@ -56,7 +56,7 @@ bool SockUtil::start_trans_service(const QString& ip, uint16_t port, EProtocolTy
     }
 
     //启动传输服务
-    if(!handler_ptr->start_service(ip.toStdString().c_str(), port, dev_port, cli)){
+    if(!handler_ptr->start_service(ip.toStdString().c_str(), port, dev_port, cli, pg_rtui)){
         delete handler_ptr;
         return false;
     }
