@@ -418,7 +418,7 @@ int PowerHandler::SetPsseJSEvents(Application* app, int sd_num, EPowerDataType s
 
     const char* Gname = ctrl_order->gname;
     DataObject* Gplant = GetGenerateObject(prj, Gname, "20 江苏");
-    DataObject* SwityhEvent = events->CreateObject("EvtSwitch", "切机");
+    DataObject* SwityhEvent = events->CreateObject("EvtSwitch", "cutGen");
 
     SwityhEvent->SetAttributeObject("p_target", Gplant, &error);
     double etime = ctrl_order->comm_trans_time+simtime;//假定0s时刻发生短路故障
