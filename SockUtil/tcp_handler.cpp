@@ -1,3 +1,5 @@
+
+#include "log_util.h"
 #include "tcp_handler.h"
 #include <WinSock.h>
 #include <QNetworkProxyFactory>
@@ -61,13 +63,17 @@ bool TcpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
         }
 
         if(!conn_state){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "connect to server failed", "server ip:", ip, "server port:", port, "device port:", dev_port, "socket id:", _sock_cli->socketDescriptor());
             return false;
         }
 
         _server_ip = ip;
         _server_port = port;
         _b_connected = true;
+
         init_signal_slots(_sock_cli, this);
+
+        LogUtil::Instance()->Output(MACRO_LOCAL, "connect to server successfully", "server ip:", ip, "server port:", port, "device port:", dev_port, "socket id:", _sock_cli->socketDescriptor());
     }
     else{           //服务端
         _sock_svr = new QTcpServer();
@@ -80,8 +86,11 @@ bool TcpNetHandler::start_service(const char* ip, uint16_t port, uint16_t dev_po
         if(ret = _sock_svr->listen(QHostAddress::AnyIPv4, port)){
               connect(_sock_svr, &QTcpServer::newConnection, this, &TcpNetHandler::accept_connection);
         }
+        else{
+            LogUtil::Instance()->Output(MACRO_LOCAL, "server listen failed", "listen port:", port, "socket id:", _sock_svr->socketDescriptor());
+            QString error = _sock_svr->errorString();
+        }
 
-         QString error = _sock_svr->errorString();
     }
 
      return ret;
@@ -121,6 +130,10 @@ bool TcpNetHandler::send_data(const char* data, int len, const char* ip, int por
         }
     }
 
+    if(!snd_success){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "send data failed", "data length::", len);
+    }
+
      return snd_success;
 }
 
@@ -136,6 +149,8 @@ void TcpNetHandler::receive_data()
         QByteArray bytes = _sock_cli->readAll();
         _rcv_buf.append(bytes);
     }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, "receive data", "data length::", _rcv_buf.length());
 
     if(_need_rcv_xml_len == 0){
         memcpy(&_need_rcv_xml_len, _rcv_buf.data() + 1, sizeof(_need_rcv_xml_len));
@@ -181,14 +196,20 @@ void TcpNetHandler::accept_connection()
     quint16 dst_port = tmp_sock->peerPort();
     QString dst_ip = tmp_sock->peerAddress().toString();
 
+    LogUtil::Instance()->Output(MACRO_LOCAL, "accept connection", "socket id:", tmp_sock->socketDescriptor(), "dst ip::", dst_ip.toStdString(), "dst port:", dst_port);
+
     emit new_net_handler(dst_ip,  dst_port, eProtocol_tcp, cli_handler);
 }
 
 void TcpNetHandler::disconnected()
 {
+    int sock_id = -1;
     if(_sock_cli){
+        sock_id = _sock_cli->socketDescriptor();
         _sock_cli->close();
     }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, "socket disconnect", "socket id:", sock_id);
 
     _b_connected = false;
 }

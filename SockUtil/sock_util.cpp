@@ -1,5 +1,6 @@
 
 #include <QtNetwork>
+#include "log_util.h"
 #include "sock_util.h"
 #include "udp_handler.h"
 #include "tcp_handler.h"
@@ -45,6 +46,7 @@ bool SockUtil::start_trans_service(const QString& ip, uint16_t port, EProtocolTy
     //判断传输服务是否已经启动，若启动直接返回
     NetHandlerBase* handler_ptr  = query_net_handler(ip, port, protocol);
     if(handler_ptr){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found NetHandlerBase", "the specified ip:", ip.toStdString(), "port:", port, "protocol:", protocol);
         return true;
     }
 
@@ -57,6 +59,7 @@ bool SockUtil::start_trans_service(const QString& ip, uint16_t port, EProtocolTy
 
     //启动传输服务
     if(!handler_ptr->start_service(ip.toStdString().c_str(), port, dev_port, cli, pg_rtui)){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "start transfer service failed",  "ip:", ip.toStdString(), "port:", port, "protocol:", protocol);
         delete handler_ptr;
         return false;
     }
@@ -248,6 +251,7 @@ NetHandlerBase* SockUtil::query_net_handler(const QString& dst_ip, uint16_t port
     QString id = QString("%1:%2").arg(dst_ip).arg(port);
     NetSockMap::iterator it_o = _device_sock_map.find(id);
     if(it_o == _device_sock_map.end() ){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found id:", id.toStdString());
         return nullptr;
     }
 
@@ -268,6 +272,7 @@ bool SockUtil::send_data(const QString& dst_ip, uint16_t port, const char* data,
 
     NetHandlerBase* handler_ptr = query_net_handler(dst_ip, port, _protocol_type);
     if(!handler_ptr){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not found NetHandlerBase", "dst ip:", dst_ip.toStdString(), "dst port:", port, "protocol:", _protocol_type);
         return false;
     }
 

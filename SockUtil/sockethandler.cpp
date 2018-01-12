@@ -1,3 +1,5 @@
+
+#include "log_util.h"
 #include "sockethandler.h"
 #include <QtConcurrent>
 
@@ -23,12 +25,14 @@ bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_p
     // 创建套接字
       _sock_cli = socket(AF_INET,SOCK_DGRAM,0);
       if(_sock_cli == INVALID_SOCKET){
+          LogUtil::Instance()->Output(MACRO_LOCAL, "create socket failed");
           return false;
       }
 
       unsigned long block=0;                              //0 阻塞， 1非阻塞
       int ret = ioctlsocket(_sock_cli, FIONBIO, &block);
       if(ret != NO_ERROR){
+          LogUtil::Instance()->Output(MACRO_LOCAL, "set socket block mode failed");
           return false;
       }
 
@@ -42,6 +46,7 @@ bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_p
 
       ret = bind(_sock_cli, (SOCKADDR*)&_local_addr, sizeof(SOCKADDR));
       if(ret != NO_ERROR){
+          LogUtil::Instance()->Output(MACRO_LOCAL, "bind port: ", dev_port == 0 ? server_port : dev_port, "failed");
           return false;
       }
 
@@ -75,7 +80,12 @@ long SocketHandler::Send(const char* ip, int port, const char* data, int len)
     dst_addr.sin_port=htons(port);
     dst_addr.sin_addr.S_un.S_addr=inet_addr(ip);
 
-    return sendto(_sock_cli, data, len, 0, (SOCKADDR*)&dst_addr, sizeof(SOCKADDR));
+    long snd_len = sendto(_sock_cli, data, len, 0, (SOCKADDR*)&dst_addr, sizeof(SOCKADDR));
+    bool snd_status = snd_len == len;
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, "send data length:", snd_len, "send status:", MACRO_SUCFAIL(snd_status));
+
+    return snd_len;
 }
 
 void SocketHandler::RcvThread()
@@ -91,14 +101,18 @@ void SocketHandler::RcvThread()
         memset(buf, 0, buf_size);
         int rcv_len = recvfrom(_sock_cli, buf, buf_size, 0,  (sockaddr*)&_src_addr, &src_addr_len);
         if(rcv_len <= 0){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "receive data failed");
             ret = WSAGetLastError();
             continue;
         }
 
         if(_b_rcv_pg_rtui){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "received pg_rtui data, data length:", rcv_len);
             _rcv_callback(buf, rcv_len);
             continue;
         }
+
+        LogUtil::Instance()->Output(MACRO_LOCAL, "receive xml data", "data length::", _rcv_buf.length());
 
         _rcv_buf.append(buf, rcv_len);
         if(_need_rcv_xml_len == 0){
