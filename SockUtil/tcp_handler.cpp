@@ -130,9 +130,7 @@ bool TcpNetHandler::send_data(const char* data, int len, const char* ip, int por
         }
     }
 
-    if(!snd_success){
-        LogUtil::Instance()->Output(MACRO_LOCAL, "send data failed", "data length::", len);
-    }
+    LogUtil::Instance()->Output(MACRO_LOCAL, "send data length:", len, "send status:", MACRO_SUCFAIL(snd_success));
 
      return snd_success;
 }
