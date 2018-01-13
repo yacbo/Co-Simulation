@@ -445,8 +445,6 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
         LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
 
-        exchange_comm_node_src_dst_id(data, _power_conf_param.prj_type);
-
         const int size_int = sizeof(int);
         const int size_2int = size_int << 1;
 
@@ -455,6 +453,8 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         memcpy(&d->flag, v_ret, size_int);
         memcpy(&d->bus_id, v_ret + size_int, size_int);
         memcpy(d->gname, v_ret + size_2int, sizeof(d->gname));
+
+        exchange_comm_node_src_dst_id(data, _power_conf_param.prj_type);
 
         d->comm_beg_id = ud.comm_dat.src_id;
         d->comm_end_id = ud.comm_dat.dst_id;
@@ -481,7 +481,7 @@ bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
 
         switch(type){
         case ePowerPrj_avr_ctrl_39: {const PowerBusInforData* d = (const PowerBusInforData*)udi.power_dat; bus_id = d->bus_id; break;}
-        case ePowerPrj_psse_jiangsu: {const PowerOperData* d = (const PowerOperData*)udi.power_dat; bus_id = d->bus_id; break;}
+        case ePowerPrj_psse_jiangsu: {const PowerCtrlOrderData* d = (const PowerCtrlOrderData*)udi.power_dat; bus_id = d->bus_id; break;}
         default: break;
         }
 

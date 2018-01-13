@@ -50,8 +50,8 @@ bool AlgorithmUtil::Alth_Calculate_CtrlOrder(const char* sim_data, char* order_r
 
     const int size_int = sizeof(int);
     const int size_2int = size_int << 1;
-    double lne1_power = atof(data_vec[0].c_str());
-    double lne2_power = atof(data_vec[1].c_str());
+    double lne1_power = atof(data_vec[1].c_str());
+    double lne2_power = atof(data_vec[2].c_str());
 
     int flag = 0;
     int exe_sta_bus_id = 40861;
