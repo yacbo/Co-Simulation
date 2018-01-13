@@ -1223,7 +1223,7 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
     for(int i=0; i<_power_conf_param.dwstm_num; ++i){
         switch(_power_conf_param.dwstm_type){
         case ePowerData_dginfor: _dwstm_info[i] = new PowerDGInforData(); break;
-        case ePowerData_ctrlorder: _dwstm_info[i] = new PowerCtrlOrderData(); break;
+        case ePowerData_ctrlorder: _dwstm_info[i] = new PowerCtrlOrderData(); strcpy_s(((PowerCtrlOrderData*)_dwstm_info[i])->gname, "sym_40861_1");break;
         default: break;
         }
         _dwstm_info[i]->data_type = (EPowerDataType)_power_conf_param.dwstm_type;

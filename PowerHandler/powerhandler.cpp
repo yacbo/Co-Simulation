@@ -105,12 +105,12 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
     }
 
     switch(_prj_type){
-    case ePowerPrj_avr_ctrl_39: _cur_time = _sim_period * _sim_count++; break;
-    case ePowerPrj_psse_jiangsu: _cur_time = _sim_count == 1 ? _sim_period : _sim_time - _sim_period;
+    case ePowerPrj_avr_ctrl_39: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
+    case ePowerPrj_psse_jiangsu: _cur_time = _sim_count == 1 ? _sim_period : (_sim_time * (_sim_count - 1)); ++_sim_count; break;
     default: break;
     }
 
-    if(_cur_time >= _sim_time){  //exit simulation
+    if(_cur_time > _sim_time){  //exit simulation
         return -2;
     }
 
@@ -417,7 +417,7 @@ int PowerHandler::SetPsseJSEvents(Application* app, int sd_num, EPowerDataType s
     const PowerCtrlOrderData* ctrl_order = (const PowerCtrlOrderData*)sd_data[0];
 
     const char* Gname = ctrl_order->gname;
-    DataObject* Gplant = GetGenerateObject(prj, Gname, "20 江苏");
+    DataObject* Gplant = GetGenerateObject(prj, Gname, "20 jiangsu");
     DataObject* SwityhEvent = events->CreateObject("EvtSwitch", "cutGen");
 
     SwityhEvent->SetAttributeObject("p_target", Gplant, &error);
