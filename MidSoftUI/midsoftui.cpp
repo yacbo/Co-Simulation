@@ -119,11 +119,8 @@ void MidSoftUI::register_device()
     _listen_port = ui->lineEdit_4->text().toInt();
 
     //打印开始注册.
-    QDateTime current_date_time = QDateTime::currentDateTime();
-    QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
-    model->setItem(n,0,new QStandardItem(current_date));
-    model->setItem(n,1,new QStandardItem("starting register..."));
-    n++;
+    QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "starting register...");
+    progress_log_slots(log_s);
 
     _dev_name = DevNamesSet[ui->comboBox_2->currentIndex()];//设备名称.
     _dev_type = XmlUtil::query_sim_dev_type(_dev_name.toStdString().c_str());
@@ -149,22 +146,19 @@ void MidSoftUI::register_device()
 void MidSoftUI::unregister_device()
 {
     //打印开始注销.
-    QDateTime current_date_time = QDateTime::currentDateTime();
-    QString current_date = current_date_time.toString("yyyy-MM-dd hh:mm:ss");
-    model->setItem(n,0,new QStandardItem(current_date));
-    model->setItem(n,1,new QStandardItem("starting unregister..."));
-    n++;
+    QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "starting unregister...");
+    progress_log_slots(log_s);
+
     const IntMap& devIds = _ms_handler->get_dev_id_map();
     IntMap::const_iterator it =  devIds.find(_dev_type);
     if(it != devIds.cend()){
         _dev_id = it->second;
         bool ret = _ms_handler->unregister(_dev_name.toStdString().c_str(),_dev_id, _sbs_ip.toStdString().c_str());
         if(!ret){
-            QDateTime current_date = QDateTime::currentDateTime();
-            QString date = current_date.toString("yyyy-MM-dd hh:mm:ss");
-            model->setItem(n,0,new QStandardItem(date));
-            model->setItem(n,1,new QStandardItem("unregister fail"));
-            n++;
+            //打印
+            QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "unregister fail");
+            progress_log_slots(log_s);
+
             string info = "unregister fail";
             qInfo(info.c_str());
         }
@@ -187,19 +181,18 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
     ESimDevType  devType = XmlUtil::query_sim_dev_type(dev_name.toStdString().c_str());
     if(devType==_dev_type)
     {
-        QDateTime current_date = QDateTime::currentDateTime();
-        QString date = current_date.toString("yyyy-MM-dd hh:mm:ss");
-        model->setItem(n,0,new QStandardItem(date));
 
         QString tips = "MidSoftUI:login_singal_slots, ";
         QString info = tips + dev_name + (login ? " register successfully." : " unregister successfully.");
-        model->setItem(n,1,new QStandardItem(info));
-        n++;
+        QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, info.toStdString());
+        progress_log_slots(log_s);
+
         //若注册成功，注册按钮禁用,启用注销按钮.
         if(ui->registerButton->isEnabled() && login)
         {
            //操作日志
-           LogUtil::Instance()->Output(MACRO_LOCAL, "[register]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+           QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "[register]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+           progress_log_slots(log_s);
 
            ui->registerButton->setEnabled(false);  //注册按钮禁用.
            ui->unregisterButton->setEnabled(true);//注销按钮启用.
@@ -217,7 +210,8 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
         if(ui->unregisterButton->isEnabled() && !login)
         {
            //操作日志
-           LogUtil::Instance()->Output(MACRO_LOCAL, "[unregister]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+           QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "[unregister]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+           progress_log_slots(log_s);
 
            ui->registerButton->setEnabled(true);  //注册按钮启用.
            ui->unregisterButton->setEnabled(false);//注销按钮禁用.

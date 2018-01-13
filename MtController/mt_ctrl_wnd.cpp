@@ -95,6 +95,7 @@ void MainWindow::init()
    ui->pushButton_5->setEnabled(false);
 
    //初始化按钮
+    ui->pushButton->setEnabled(false);
     ui->pushButton_2->setEnabled(false);
     ui->pushButton_3->setEnabled(false);
 
@@ -121,7 +122,8 @@ void MainWindow::init()
    ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
    ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
-   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   //ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
    ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
    ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 
@@ -258,7 +260,7 @@ void MainWindow::register_device()
         return;
     }
     //打印开始注册.
-    progress_log_slots("starting register...");
+    progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "starting register..."));
 
     string SBSipStr = ui->lineEdit_8->text().toStdString();
     int SBSport = ui->lineEdit_9->text().toInt();
@@ -281,7 +283,7 @@ void MainWindow::register_device()
 void MainWindow::unregister_device()
 {
     //打印开始注销.
-    progress_log_slots("eSimDev_sim_controller starting unregister...");
+    progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "eSimDev_sim_controller starting unregister..."));
 
     const IntMap& devIds = _ms_handler->get_dev_id_map();
     IntMap::const_iterator it =  devIds.find(eSimDev_sim_controller);
@@ -289,7 +291,7 @@ void MainWindow::unregister_device()
         int dev_id = it->second;
         bool ret = _ms_handler->unregister(DevNamesSet[eSimDev_sim_controller],dev_id, ui->lineEdit_8->text().toStdString().c_str());
         if(!ret){
-            progress_log_slots("unregister fail.");
+            progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "unregister fail."));
             string info = "unregister fail";
             qInfo(info.c_str());
         }
@@ -355,13 +357,22 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 ui->pushButton_5->setEnabled(true);  //启用注销按钮.
                 ui->pushButton_5->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
                 ui->pushButton_4->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+
                 ui->lineEdit_8->setEnabled(false);  //SBS ip输入禁用.
                 ui->lineEdit_9->setEnabled(false); //SBS port输入禁用.
                 fm.setSbsSoftOnLine();  //SBS在线设置.
-                //
-                progress_log_slots("MainWindow:login_singal_slots, sim_controller register successfully.");
 
-                LogUtil::Instance()->Output(MACRO_LOCAL, "[sim_controller register success]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port);
+                //使能初始化，禁用开始仿真\停止仿真
+                ui->pushButton->setEnabled(true);
+                ui->pushButton_2->setEnabled(false);
+                ui->pushButton_3->setEnabled(false);
+                ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+                ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+                ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+
+                //
+                progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "MainWindow:login_singal_slots, sim_controller register successfully."));
+                progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[sim_controller register success]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             }
           break;
           deafult: break;
@@ -401,10 +412,18 @@ void MainWindow::login_singal_slots(QString dev_name, QString dev_ip, uint16_t d
                 fm.setCommSoftOffLine();
                 fm.setElecAppSoftOffLine();
                 fm.setComboBoxClear();
-                //
-                progress_log_slots("eSimDev_sim_controller unregister OK.");
 
-                LogUtil::Instance()->Output(MACRO_LOCAL, "[sim_controller unregister success]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port);
+                //使能初始化，禁用开始仿真\停止仿真
+                ui->pushButton->setEnabled(false);
+                ui->pushButton_2->setEnabled(false);
+                ui->pushButton_3->setEnabled(false);
+                ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+                ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+                ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+
+                //打印日志
+                progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "eSimDev_sim_controller unregister OK."));
+                progress_log_slots(LogUtil::Instance()->Output(MACRO_LOCAL, "[sim_controller unregister success]"," dev_name:",dev_name.toStdString()," dev_ip:",dev_ip.toStdString()," dev_port:",dev_port));
             }
             break;
         }
