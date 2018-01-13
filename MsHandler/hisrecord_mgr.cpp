@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include "hisrecord_mgr.h"
 #include "power_data_def.h"
+#include "log_util.h"
 
 HisRecordMgr::HisRecordMgr()
     : _rec_base_dir(QCoreApplication::applicationDirPath().toStdString())
@@ -36,6 +37,8 @@ bool HisRecordMgr::check_folder(const string& folder)
     if(dir.exists()){
       return true;
     }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, "create history record folder:", folder);
 
     //创建多级目录
     return dir.mkpath(path);
@@ -115,12 +118,14 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
         file_name = _file_list_vec.back();
     }
     else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not exist history record and current simulation time is:", sim_time);
         return false;
     }
 
     string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
     std::ifstream in(rec_path);
     if(in.fail()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "open file:", rec_path, "failed");
         return false;
     }
 
@@ -161,10 +166,11 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
     string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
     std::ofstream out(rec_path);
     if(out.fail()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "open file:", rec_path, "failed");
         return false;
     }
 
-    out << std::setw(20) << "sim time"
+    out << "sim time"
           << std::setw(20) << "power bus id"
           << std::setw(20) << "comm src id"
           << std::setw(20) << "ocmm dst id"
@@ -177,7 +183,7 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
     for(int i=0; i<vec.size(); ++i){
         const UnionSimData& dat = vec[i];
         const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
-        out << std::setw(20) << dat.sim_time
+        out << dat.sim_time
               << std::setw(20) << pbid->bus_id
               << std::setw(20) << dat.comm_dat.src_id
               << std::setw(20) << dat.comm_dat.dst_id
