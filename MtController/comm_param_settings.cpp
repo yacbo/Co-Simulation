@@ -1254,39 +1254,80 @@ void comm_param_settings::rout_attack_button28_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_StaticRoute data;
-    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data.clientAddr.port = 65500;//port  uInt32_t型
-    data.type = ePG_RTUI_add_staticroute; //type
-    data.length = sizeof(PG_RTUI_StaticRoute);//length大小
-    data.nodeId=ui->lineEdit_48->text().toInt();
-    data.pdsi_delay_time = ui->lineEdit_49->text().toFloat();
-    data.cost =ui->lineEdit_53->text().toInt();
-    string stu1 =ui->lineEdit_50->text().toStdString();
-    string stu2 =ui->lineEdit_51->text().toStdString();
-    string stu3 =ui->lineEdit_52->text().toStdString();
-    strcpy(data.dst_ip,stu1.data());
-    strcpy(data.nxt_hop,stu2.data());
-    strcpy(data.out_itf_ip,stu3.data());
-    double time = ui->lineEdit_28->text().toDouble();
-    const int length = sizeof(PG_RTUI_StaticRoute)+sizeof(double);
-    char d[length]={0};
-    memcpy(d,&data,data.length);
-    memcpy(d+data.length,&time,sizeof(double));
-    QByteArray bytes(d, length);
-    XmlUtil::add_CommSimEventConf_data(bytes);
-    std::stringstream ss;
-    ss<<"靶标节点:"<<ui->lineEdit_48->text().toStdString()
-      <<"\n预设攻击时间:"<<ui->lineEdit_49->text().toStdString()
-      <<"\n目的地址:"<<ui->lineEdit_50->text().toStdString()
-      <<"\n下一跳地址:"<<ui->lineEdit_51->text().toStdString()
-      <<"\n接口IP地址:"<<ui->lineEdit_52->text().toStdString()
-      <<"\n权值数:"<<ui->lineEdit_53->text().toStdString();
-    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem(QString::fromStdString("路由攻击事件")));
-    model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
-    n++;
-    vec.push_back(QString::fromLatin1(d, length));
+    if(ui->comboBox_6->currentIndex()==0)
+    {
+        PG_RTUI_StaticRoute data;
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        data.type = ePG_RTUI_add_staticroute; //type
+        data.length = sizeof(PG_RTUI_StaticRoute);//length大小
+        data.nodeId=ui->lineEdit_48->text().toInt();
+        data.pdsi_delay_time = ui->lineEdit_49->text().toFloat();
+        data.cost =ui->lineEdit_53->text().toInt();
+        string stu1 =ui->lineEdit_50->text().toStdString();
+        string stu2 =ui->lineEdit_51->text().toStdString();
+        string stu3 =ui->lineEdit_52->text().toStdString();
+        strcpy(data.dst_ip,stu1.data());
+        strcpy(data.nxt_hop,stu2.data());
+        strcpy(data.out_itf_ip,stu3.data());
+
+        double time = ui->lineEdit_28->text().toDouble();
+        const int length = sizeof(PG_RTUI_StaticRoute)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        std::stringstream ss;
+        ss<<"靶标节点:"<<ui->lineEdit_48->text().toStdString()
+          <<"\n预设攻击时间:"<<ui->lineEdit_49->text().toStdString()
+          <<"\n目的地址:"<<ui->lineEdit_50->text().toStdString()
+          <<"\n下一跳地址:"<<ui->lineEdit_51->text().toStdString()
+          <<"\n接口IP地址:"<<ui->lineEdit_52->text().toStdString()
+          <<"\n权值数:"<<ui->lineEdit_53->text().toStdString();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("路由攻击事件")));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+        vec.push_back(QString::fromLatin1(d, length));
+    }else if(ui->comboBox_6->currentIndex()==1)
+    {
+        PG_RTUI_StaticRoute data;
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        data.type = ePG_RTUI_remove_staticroute; //type
+        data.length = sizeof(PG_RTUI_StaticRoute);//length大小
+        data.nodeId=ui->lineEdit_48->text().toInt();
+        data.pdsi_delay_time = ui->lineEdit_49->text().toFloat();
+        data.cost =ui->lineEdit_53->text().toInt();
+        string stu1 =ui->lineEdit_50->text().toStdString();
+        string stu2 =ui->lineEdit_51->text().toStdString();
+        string stu3 =ui->lineEdit_52->text().toStdString();
+        strcpy(data.dst_ip,stu1.data());
+        strcpy(data.nxt_hop,stu2.data());
+        strcpy(data.out_itf_ip,stu3.data());
+
+        double time = ui->lineEdit_28->text().toDouble();
+        const int length = sizeof(PG_RTUI_StaticRoute)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        std::stringstream ss;
+        ss<<"靶标节点:"<<ui->lineEdit_48->text().toStdString()
+          <<"\n预设攻击时间:"<<ui->lineEdit_49->text().toStdString()
+          <<"\n目的地址:"<<ui->lineEdit_50->text().toStdString()
+          <<"\n下一跳地址:"<<ui->lineEdit_51->text().toStdString()
+          <<"\n接口IP地址:"<<ui->lineEdit_52->text().toStdString()
+          <<"\n权值数:"<<ui->lineEdit_53->text().toStdString();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("路由攻击停止事件")));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+        vec.push_back(QString::fromLatin1(d, length));
+    }
+
 }
 //事件列表添加事件 数据篡改
 void comm_param_settings::data_tamper_button29_event()
@@ -1299,41 +1340,74 @@ void comm_param_settings::data_tamper_button29_event()
         return;
     }
 
-    PG_RTUI_SetDataTamperSimTime data;
-    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data.clientAddr.port = 65500;//port  uInt32_t型
-    data.type = ePG_RTUI_set_data_tamper_sim_time; //type
-    data.length = sizeof(PG_RTUI_SetDataTamperSimTime);//length大小
+    if(ui->comboBox_7->currentIndex()==0)
+    {
+        PG_RTUI_SetDataTamperSimTime data;
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        data.type = ePG_RTUI_set_data_tamper_sim_time; //type
+        data.length = sizeof(PG_RTUI_SetDataTamperSimTime);//length大小
 
-    data.nodeId = ui->lineEdit_45->text().toInt();
-    data.powernodeId =ui->lineEdit_20->text().toInt();
-    data.datatype =ui->comboBox_4->currentIndex()+1;
-    data.dataPlace =ui->lineEdit_22->text().toInt();
-    string stu1 = ui->lineEdit_23->text().toStdString();
-    strcpy(data.dataDev,stu1.data());
-    data.preset_time = ui->lineEdit_46->text().toFloat();
-    data.tamper_time= ui->lineEdit_47->text().toFloat();
+        data.nodeId = ui->lineEdit_45->text().toInt();
+        data.powernodeId =ui->lineEdit_20->text().toInt();
+        data.datatype =ui->comboBox_4->currentIndex()+1;
+        data.dataPlace =ui->lineEdit_22->text().toInt();
+        string stu1 = ui->lineEdit_23->text().toStdString();
+        strcpy(data.dataDev,stu1.data());
+        data.preset_time = ui->lineEdit_46->text().toFloat();
+        data.tamper_time= ui->lineEdit_47->text().toFloat();
 
-    double time = ui->lineEdit_29->text().toDouble();
-    const int length = sizeof(PG_RTUI_SetDataTamperSimTime)+sizeof(double);
-    char d[length]={0};
-    memcpy(d,&data,data.length);
-    memcpy(d+data.length,&time,sizeof(double));
-    QByteArray bytes(d, length);
-    XmlUtil::add_CommSimEventConf_data(bytes);
-    std::stringstream ss;
-    ss<<"攻击点号:"<<ui->lineEdit_45->text().toStdString()
-      <<"\n电力节点:"<<ui->lineEdit_20->text().toStdString()
-      <<"\n数据类型:"<<ui->comboBox_4->currentText().toStdString()
-      <<"\n字节开始位置处:"<<ui->lineEdit_22->text().toStdString()
-      <<"\n修改量value:"<<ui->lineEdit_23->text().toStdString()
-      <<"\n预设攻击时间:"<<ui->lineEdit_46->text().toStdString()
-      <<"\n攻击时间:"<<ui->lineEdit_47->text().toStdString();
-    model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-    model_t->setItem(n,1,new QStandardItem(QString::fromStdString("数据篡改事件")));
-    model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
-    n++;
-    vec.push_back(QString::fromLatin1(d, length));
+        double time = ui->lineEdit_29->text().toDouble();
+        const int length = sizeof(PG_RTUI_SetDataTamperSimTime)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        std::stringstream ss;
+        ss<<"攻击点号:"<<ui->lineEdit_45->text().toStdString()
+          <<"\n电力节点:"<<ui->lineEdit_20->text().toStdString()
+          <<"\n数据类型:"<<ui->comboBox_4->currentText().toStdString()
+          <<"\n字节开始位置处:"<<ui->lineEdit_22->text().toStdString()
+          <<"\n修改量value:"<<ui->lineEdit_23->text().toStdString()
+          <<"\n预设攻击时间:"<<ui->lineEdit_46->text().toStdString()
+          <<"\n攻击时间:"<<ui->lineEdit_47->text().toStdString();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("数据篡改攻击事件")));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+        vec.push_back(QString::fromLatin1(d, length));
+    }
+    else if(ui->comboBox_7->currentIndex()==1)
+    {
+        PG_RTUI_StopDataTamper data;
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        data.type = ePG_RTUI_stop_data_tamper; //type
+        data.length = sizeof(PG_RTUI_StopDataTamper);//length大小
+
+        double time = ui->lineEdit_29->text().toDouble();
+        const int length = sizeof(PG_RTUI_SetDataTamperSimTime)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        std::stringstream ss;
+        ss<<"攻击点号:"<<ui->lineEdit_45->text().toStdString()
+          <<"\n电力节点:"<<ui->lineEdit_20->text().toStdString()
+          <<"\n数据类型:"<<ui->comboBox_4->currentText().toStdString()
+          <<"\n字节开始位置处:"<<ui->lineEdit_22->text().toStdString()
+          <<"\n修改量value:"<<ui->lineEdit_23->text().toStdString()
+          <<"\n预设攻击时间:"<<ui->lineEdit_46->text().toStdString()
+          <<"\n攻击时间:"<<ui->lineEdit_47->text().toStdString();
+        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("数据篡改攻击停止事件")));
+        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+        n++;
+        vec.push_back(QString::fromLatin1(d, length));
+    }
+
 }
 
 //发送数据

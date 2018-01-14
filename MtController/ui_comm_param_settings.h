@@ -33,7 +33,7 @@ class Ui_comm_param_settings
 {
 public:
     QVBoxLayout *verticalLayout_15;
-    QHBoxLayout *horizontalLayout_62;
+    QHBoxLayout *horizontalLayout_64;
     QVBoxLayout *verticalLayout_10;
     QGroupBox *groupBox_6;
     QVBoxLayout *verticalLayout_6;
@@ -191,7 +191,7 @@ public:
     QPushButton *pushButton_27;
     QVBoxLayout *verticalLayout_13;
     QGroupBox *groupBox_8;
-    QVBoxLayout *verticalLayout_8;
+    QVBoxLayout *verticalLayout_7;
     QHBoxLayout *horizontalLayout_43;
     QLabel *label_55;
     QLineEdit *lineEdit_48;
@@ -214,12 +214,15 @@ public:
     QPushButton *pushButton_22;
     QPushButton *pushButton_23;
     QPushButton *pushButton_24;
+    QHBoxLayout *horizontalLayout_62;
+    QLabel *label_34;
+    QComboBox *comboBox_6;
     QHBoxLayout *horizontalLayout_58;
     QLabel *label_30;
     QLineEdit *lineEdit_28;
     QPushButton *pushButton_28;
     QGroupBox *groupBox_7;
-    QVBoxLayout *verticalLayout_7;
+    QVBoxLayout *verticalLayout_8;
     QHBoxLayout *horizontalLayout_39;
     QLabel *label_52;
     QLineEdit *lineEdit_45;
@@ -245,6 +248,9 @@ public:
     QPushButton *pushButton_19;
     QPushButton *pushButton_20;
     QPushButton *pushButton_21;
+    QHBoxLayout *horizontalLayout_63;
+    QLabel *label_35;
+    QComboBox *comboBox_7;
     QHBoxLayout *horizontalLayout_59;
     QLabel *label_31;
     QLineEdit *lineEdit_29;
@@ -267,8 +273,8 @@ public:
         comm_param_settings->setWindowIcon(icon);
         verticalLayout_15 = new QVBoxLayout(comm_param_settings);
         verticalLayout_15->setObjectName(QStringLiteral("verticalLayout_15"));
-        horizontalLayout_62 = new QHBoxLayout();
-        horizontalLayout_62->setObjectName(QStringLiteral("horizontalLayout_62"));
+        horizontalLayout_64 = new QHBoxLayout();
+        horizontalLayout_64->setObjectName(QStringLiteral("horizontalLayout_64"));
         verticalLayout_10 = new QVBoxLayout();
         verticalLayout_10->setObjectName(QStringLiteral("verticalLayout_10"));
         groupBox_6 = new QGroupBox(comm_param_settings);
@@ -465,7 +471,7 @@ public:
         verticalLayout_10->addWidget(groupBox_5);
 
 
-        horizontalLayout_62->addLayout(verticalLayout_10);
+        horizontalLayout_64->addLayout(verticalLayout_10);
 
         verticalLayout_11 = new QVBoxLayout();
         verticalLayout_11->setObjectName(QStringLiteral("verticalLayout_11"));
@@ -830,7 +836,7 @@ public:
         verticalLayout_11->addWidget(groupBox_2);
 
 
-        horizontalLayout_62->addLayout(verticalLayout_11);
+        horizontalLayout_64->addLayout(verticalLayout_11);
 
         verticalLayout_12 = new QVBoxLayout();
         verticalLayout_12->setObjectName(QStringLiteral("verticalLayout_12"));
@@ -1135,7 +1141,7 @@ public:
         verticalLayout_12->addWidget(groupBox_4);
 
 
-        horizontalLayout_62->addLayout(verticalLayout_12);
+        horizontalLayout_64->addLayout(verticalLayout_12);
 
         verticalLayout_13 = new QVBoxLayout();
         verticalLayout_13->setObjectName(QStringLiteral("verticalLayout_13"));
@@ -1143,8 +1149,8 @@ public:
         groupBox_8->setObjectName(QStringLiteral("groupBox_8"));
         groupBox_8->setMinimumSize(QSize(230, 280));
         groupBox_8->setMaximumSize(QSize(500, 280));
-        verticalLayout_8 = new QVBoxLayout(groupBox_8);
-        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
+        verticalLayout_7 = new QVBoxLayout(groupBox_8);
+        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
         horizontalLayout_43 = new QHBoxLayout();
         horizontalLayout_43->setObjectName(QStringLiteral("horizontalLayout_43"));
         label_55 = new QLabel(groupBox_8);
@@ -1160,7 +1166,7 @@ public:
         horizontalLayout_43->addWidget(lineEdit_48);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_43);
+        verticalLayout_7->addLayout(horizontalLayout_43);
 
         horizontalLayout_44 = new QHBoxLayout();
         horizontalLayout_44->setObjectName(QStringLiteral("horizontalLayout_44"));
@@ -1177,7 +1183,7 @@ public:
         horizontalLayout_44->addWidget(lineEdit_49);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_44);
+        verticalLayout_7->addLayout(horizontalLayout_44);
 
         horizontalLayout_45 = new QHBoxLayout();
         horizontalLayout_45->setObjectName(QStringLiteral("horizontalLayout_45"));
@@ -1194,7 +1200,7 @@ public:
         horizontalLayout_45->addWidget(lineEdit_50);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_45);
+        verticalLayout_7->addLayout(horizontalLayout_45);
 
         horizontalLayout_46 = new QHBoxLayout();
         horizontalLayout_46->setObjectName(QStringLiteral("horizontalLayout_46"));
@@ -1211,7 +1217,7 @@ public:
         horizontalLayout_46->addWidget(lineEdit_51);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_46);
+        verticalLayout_7->addLayout(horizontalLayout_46);
 
         horizontalLayout_47 = new QHBoxLayout();
         horizontalLayout_47->setObjectName(QStringLiteral("horizontalLayout_47"));
@@ -1228,7 +1234,7 @@ public:
         horizontalLayout_47->addWidget(lineEdit_52);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_47);
+        verticalLayout_7->addLayout(horizontalLayout_47);
 
         horizontalLayout_48 = new QHBoxLayout();
         horizontalLayout_48->setObjectName(QStringLiteral("horizontalLayout_48"));
@@ -1245,7 +1251,7 @@ public:
         horizontalLayout_48->addWidget(lineEdit_53);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_48);
+        verticalLayout_7->addLayout(horizontalLayout_48);
 
         horizontalLayout_49 = new QHBoxLayout();
         horizontalLayout_49->setObjectName(QStringLiteral("horizontalLayout_49"));
@@ -1268,7 +1274,23 @@ public:
         horizontalLayout_49->addWidget(pushButton_24);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_49);
+        verticalLayout_7->addLayout(horizontalLayout_49);
+
+        horizontalLayout_62 = new QHBoxLayout();
+        horizontalLayout_62->setObjectName(QStringLiteral("horizontalLayout_62"));
+        label_34 = new QLabel(groupBox_8);
+        label_34->setObjectName(QStringLiteral("label_34"));
+        label_34->setMinimumSize(QSize(120, 0));
+
+        horizontalLayout_62->addWidget(label_34);
+
+        comboBox_6 = new QComboBox(groupBox_8);
+        comboBox_6->setObjectName(QStringLiteral("comboBox_6"));
+
+        horizontalLayout_62->addWidget(comboBox_6);
+
+
+        verticalLayout_7->addLayout(horizontalLayout_62);
 
         horizontalLayout_58 = new QHBoxLayout();
         horizontalLayout_58->setObjectName(QStringLiteral("horizontalLayout_58"));
@@ -1290,7 +1312,7 @@ public:
         horizontalLayout_58->addWidget(pushButton_28);
 
 
-        verticalLayout_8->addLayout(horizontalLayout_58);
+        verticalLayout_7->addLayout(horizontalLayout_58);
 
 
         verticalLayout_13->addWidget(groupBox_8);
@@ -1298,8 +1320,8 @@ public:
         groupBox_7 = new QGroupBox(comm_param_settings);
         groupBox_7->setObjectName(QStringLiteral("groupBox_7"));
         groupBox_7->setMinimumSize(QSize(230, 340));
-        verticalLayout_7 = new QVBoxLayout(groupBox_7);
-        verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
+        verticalLayout_8 = new QVBoxLayout(groupBox_7);
+        verticalLayout_8->setObjectName(QStringLiteral("verticalLayout_8"));
         horizontalLayout_39 = new QHBoxLayout();
         horizontalLayout_39->setObjectName(QStringLiteral("horizontalLayout_39"));
         label_52 = new QLabel(groupBox_7);
@@ -1315,7 +1337,7 @@ public:
         horizontalLayout_39->addWidget(lineEdit_45);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_39);
+        verticalLayout_8->addLayout(horizontalLayout_39);
 
         horizontalLayout_34 = new QHBoxLayout();
         horizontalLayout_34->setObjectName(QStringLiteral("horizontalLayout_34"));
@@ -1332,7 +1354,7 @@ public:
         horizontalLayout_34->addWidget(lineEdit_20);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_34);
+        verticalLayout_8->addLayout(horizontalLayout_34);
 
         horizontalLayout_35 = new QHBoxLayout();
         horizontalLayout_35->setObjectName(QStringLiteral("horizontalLayout_35"));
@@ -1351,7 +1373,7 @@ public:
         horizontalLayout_35->setStretch(0, 2);
         horizontalLayout_35->setStretch(1, 4);
 
-        verticalLayout_7->addLayout(horizontalLayout_35);
+        verticalLayout_8->addLayout(horizontalLayout_35);
 
         horizontalLayout_36 = new QHBoxLayout();
         horizontalLayout_36->setObjectName(QStringLiteral("horizontalLayout_36"));
@@ -1368,7 +1390,7 @@ public:
         horizontalLayout_36->addWidget(lineEdit_22);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_36);
+        verticalLayout_8->addLayout(horizontalLayout_36);
 
         horizontalLayout_50 = new QHBoxLayout();
         horizontalLayout_50->setObjectName(QStringLiteral("horizontalLayout_50"));
@@ -1385,7 +1407,7 @@ public:
         horizontalLayout_50->addWidget(lineEdit_23);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_50);
+        verticalLayout_8->addLayout(horizontalLayout_50);
 
         horizontalLayout_40 = new QHBoxLayout();
         horizontalLayout_40->setObjectName(QStringLiteral("horizontalLayout_40"));
@@ -1402,7 +1424,7 @@ public:
         horizontalLayout_40->addWidget(lineEdit_46);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_40);
+        verticalLayout_8->addLayout(horizontalLayout_40);
 
         horizontalLayout_41 = new QHBoxLayout();
         horizontalLayout_41->setObjectName(QStringLiteral("horizontalLayout_41"));
@@ -1419,7 +1441,7 @@ public:
         horizontalLayout_41->addWidget(lineEdit_47);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_41);
+        verticalLayout_8->addLayout(horizontalLayout_41);
 
         horizontalLayout_42 = new QHBoxLayout();
         horizontalLayout_42->setObjectName(QStringLiteral("horizontalLayout_42"));
@@ -1442,7 +1464,23 @@ public:
         horizontalLayout_42->addWidget(pushButton_21);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_42);
+        verticalLayout_8->addLayout(horizontalLayout_42);
+
+        horizontalLayout_63 = new QHBoxLayout();
+        horizontalLayout_63->setObjectName(QStringLiteral("horizontalLayout_63"));
+        label_35 = new QLabel(groupBox_7);
+        label_35->setObjectName(QStringLiteral("label_35"));
+        label_35->setMinimumSize(QSize(120, 0));
+
+        horizontalLayout_63->addWidget(label_35);
+
+        comboBox_7 = new QComboBox(groupBox_7);
+        comboBox_7->setObjectName(QStringLiteral("comboBox_7"));
+
+        horizontalLayout_63->addWidget(comboBox_7);
+
+
+        verticalLayout_8->addLayout(horizontalLayout_63);
 
         horizontalLayout_59 = new QHBoxLayout();
         horizontalLayout_59->setObjectName(QStringLiteral("horizontalLayout_59"));
@@ -1464,13 +1502,13 @@ public:
         horizontalLayout_59->addWidget(pushButton_29);
 
 
-        verticalLayout_7->addLayout(horizontalLayout_59);
+        verticalLayout_8->addLayout(horizontalLayout_59);
 
 
         verticalLayout_13->addWidget(groupBox_7);
 
 
-        horizontalLayout_62->addLayout(verticalLayout_13);
+        horizontalLayout_64->addLayout(verticalLayout_13);
 
         verticalLayout_14 = new QVBoxLayout();
         verticalLayout_14->setObjectName(QStringLiteral("verticalLayout_14"));
@@ -1511,10 +1549,10 @@ public:
         verticalLayout_14->addLayout(horizontalLayout_53);
 
 
-        horizontalLayout_62->addLayout(verticalLayout_14);
+        horizontalLayout_64->addLayout(verticalLayout_14);
 
 
-        verticalLayout_15->addLayout(horizontalLayout_62);
+        verticalLayout_15->addLayout(horizontalLayout_64);
 
 
         retranslateUi(comm_param_settings);
@@ -1617,6 +1655,12 @@ public:
         pushButton_22->setText(QApplication::translate("comm_param_settings", "\347\241\256\350\256\244", Q_NULLPTR));
         pushButton_23->setText(QApplication::translate("comm_param_settings", "\345\217\226\346\266\210", Q_NULLPTR));
         pushButton_24->setText(QApplication::translate("comm_param_settings", "\346\201\242\345\244\215", Q_NULLPTR));
+        label_34->setText(QApplication::translate("comm_param_settings", "\346\201\266\346\204\217\350\267\257\347\224\261\346\224\273\345\207\273\351\205\215\347\275\256\357\274\232", Q_NULLPTR));
+        comboBox_6->clear();
+        comboBox_6->insertItems(0, QStringList()
+         << QApplication::translate("comm_param_settings", "\346\224\273\345\207\273\350\256\276\347\275\256", Q_NULLPTR)
+         << QApplication::translate("comm_param_settings", "\346\224\273\345\207\273\345\201\234\346\255\242", Q_NULLPTR)
+        );
         label_30->setText(QApplication::translate("comm_param_settings", "\344\272\213\344\273\266\346\227\266\351\227\264\357\274\232", Q_NULLPTR));
         pushButton_28->setText(QApplication::translate("comm_param_settings", "\346\267\273\345\212\240\344\272\213\344\273\266", Q_NULLPTR));
         groupBox_7->setTitle(QApplication::translate("comm_param_settings", "\346\225\260\346\215\256\347\257\241\346\224\271\346\224\273\345\207\273\347\256\241\347\220\206", Q_NULLPTR));
@@ -1637,6 +1681,12 @@ public:
         pushButton_19->setText(QApplication::translate("comm_param_settings", "\347\241\256\350\256\244", Q_NULLPTR));
         pushButton_20->setText(QApplication::translate("comm_param_settings", "\345\217\226\346\266\210", Q_NULLPTR));
         pushButton_21->setText(QApplication::translate("comm_param_settings", "\346\201\242\345\244\215", Q_NULLPTR));
+        label_35->setText(QApplication::translate("comm_param_settings", "\346\225\260\346\215\256\347\257\241\346\224\271\346\224\273\345\207\273\351\205\215\347\275\256", Q_NULLPTR));
+        comboBox_7->clear();
+        comboBox_7->insertItems(0, QStringList()
+         << QApplication::translate("comm_param_settings", "\346\224\273\345\207\273\350\256\276\347\275\256", Q_NULLPTR)
+         << QApplication::translate("comm_param_settings", "\346\224\273\345\207\273\345\201\234\346\255\242", Q_NULLPTR)
+        );
         label_31->setText(QApplication::translate("comm_param_settings", "\344\272\213\344\273\266\346\227\266\351\227\264\357\274\232", Q_NULLPTR));
         pushButton_29->setText(QApplication::translate("comm_param_settings", "\346\267\273\345\212\240\344\272\213\344\273\266", Q_NULLPTR));
         groupBox_9->setTitle(QApplication::translate("comm_param_settings", "\344\272\213\344\273\266\345\210\227\350\241\250", Q_NULLPTR));
