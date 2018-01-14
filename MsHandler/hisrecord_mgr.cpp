@@ -149,10 +149,10 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
         dat.comm_dat.trans_delay = std::stol(dat_vec[5]);
         pbid.bus_volt = std::stod(dat_vec[6]);
         pbid.bus_angle = std::stod(dat_vec[7]);
-
         memcpy(dat.power_dat, &pbid, sizeof(PowerBusInforData));
 
         vec.push_back(dat);
+        dat_vec.clear();
     }
 
     in.close();
@@ -206,6 +206,7 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
     IntMap his_map;
     SimpleIntSet his_set, rec_set;
 
+    //记录历史数据母线集
     for(int i=0; i<his.size(); ++i){
         const UnionSimData& dat = his[i];
         const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
@@ -213,29 +214,33 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
         his_set.insert(pbid->bus_id);
     }
 
+    //记录当前数据母线集
     string cur_bus_id = "current record bus id: ";
     UnionSimDatVec tmp_vec(his.size());
     for(int i=0; i<record.size(); ++i){
         const UnionSimData& dat = record[i];
         const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
-        memcpy(&tmp_vec[pbid->bus_id],  &dat, sizeof(UnionSimData));
-        cur_bus_id += pbid->bus_id + " ";
+        memcpy(&tmp_vec[pbid->bus_id - 1],  &dat, sizeof(UnionSimData));
+        cur_bus_id += std::to_string(pbid->bus_id) + " ";
         rec_set.insert(pbid->bus_id);
     }
 
+    //与历史母线集对比查询当前母线集缺少的母线编号
     IntVec diff_vec(his.size() > record.size() ? his.size() : record.size());
     IntVec::iterator diff_end = std::set_difference(his_set.begin(), his_set.end(), rec_set.begin(), rec_set.end(), diff_vec.begin());
     int diff_num = diff_end - diff_vec.begin();
 
+    //借助历史数据补全当前数据集
     string need_bus_id = "insert history record bus id: ";
     for(int i=0; i<diff_num; ++i){
-        need_bus_id += diff_vec[i] + " ";
+        need_bus_id += std::to_string(diff_vec[i]) + " ";
         int index = his_map[diff_vec[i]];
         memcpy(&tmp_vec[index], &his[index], sizeof(UnionSimData));
     }
 
     LogUtil::Instance()->Output(MACRO_LOCAL, cur_bus_id, need_bus_id);
 
+    //设置当前数据
     record.clear();
     record.resize(tmp_vec.size());
     for(int i=0; i<tmp_vec.size(); ++i){

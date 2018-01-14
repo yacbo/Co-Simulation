@@ -397,13 +397,14 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
             return false;
         }
 
+        int data_items = data.size();
         if(!HisRecordMgr::instance()->fill_record(_power_conf_param.upstm_type, his_rec_vec, data)){
             info = LogUtil::Instance()->Output(MACRO_LOCAL, "fill record failed");
             return false;
         }
 
         info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv data items not equal to the config value, current items:",
-                                                   data.size(), "config items:", _power_conf_param.upstm_num, "Apply History Data");
+                                                   data_items, "config items:", _power_conf_param.upstm_num, "[Apply History Record Data]");
         emit progress_log_signal(info);
     }
 
@@ -632,6 +633,11 @@ void client_proxy::handle_power(ApplMessage* msg)
             return;
         }
 
+        //通知SBS当前仿真时间.
+        double current_sim_time = _power_handler->QueryCurSimTime();
+        doc = XmlUtil::generate_sim_time_notify_xml(ss_id, 10000, current_sim_time);
+        emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
+
         info  = LogUtil::Instance()->Output(MACRO_LOCAL, "start execute power simulation");
         emit progress_log_signal(info);
 
@@ -642,6 +648,7 @@ void client_proxy::handle_power(ApplMessage* msg)
                                                           _power_conf_param.upstm_num,
                                                           (EPowerDataType)_power_conf_param.upstm_type,
                                                           _upstm_info);
+
         if(ret < 0){
             _power_handler->ExitHandler();
             info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute Over, power software has closed");
@@ -697,6 +704,11 @@ void client_proxy::handle_power(ApplMessage* msg)
         _expect_proc_type = eSubProcedure_session_end;
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){
+        //通知SBS当前仿真时间.
+        double current_sim_time = _power_handler->QueryCurSimTime();
+        doc = XmlUtil::generate_sim_time_notify_xml(ss_id, 10000, current_sim_time);
+        emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
+
         if(_power_init_success){
            reset_power_input_data();
            ret = _power_handler->Execute(_power_conf_param.dwstm_num,

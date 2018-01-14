@@ -420,6 +420,7 @@ void application_layer::handle_msg(ApplMessage* msg)
     switch(msg->_proc_msg->_proc_type){
     case eSubProcedure_sim_cmd: handle_sim_cmd(msg); break;
     case eSubProcedure_cfg_sim_param_data: handle_cfg_sim_param(msg); break;
+    case eSubProcedure_sim_time_notify_data:
     case eSubProcedure_cfg_communication_data: handle_comm_sim_event(msg); break;
     case eSubProcedure_session_begin:
     case eSubProcedure_appl_request:
@@ -476,12 +477,12 @@ void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& 
     QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "event data items:", data.size());
     emit progress_log_signal(info);
 
+    QMutexLocker lck(&_mtx);
+
     _event_time_vec.insert(_event_time_vec.end(), time.begin(), time.end());
     _event_data_vec.insert(_event_data_vec.end(), data.begin(), data.end());
 
     //对事件按时间升序排列
-    _mtx.lock();
-
     int nsize = _event_time_vec.size();
     for(int i=0; i<nsize - 1; ++i){
         for(int j=i+1; j<nsize; ++j){
@@ -491,8 +492,6 @@ void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& 
             }
         }
     }
-
-    _mtx.unlock();
 }
 
 void application_layer::check_sim_time_event_slots()
@@ -514,8 +513,7 @@ void application_layer::check_sim_time_event_slots()
         forward_event_data(_event_data_vec[i]);
     }
 
-    _mtx.lock();
-
+    QMutexLocker lck (&_mtx);
     DblVec::iterator it_dbl = _event_time_vec.begin();
     DblVec::iterator it_dbl_end = it_dbl + index + 1;
     while(it_dbl != it_dbl_end){
@@ -527,8 +525,6 @@ void application_layer::check_sim_time_event_slots()
     while(it_byte != it_byte_end){
         it_byte = _event_data_vec.erase(it_byte);
     }
-
-    _mtx.unlock();
 }
 
 void application_layer::forward_event_data(QByteArray& data)

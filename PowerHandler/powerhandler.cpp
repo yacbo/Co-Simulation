@@ -8,6 +8,7 @@ using std::string;
 PowerHandler::PowerHandler()
 {
     _sim_count = 1;
+    _cur_time = 0.0;
     _instance = nullptr;
 
     _api_fixture = new ApiFixture();
@@ -72,7 +73,7 @@ bool PowerHandler::InitHandler(EPowerPrjType prj_type, const char* prj_name, con
         for (; it != folders.end(); ++it) {
             DataObject* folder = *it;
             string EvtSwitchName = folder->GetAttributeString("loc_name")->GetString();
-            if(EvtSwitchName.compare("切机")==0)
+            if(EvtSwitchName.compare("cutGen")==0)
             {
                 folder->DeleteObject();
             }
@@ -387,16 +388,14 @@ int PowerHandler::SetAVREvents(Application* app, int sd_num, EPowerDataType sd_t
         paramevent[i]->SetAttributeString("variable", "Vbias2", &error);
     }
 
-    double etime = simtime;
+    double etime = 0;
     for (int i = 0; i < sd_num; ++i){
+        const PowerDGInforData* dg_data = (const PowerDGInforData*)sd_data[i];
+        etime = dg_data->time_diff / 1e9 + simtime;
         paramevent[i]->SetAttributeDouble("hrtime", 0, &error);                //这边时间为当前仿真时刻+通信时延
         paramevent[i]->SetAttributeDouble("mtime", 0, &error);                 //这边时间为当前仿真时刻+通信时延
         paramevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
-
-        if(sd_type == ePowerData_dginfor){
-            const PowerDGInforData* dg_data = (const PowerDGInforData*)sd_data[i];
-            paramevent[i]->SetAttributeDouble("value", dg_data->dv, &error); //这边值为发电机机端电压调整量
-        }
+        paramevent[i]->SetAttributeDouble("value", dg_data->dv, &error); //这边值为发电机机端电压调整量
     }
 
     return error;
@@ -421,7 +420,7 @@ int PowerHandler::SetPsseJSEvents(Application* app, int sd_num, EPowerDataType s
     DataObject* SwityhEvent = events->CreateObject("EvtSwitch", "cutGen");
 
     SwityhEvent->SetAttributeObject("p_target", Gplant, &error);
-    double etime = ctrl_order->comm_trans_time+simtime;//假定0s时刻发生短路故障
+    double etime = ctrl_order->comm_trans_time / 1e9 + 0.16;//假定0s时刻发生短路故障
     SwityhEvent->SetAttributeDouble("hrtime", 0, &error);//这边时间为当前仿真时刻+通信时延
     SwityhEvent->SetAttributeDouble("mtime", 0, &error);//这边时间为当前仿真时刻+通信时延
     SwityhEvent->SetAttributeDouble("time", etime, &error);//这边时间为当前仿真时刻+通信时延
