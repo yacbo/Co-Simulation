@@ -122,7 +122,7 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
         return false;
     }
 
-    string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
+    string rec_path = file_name;
     std::ifstream in(rec_path);
     if(in.fail()){
         LogUtil::Instance()->Output(MACRO_LOCAL, "open file:", rec_path, "failed");
@@ -213,9 +213,13 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
         his_set.insert(pbid->bus_id);
     }
 
+    string cur_bus_id = "current record bus id: ";
+    UnionSimDatVec tmp_vec(his.size());
     for(int i=0; i<record.size(); ++i){
         const UnionSimData& dat = record[i];
         const PowerBusInforData* pbid = (const PowerBusInforData*)dat.power_dat ;
+        memcpy(&tmp_vec[pbid->bus_id],  &dat, sizeof(UnionSimData));
+        cur_bus_id += pbid->bus_id + " ";
         rec_set.insert(pbid->bus_id);
     }
 
@@ -223,10 +227,19 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
     IntVec::iterator diff_end = std::set_difference(his_set.begin(), his_set.end(), rec_set.begin(), rec_set.end(), diff_vec.begin());
     int diff_num = diff_end - diff_vec.begin();
 
+    string need_bus_id = "insert history record bus id: ";
     for(int i=0; i<diff_num; ++i){
+        need_bus_id += diff_vec[i] + " ";
         int index = his_map[diff_vec[i]];
-        record.insert(record.begin() + index, UnionSimData());
-        memcpy(&record[index], &his[index], sizeof(UnionSimData));
+        memcpy(&tmp_vec[index], &his[index], sizeof(UnionSimData));
+    }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, cur_bus_id, need_bus_id);
+
+    record.clear();
+    record.resize(tmp_vec.size());
+    for(int i=0; i<tmp_vec.size(); ++i){
+        memcpy(&record[i], &tmp_vec[i], sizeof(UnionSimData));
     }
 
     return true;
