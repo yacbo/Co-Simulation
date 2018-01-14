@@ -19,7 +19,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_15">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_62">
+    <layout class="QHBoxLayout" name="horizontalLayout_64">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
@@ -1258,7 +1258,7 @@
          <property name="title">
           <string>恶意路由攻击</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_43">
             <item>
@@ -1432,6 +1432,37 @@
            </layout>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_62">
+            <item>
+             <widget class="QLabel" name="label_34">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>恶意路由攻击配置：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_6">
+              <item>
+               <property name="text">
+                <string>攻击设置</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>攻击停止</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_58">
             <item>
              <widget class="QLabel" name="label_30">
@@ -1472,7 +1503,7 @@
          <property name="title">
           <string>数据篡改攻击管理</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_39">
             <item>
@@ -1685,6 +1716,37 @@
               <property name="text">
                <string>恢复</string>
               </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_63">
+            <item>
+             <widget class="QLabel" name="label_35">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>数据篡改攻击配置</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_7">
+              <item>
+               <property name="text">
+                <string>攻击设置</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>攻击停止</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
