@@ -17,9 +17,9 @@
    <iconset resource="../MidSoftUI/minsoft.qrc">
     <normaloff>:/power_32.png</normaloff>:/power_32.png</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_61">
+  <layout class="QVBoxLayout" name="verticalLayout_15">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_60">
+    <layout class="QHBoxLayout" name="horizontalLayout_62">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
@@ -934,6 +934,51 @@
            </layout>
           </item>
           <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_60">
+            <item>
+             <widget class="QLabel" name="label_32">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
+              <property name="text">
+               <string>节点故障配置：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_2">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <item>
+               <property name="text">
+                <string>故障设置</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>故障恢复</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_56">
             <item>
              <widget class="QLabel" name="label_28">
@@ -1124,6 +1169,40 @@
               <property name="text">
                <string>恢复</string>
               </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_61">
+            <item>
+             <widget class="QLabel" name="label_33">
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
+              <property name="text">
+               <string>链路故障配置：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_5">
+              <item>
+               <property name="text">
+                <string>故障设置</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>故障恢复</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>

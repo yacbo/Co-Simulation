@@ -1027,51 +1027,105 @@ void comm_param_settings::node_breakdown_button26_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangeNodeStatus data;
+    if(ui->comboBox_2->currentIndex()==0)   //节点故障设置
+    {
+        PG_RTUI_ChangeNodeStatus data;
 
-    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data.clientAddr.port = 65500;//port  uInt16_t型
-    if(ui->radioButton_2->isChecked())   //非半实物
-    {
-        data.type = ePG_RTUI_change_node_status; //type 23
-    }
-    if(ui->radioButton->isChecked())   //半实物
-    {
-        data.type = ePG_RTUI_hr_change_node_status; //type 5
-    }
-    data.length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt16_t型
+        if(ui->radioButton_2->isChecked())   //非半实物
+        {
+            data.type = ePG_RTUI_change_node_status; //type 23
+        }
+        if(ui->radioButton->isChecked())   //半实物
+        {
+            data.type = ePG_RTUI_hr_change_node_status; //type 5
+        }
+        data.length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
+        data.nodeId = ui->lineEdit_13->text().toInt();
+        data.pdsi_delay_time = ui->lineEdit_14->text().toFloat();
+        data.change_delay_time = ui->lineEdit_15->text().toFloat();
 
-    data.nodeId = ui->lineEdit_13->text().toInt();
-    data.pdsi_delay_time = ui->lineEdit_14->text().toFloat();
-    data.change_delay_time = ui->lineEdit_15->text().toFloat();
-    double time = ui->lineEdit_26->text().toDouble();
-    const int length = sizeof(PG_RTUI_ChangeNodeStatus)+sizeof(double);
-    char d[length]={0};
-    memcpy(d,&data,data.length);
-    memcpy(d+data.length,&time,sizeof(double));
-    QByteArray bytes(d, length);
-    XmlUtil::add_CommSimEventConf_data(bytes);
-    if(ui->radioButton_2->isChecked())   //非半实物
-    {
-        std::stringstream ss;
-        ss<<"故障节点:"<<ui->lineEdit_13->text().toStdString().data();
-        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("节点故障事件:not half.")));
-        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
-        n++;
+        double time = ui->lineEdit_26->text().toDouble();
+        const int length = sizeof(PG_RTUI_ChangeNodeStatus)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        if(ui->radioButton_2->isChecked())   //非半实物
+        {
+            std::stringstream ss;
+            ss<<"节点:"<<ui->lineEdit_13->text().toStdString().data();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem(QString::fromStdString("节点故障事件(not half).")));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        if(ui->radioButton->isChecked())   //半实物
+        {
+            std::stringstream ss;
+            ss<<"节点:"<<ui->lineEdit_13->text().toStdString()
+              <<"\n预设故障时间:"<<ui->lineEdit_14->text().toStdString()
+              <<"\n延迟补偿:"<<ui->lineEdit_15->text().toStdString();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem("节点故障事件(half)."));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        vec.push_back(QString::fromLatin1(d, length));
     }
-    if(ui->radioButton->isChecked())   //半实物
+    else if(ui->comboBox_2->currentIndex()==1)  //节点故障恢复
     {
-        std::stringstream ss;
-        ss<<"故障节点:"<<ui->lineEdit_13->text().toStdString()
-          <<"\n预设故障时间:"<<ui->lineEdit_14->text().toStdString()
-          <<"\n延迟补偿:"<<ui->lineEdit_15->text().toStdString();
-        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-        model_t->setItem(n,1,new QStandardItem("节点故障事件:half."));
-        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
-        n++;
+        PG_RTUI_ChangeNodeStatus data;
+
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        if(ui->radioButton_2->isChecked())   //非半实物
+        {
+            data.type = ePG_RTUI_recover_node_status; //type 24
+        }
+        if(ui->radioButton->isChecked())   //半实物
+        {
+            data.type = ePG_RTUI_hr_recover_node_status; //type 6
+        }
+        data.length = sizeof(PG_RTUI_ChangeNodeStatus);//length大小
+
+        data.nodeId = ui->lineEdit_13->text().toInt();
+        data.pdsi_delay_time = ui->lineEdit_14->text().toFloat();
+        data.change_delay_time = ui->lineEdit_15->text().toFloat();
+
+        double time = ui->lineEdit_26->text().toDouble();
+        const int length = sizeof(PG_RTUI_ChangeNodeStatus)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        if(ui->radioButton_2->isChecked())   //非半实物
+        {
+            std::stringstream ss;
+            ss<<"节点:"<<ui->lineEdit_13->text().toStdString().data();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem(QString::fromStdString("节点故障恢复事件(not half).")));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        if(ui->radioButton->isChecked())   //半实物
+        {
+            std::stringstream ss;
+            ss<<"节点:"<<ui->lineEdit_13->text().toStdString()
+              <<"\n预设故障时间:"<<ui->lineEdit_14->text().toStdString()
+              <<"\n延迟补偿:"<<ui->lineEdit_15->text().toStdString();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem("节点故障恢复事件(half)."));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        vec.push_back(QString::fromLatin1(d, length));
+
     }
-    vec.push_back(QString::fromLatin1(d, length));
+
 }
 //事件列表添加事件  链路故障
 void comm_param_settings::link_breakdown_button27_event()
@@ -1086,54 +1140,109 @@ void comm_param_settings::link_breakdown_button27_event()
         QMessageBox::information(this, QString::fromStdString("警告"),QString::fromStdString("请检查输入的参数!"));
         return;
     }
-    PG_RTUI_ChangePortStatus data;
-    data.clientAddr.ip_addr =_ip;//ip uInt32_t型
-    data.clientAddr.port = 65500;//port  uInt32_t型
-    if(ui->radioButton_4->isChecked())   //非半实物
+    if(ui->comboBox_5->currentIndex()==0)  //链路故障设置
     {
-        data.type = ePG_RTUI_change_port_status; //type
-    }
-    if(ui->radioButton_3->isChecked())   //半实物
-    {
-        data.type = ePG_RTUI_hr_change_port_status; //type
-    }
-    data.length = sizeof(PG_RTUI_ChangePortStatus);//length大小
+        PG_RTUI_ChangePortStatus data;
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        if(ui->radioButton_4->isChecked())   //非半实物
+        {
+            data.type = ePG_RTUI_change_port_status; //type
+        }
+        if(ui->radioButton_3->isChecked())   //半实物
+        {
+            data.type = ePG_RTUI_hr_change_port_status; //type
+        }
+        data.length = sizeof(PG_RTUI_ChangePortStatus);//length大小
 
-    data.nodeId1 = ui->lineEdit_16->text().toInt();
-    data.nodeId2 = ui->lineEdit_17->text().toInt();
-    data.pdsi_delay_time = ui->lineEdit_18->text().toFloat();
-    data.change_delay_time = ui->lineEdit_19->text().toFloat();
+        data.nodeId1 = ui->lineEdit_16->text().toInt();
+        data.nodeId2 = ui->lineEdit_17->text().toInt();
+        data.pdsi_delay_time = ui->lineEdit_18->text().toFloat();
+        data.change_delay_time = ui->lineEdit_19->text().toFloat();
 
-    double time = ui->lineEdit_27->text().toDouble();
-    const int length = sizeof(PG_RTUI_ChangePortStatus)+sizeof(double);
-    char d[length]={0};
-    memcpy(d,&data,data.length);
-    memcpy(d+data.length,&time,sizeof(double));
-    QByteArray bytes(d, length);
-    XmlUtil::add_CommSimEventConf_data(bytes);
-    if(ui->radioButton_4->isChecked())   //非半实物
-    {
-        std::stringstream ss;
-        ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString().data()
-          <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString().data();
-        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-        model_t->setItem(n,1,new QStandardItem(QString::fromStdString("链路故障事件:not half.")));
-        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
-        n++;
+        double time = ui->lineEdit_27->text().toDouble();
+        const int length = sizeof(PG_RTUI_ChangePortStatus)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        if(ui->radioButton_4->isChecked())   //非半实物
+        {
+            std::stringstream ss;
+            ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString().data()
+             <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString().data();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem(QString::fromStdString("链路故障事件(not half).")));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        if(ui->radioButton_3->isChecked())   //半实物
+        {
+            std::stringstream ss;
+            ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString()
+             <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString()
+            <<"\n预设故障时间:"<<ui->lineEdit_18->text().toStdString()
+            <<"\n延迟补偿:"<<ui->lineEdit_19->text().toStdString();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem("链路故障事(half)."));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        vec.push_back(QString::fromLatin1(d, length));
     }
-    if(ui->radioButton_3->isChecked())   //半实物
+    else if(ui->comboBox_5->currentIndex()==1)  //链路故障恢复
     {
-        std::stringstream ss;
-        ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString()
-          <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString()
-          <<"\n预设故障时间:"<<ui->lineEdit_18->text().toStdString()
-          <<"\n延迟补偿:"<<ui->lineEdit_19->text().toStdString();
-        model_t->setItem(n,0,new QStandardItem(QString::number(time)));
-        model_t->setItem(n,1,new QStandardItem("链路故障事件:half."));
-        model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
-        n++;
+        PG_RTUI_ChangePortStatus data;
+        data.clientAddr.ip_addr =_ip;//ip uInt32_t型
+        data.clientAddr.port = 65500;//port  uInt32_t型
+        if(ui->radioButton_4->isChecked())   //非半实物
+        {
+            data.type = ePG_RTUI_recover_port_status; //type
+        }
+        if(ui->radioButton_3->isChecked())   //半实物
+        {
+            data.type = ePG_RTUI_hr_recover_port_status; //type
+        }
+        data.length = sizeof(PG_RTUI_ChangePortStatus);//length大小
+
+        data.nodeId1 = ui->lineEdit_16->text().toInt();
+        data.nodeId2 = ui->lineEdit_17->text().toInt();
+        data.pdsi_delay_time = ui->lineEdit_18->text().toFloat();
+        data.change_delay_time = ui->lineEdit_19->text().toFloat();
+
+        double time = ui->lineEdit_27->text().toDouble();
+        const int length = sizeof(PG_RTUI_ChangePortStatus)+sizeof(double);
+        char d[length]={0};
+        memcpy(d,&data,data.length);
+        memcpy(d+data.length,&time,sizeof(double));
+        QByteArray bytes(d, length);
+        XmlUtil::add_CommSimEventConf_data(bytes);
+        if(ui->radioButton_4->isChecked())   //非半实物
+        {
+            std::stringstream ss;
+            ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString().data()
+             <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString().data();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem(QString::fromStdString("链路故障恢复事件(not half).")));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        if(ui->radioButton_3->isChecked())   //半实物
+        {
+            std::stringstream ss;
+            ss<<"源节点号:"<<ui->lineEdit_16->text().toStdString()
+             <<"\n目的节点:"<<ui->lineEdit_17->text().toStdString()
+            <<"\n预设故障时间:"<<ui->lineEdit_18->text().toStdString()
+            <<"\n延迟补偿:"<<ui->lineEdit_19->text().toStdString();
+            model_t->setItem(n,0,new QStandardItem(QString::number(time)));
+            model_t->setItem(n,1,new QStandardItem("链路故障恢复事件(half)."));
+            model_t->setItem(n,2,new QStandardItem(QString::fromStdString(ss.str())));
+            n++;
+        }
+        vec.push_back(QString::fromLatin1(d, length));
     }
-    vec.push_back(QString::fromLatin1(d, length));
+
 }
 //事件列表添加事件 路由攻击
 void comm_param_settings::rout_attack_button28_event()

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <functional>
 #include <WinSock.h>
-
+#include <inttypes.h>
 typedef std::function<void(const char*, int)> RcvCallback;
 
 class SocketHandler : public QObject
