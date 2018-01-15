@@ -14,7 +14,7 @@
    <string>通信参数配置</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../MidSoftUI/minsoft.qrc">
+   <iconset resource="resourece.qrc">
     <normaloff>:/power_32.png</normaloff>:/power_32.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1441,6 +1441,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
                <string>恶意路由攻击配置：</string>
               </property>
@@ -1730,8 +1733,11 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">border:0px;</string>
+              </property>
               <property name="text">
-               <string>数据篡改攻击配置</string>
+               <string>数据篡改攻击配置：</string>
               </property>
              </widget>
             </item>
@@ -1847,7 +1853,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../MidSoftUI/minsoft.qrc"/>
+  <include location="resourece.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1281,6 +1281,7 @@ public:
         label_34 = new QLabel(groupBox_8);
         label_34->setObjectName(QStringLiteral("label_34"));
         label_34->setMinimumSize(QSize(120, 0));
+        label_34->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_62->addWidget(label_34);
 
@@ -1471,6 +1472,7 @@ public:
         label_35 = new QLabel(groupBox_7);
         label_35->setObjectName(QStringLiteral("label_35"));
         label_35->setMinimumSize(QSize(120, 0));
+        label_35->setStyleSheet(QStringLiteral("border:0px;"));
 
         horizontalLayout_63->addWidget(label_35);
 
@@ -1681,7 +1683,7 @@ public:
         pushButton_19->setText(QApplication::translate("comm_param_settings", "\347\241\256\350\256\244", Q_NULLPTR));
         pushButton_20->setText(QApplication::translate("comm_param_settings", "\345\217\226\346\266\210", Q_NULLPTR));
         pushButton_21->setText(QApplication::translate("comm_param_settings", "\346\201\242\345\244\215", Q_NULLPTR));
-        label_35->setText(QApplication::translate("comm_param_settings", "\346\225\260\346\215\256\347\257\241\346\224\271\346\224\273\345\207\273\351\205\215\347\275\256", Q_NULLPTR));
+        label_35->setText(QApplication::translate("comm_param_settings", "\346\225\260\346\215\256\347\257\241\346\224\271\346\224\273\345\207\273\351\205\215\347\275\256\357\274\232", Q_NULLPTR));
         comboBox_7->clear();
         comboBox_7->insertItems(0, QStringList()
          << QApplication::translate("comm_param_settings", "\346\224\273\345\207\273\350\256\276\347\275\256", Q_NULLPTR)
