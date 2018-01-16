@@ -50,12 +50,17 @@ bool AlgorithmUtil::Alth_Calculate_CtrlOrder(const char* sim_data, char* order_r
 
     const int size_int = sizeof(int);
     const int size_2int = size_int << 1;
-    double lne1_power = atof(data_vec[1].c_str());
-    double lne2_power = atof(data_vec[2].c_str());
+    const std::string& node = data_vec[1];
+    double lne1_power = atof(data_vec[2].c_str());
+    double lne2_power = atof(data_vec[3].c_str());
+
+    int prefix_i = node.find_first_of('_');
+    int post_i = node.find_last_of('_');
 
     int flag = 0;
-    int exe_sta_bus_id = 40861;   //41051
-    char gname[32] = {"sym_40861_1"};  //"sym_41051_1"
+    char gname[32] = {0};                                       //"sym_41051_1"
+    strcpy_s(gname, node.c_str());
+    int exe_sta_bus_id = std::stoi(node.substr(prefix_i + 1, post_i - prefix_i - 1));   //41051
 
     if(lne1_power < 0.001 && lne2_power < 0.001){
         memcpy(order_ret, &flag, size_int);

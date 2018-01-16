@@ -382,7 +382,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
         }
         case ePowerData_poweroper:{
             PowerOperData* d = (PowerOperData*)data[i].power_dat;
-            stream += std::to_string(d->lne1_power) + " " + std::to_string(d->lne2_power) + " ";
+            stream += _power_conf_param.reserve_data + " " + std::to_string(d->lne1_power) + " " + std::to_string(d->lne2_power) + " ";
             break;
         }
         case ePowerData_freqinfor:{
@@ -1272,7 +1272,7 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
         case ePowerData_ctrlorder: {
             PowerCtrlOrderData* cd = new PowerCtrlOrderData();
             cd->flag = 1;
-            strcpy_s(cd->gname, "sym_40861_1");      //"sym_41051_1"
+            strcpy_s(cd->gname, _power_conf_param.reserve_data.c_str());
             _dwstm_info[i] = cd;
             break;
         }

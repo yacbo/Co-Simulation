@@ -1236,6 +1236,7 @@ bool XmlUtil::load_PowerSimConfParam_cfg(const char* cfg_path, PowerConfParam& d
     data.upstm_type = std::stoi(cfg_par_vec[6]);
     data.dwstm_num = std::stoi(cfg_par_vec[7]);
     data.upstm_num = std::stoi(cfg_par_vec[8]);
+    data.reserve_data = cfg_par_vec[9];
 
     string dwnodes_map_tbl, upnodes_map_tbl;
     int dw_end_index = map_index + data.dwstm_num;
@@ -1283,10 +1284,13 @@ bool  XmlUtil::parse_PowerSimConfParam_xml(const DataXmlVec& vec, PowerConfParam
     VariableMsgDataBody* var_upstm_num= (VariableMsgDataBody*)vec[8];
     data.upstm_num = std::stoi(var_upstm_num->_var_value);
 
-    VariableMsgDataBody* var_dwnodes_map = (VariableMsgDataBody*)vec[9];
+    VariableMsgDataBody* var_reserve_data = (VariableMsgDataBody*)vec[9];
+    data.reserve_data = var_reserve_data->_var_value;
+
+    VariableMsgDataBody* var_dwnodes_map = (VariableMsgDataBody*)vec[10];
     data.dwnodes_map = var_dwnodes_map->_var_value;
 
-    VariableMsgDataBody* var_upnodes_map = (VariableMsgDataBody*)vec[10];
+    VariableMsgDataBody* var_upnodes_map = (VariableMsgDataBody*)vec[11];
     data.upnodes_map = var_upnodes_map->_var_value;
 
     return true;
