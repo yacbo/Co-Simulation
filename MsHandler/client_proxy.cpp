@@ -1265,8 +1265,21 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
     _dwstm_info.resize(_power_conf_param.dwstm_num);
     for(int i=0; i<_power_conf_param.dwstm_num; ++i){
         switch(_power_conf_param.dwstm_type){
-        case ePowerData_dginfor: _dwstm_info[i] = new PowerDGInforData(); break;
-        case ePowerData_ctrlorder: _dwstm_info[i] = new PowerCtrlOrderData(); strcpy_s(((PowerCtrlOrderData*)_dwstm_info[i])->gname, "sym_40861_1");break;
+        case ePowerData_dginfor: {
+            _dwstm_info[i] = new PowerDGInforData();
+            break;
+        }
+        case ePowerData_ctrlorder: {
+            PowerCtrlOrderData* cd = new PowerCtrlOrderData();
+            cd->flag = 1;
+            strcpy_s(cd->gname, "sym_40861_1");      //"sym_41051_1"
+            _dwstm_info[i] = cd;
+            break;
+        }
+        case ePowerData_dpnode:{
+            _dwstm_info[i] = new PowerDpNodeData();
+            break;
+        }
         default: break;
         }
         _dwstm_info[i]->data_type = (EPowerDataType)_power_conf_param.dwstm_type;
@@ -1275,8 +1288,21 @@ void client_proxy::handle_power_cfg_param(ApplMessage* msg)
     _upstm_info.resize(_power_conf_param.upstm_num);
     for(int i=0; i<_power_conf_param.upstm_num; ++i){
         switch(_power_conf_param.upstm_type){
-        case ePowerData_businfor: _upstm_info[i] = new PowerBusInforData(); _upstm_info[i]->data_length = sizeof(PowerBusInforData); break;
-        case ePowerData_poweroper: _upstm_info[i] = new PowerOperData(); _upstm_info[i]->data_length = sizeof(PowerOperData); break;
+        case ePowerData_businfor: {
+            _upstm_info[i] = new PowerBusInforData();
+            _upstm_info[i]->data_length = sizeof(PowerBusInforData);
+            break;
+        }
+        case ePowerData_poweroper: {
+            _upstm_info[i] = new PowerOperData();
+            _upstm_info[i]->data_length = sizeof(PowerOperData);
+            break;
+        }
+        case ePowerData_freqinfor:{
+            _upstm_info[i] = new PowerFreqInforData();
+            _upstm_info[i]->data_length = sizeof(PowerFreqInforData);
+            break;
+        }
         default: break;
         }
         _upstm_info[i]->data_type = (EPowerDataType)_power_conf_param.upstm_type;

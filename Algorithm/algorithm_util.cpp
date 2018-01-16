@@ -54,8 +54,8 @@ bool AlgorithmUtil::Alth_Calculate_CtrlOrder(const char* sim_data, char* order_r
     double lne2_power = atof(data_vec[2].c_str());
 
     int flag = 0;
-    int exe_sta_bus_id = 40861;
-    char gname[32] = {"sym_40861_1"};
+    int exe_sta_bus_id = 40861;   //41051
+    char gname[32] = {"sym_40861_1"};  //"sym_41051_1"
 
     if(lne1_power < 0.001 && lne2_power < 0.001){
         memcpy(order_ret, &flag, size_int);
