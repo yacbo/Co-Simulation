@@ -139,8 +139,8 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
         PowerCtrlOrderData* d = (PowerCtrlOrderData*)sd_data[0];
         if(d->flag == 0){
             err = SetPsseJSEvents(app, sd_num, sd_type, sd_data, simutime);
-            break;
         }
+        break;
     }
     case ePowerPrj_conf_power: err = SetConfPowerEvents(app, sd_num, sd_type, sd_data, simutime); break;
     default:  err = 1; break;
