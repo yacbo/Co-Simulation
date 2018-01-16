@@ -58,11 +58,11 @@ bool PowerHandler::InitHandler(EPowerPrjType prj_type, const char* prj_name, con
     Value v_ev("IntEvt");
     ValueGuard int_ev(app->Execute("GetCaseObject", &v_ev));
     DataObject* events = int_ev->GetDataObject();
-    DataObjVec folders = Utils::GetChildren(events, "EvtParam");
 
-    DataObjVec::iterator it = folders.begin();
     switch(prj_type){
     case ePowerPrj_avr_ctrl_39:{
+        DataObjVec folders = Utils::GetChildren(events, "EvtParam");
+        DataObjVec::iterator it = folders.begin();
         for (; it != folders.end(); ++it) {
             DataObject* folder = *it;
             folder->DeleteObject();
@@ -70,15 +70,31 @@ bool PowerHandler::InitHandler(EPowerPrjType prj_type, const char* prj_name, con
         break;
     }
     case ePowerPrj_psse_jiangsu: {
+        DataObjVec folders = Utils::GetChildren(events, "EvtParam");
+        DataObjVec::iterator it = folders.begin();
         for (; it != folders.end(); ++it) {
             DataObject* folder = *it;
             string EvtSwitchName = folder->GetAttributeString("loc_name")->GetString();
-            if(EvtSwitchName.compare("cutGen")==0)
-            {
+            if(EvtSwitchName.compare("cutGen")==0){
                 folder->DeleteObject();
             }
         }
         break;
+    }
+    case ePowerPrj_conf_power:{
+        DataObjVec folders = Utils::GetChildren(events, "EvtLod");
+        DataObjVec::iterator it = folders.begin();
+        for (; it != folders.end(); ++it) {
+            DataObject* folder = *it;
+            string EvtlodName = folder->GetAttributeString("loc_name")->GetString();
+            char loadevt[32] = {0};
+            for(int i=0; i<5; ++i){
+                sprintf_s(loadevt, "loadevent%d", i + 1);
+                if(EvtlodName.compare(loadevt)==0){
+                    folder->DeleteObject();
+                }
+            }
+        }
     }
     default: break;
     }
@@ -108,6 +124,7 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
     switch(_prj_type){
     case ePowerPrj_avr_ctrl_39: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
     case ePowerPrj_psse_jiangsu: _cur_time = _sim_count == 1 ? _sim_period : (_sim_time * (_sim_count - 1)); ++_sim_count; break;
+    case ePowerPrj_conf_power: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
     default: break;
     }
 
@@ -118,7 +135,14 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
     double simutime = _cur_time;
     switch(_prj_type){
     case ePowerPrj_avr_ctrl_39: err = SetAVREvents(app, sd_num, sd_type, sd_data, simutime); break;
-    case ePowerPrj_psse_jiangsu: err = SetPsseJSEvents(app, sd_num, sd_type, sd_data, simutime); break;
+    case ePowerPrj_psse_jiangsu: {
+        PowerCtrlOrderData* d = (PowerCtrlOrderData*)sd_data[0];
+        if(d->flag == 0){
+            err = SetPsseJSEvents(app, sd_num, sd_type, sd_data, simutime);
+            break;
+        }
+    }
+    case ePowerPrj_conf_power: err = SetConfPowerEvents(app, sd_num, sd_type, sd_data, simutime); break;
     default:  err = 1; break;
     }
 
@@ -167,6 +191,13 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
         info->lne1_power = (double)atof(mat[end_line][2].c_str());
         strcpy_s(info->lne2_name, mat[end_line][3].c_str());
         info->lne2_power= (double)atof(mat[end_line][4].c_str());
+        break;
+    }
+    case ePowerPrj_conf_power:{
+        PowerFreqInforData* info = (PowerFreqInforData*)su_data[0];
+        info->bus_id = 1;
+        info->cur_sim_time=(double)atof(mat[end_line][0].c_str());
+        info->freq = (double)atof(mat[end_line][1].c_str());
         break;
     }
     default: break;
@@ -277,6 +308,17 @@ DataObject* PowerHandler::GetGenerateObject(DataObject* prj, const char *gname, 
     myg = GetChild(mygrid, gname);
 
     return myg;
+}
+
+DataObject* PowerHandler::GetLoadEVObject(DataObject* prj, char *LoadEVname, const char *Gridname)
+{
+     DataObject* load_ev = nullptr;
+     DataObject* networkmodel = GetChild(prj, "Network Model");
+     DataObject* networkdata = GetChild(networkmodel, "Network Data");
+     DataObject* mygrid = GetChild(networkdata, Gridname);
+
+     load_ev = GetChild(mygrid, LoadEVname);
+     return load_ev;
 }
 
 //--------------------------------------------------------------------------------
@@ -426,6 +468,49 @@ int PowerHandler::SetPsseJSEvents(Application* app, int sd_num, EPowerDataType s
     SwityhEvent->SetAttributeDouble("time", etime, &error);//这边时间为当前仿真时刻+通信时延
     SwityhEvent->SetAttributeInt("i_switch", ctrl_order->flag, &error);//这边值为发电机是否投运
     SwityhEvent->SetAttributeInt("i_allph", 1, &error);
+
+    return error;
+}
+
+int PowerHandler::SetConfPowerEvents(Application* app, int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, double simtime)
+{
+    DataObject* prj = app->GetActiveProject();
+    if (!prj) {
+        return 1;
+    }
+
+    //run a Result Export
+    Value int_evt("IntEvt");
+    ValueGuard intEvt(app->Execute("GetCaseObject", &int_evt));
+    DataObject* events = intEvt->GetDataObject();
+    DataObject* loadevent[5];
+    DataObject* Load_EV[5];
+
+    char loadEV[32] = {0};
+    for(int i=0; i<sd_num; ++i){
+        sprintf_s(loadEV, "Load_EV%d", i + 1);
+        Load_EV[i] = GetLoadEVObject(prj, loadEV, "Demogrid");
+    }
+
+    int error = 0;
+    char loadevt[32] = {0};
+    for(int i=0; i<sd_num; ++i){
+        sprintf_s(loadevt, "loadevent%d", i + 1);
+        loadevent[i] = events->CreateObject("EvtLod", loadevt);
+    }
+
+    double etime = 0;
+    for (int i = 0; i <sd_num; ++i){
+        const PowerDpNodeData* dp_node = (const PowerDpNodeData*)sd_data[i];
+        etime=dp_node->sim_time;
+        loadevent[i]->SetAttributeDouble("hrtime", 0, &error);                //这边时间为当前仿真时刻+通信时延
+        loadevent[i]->SetAttributeDouble("mtime", 0, &error);                 //这边时间为当前仿真时刻+通信时延
+        loadevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
+        loadevent[i]->SetAttributeInt("iopt_load", 0, &error);
+        loadevent[i]->SetAttributeObject("p_target", Load_EV[i],&error);
+        loadevent[i]->SetAttributeInt("iopt_type", 0, &error);
+        loadevent[i]->SetAttributeDouble("dP", dp_node->dp, &error);//有功调整值
+    }
 
     return error;
 }

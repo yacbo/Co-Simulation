@@ -32,6 +32,10 @@ void DecisionAlth::execute_event_proc_algorithm(const ProcEventParam* param, voi
         ev_p->_handle_success = util->Alth_Calculate_CtrlOrder(ev_p->_in_out_info.c_str(), (char*)customData);
         break;
     }
+    case ePowerPrj_conf_power:{
+
+        break;
+    }
     default: break;
     }
 

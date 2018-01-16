@@ -25,12 +25,15 @@ private:
     DataObject* GetCaseObject(DataObject* project, const char* case_name);
     DataObject* GetAvrObject(DataObject* prj,  const char *avrname, const char *powerplantname);
     DataObject* GetGenerateObject(DataObject* prj, const char *gname, const char *gridname);
+    DataObject* GetLoadEVObject(DataObject* prj, char *LoadEVname, const char *Gridname);
+
     int CalculateTransient(Application* app, double simutime);
     int ExportCalculateResult(Application* app, const char *filename);
 
 private:
     int SetAVREvents(Application* app, int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, double simtime);
     int SetPsseJSEvents(Application* app, int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, double simtime);
+    int SetConfPowerEvents(Application* app, int sd_num, EPowerDataType sd_type, const PowerSDDataVec& sd_data, double simtime);
 
 private:
     bool ReadSimRet(const char* filename, SStrVec& mat);

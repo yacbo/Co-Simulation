@@ -342,6 +342,11 @@ bool client_proxy::map_power_comm_sim_data(UnionSimDatVec& ud)
             data.sim_time = d->cur_sim_time;
             memcpy(data.power_dat, d, sizeof(PowerOperData));
         }
+        case ePowerData_freqinfor:{
+            const PowerFreqInforData* d = (const PowerFreqInforData*)_upstm_info[i];
+            data.sim_time = d->cur_sim_time;
+            memcpy(data.power_dat, d, sizeof(PowerOperData));
+        }
         default: break;
         }
 
@@ -378,6 +383,17 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
         case ePowerData_poweroper:{
             PowerOperData* d = (PowerOperData*)data[i].power_dat;
             stream += std::to_string(d->lne1_power) + " " + std::to_string(d->lne2_power) + " ";
+            break;
+        }
+        case ePowerData_freqinfor:{
+            if(data.size() == 1){                                //frequency
+                PowerFreqInforData*d = (PowerFreqInforData*)data[i].power_dat;
+                stream += "freq " + std::to_string(d->bus_id) + " " + std::to_string(d->freq);
+            }
+            else{                                                    //iterator
+                PowerDpNodeData*d = (PowerDpNodeData*)data[i].power_dat;
+                stream += std::to_string(d->bus_id) + " " + std::to_string(d->dp) + " ";
+            }
             break;
         }
         default: break;
@@ -466,6 +482,14 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         XmlUtil::generate_xml_power_appl_data(_power_conf_param.prj_type, tmp, data, vec);
         break;
     }
+    case ePowerData_freqinfor:{
+        char v_ret[1024] = {0};
+        _decision_alth->execute_event_proc_algorithm(&param, v_ret);
+        bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
+        LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
+
+        break;
+    }
     default: break;
     }
 
@@ -481,8 +505,9 @@ bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
         UnionSimData& udi = data[i];
 
         switch(type){
-        case ePowerPrj_avr_ctrl_39: {const PowerBusInforData* d = (const PowerBusInforData*)udi.power_dat; bus_id = d->bus_id; break;}
-        case ePowerPrj_psse_jiangsu: {const PowerCtrlOrderData* d = (const PowerCtrlOrderData*)udi.power_dat; bus_id = d->bus_id; break;}
+        case ePowerPrj_avr_ctrl_39:  {const PowerBusInforData* d = (const PowerBusInforData*)udi.power_dat; bus_id = d->bus_id; break;}
+        case ePowerPrj_psse_jiangsu:  {const PowerCtrlOrderData* d = (const PowerCtrlOrderData*)udi.power_dat; bus_id = d->bus_id; break;}
+        case ePowerPrj_conf_power: {const PowerFreqInforData* d = (const PowerFreqInforData*)udi.power_dat; bus_id = d->bus_id; break;}
         default: break;
         }
 
@@ -524,6 +549,12 @@ void client_proxy::reset_power_input_data()
             PowerCtrlOrderData* ei = (PowerCtrlOrderData*)_dwstm_info[i];
             PowerCtrlOrderData* ci = (PowerCtrlOrderData*)_union_sim_dat_rcv_vec[i].power_dat;
             memcpy(ei, ci, sizeof(PowerCtrlOrderData));
+            break;
+        }
+        case ePowerPrj_conf_power:{
+            PowerDpNodeData* di = (PowerDpNodeData*)_dwstm_info[i];
+            PowerDpNodeData* pi = (PowerDpNodeData*)_union_sim_dat_rcv_vec[i].power_dat;
+            memcpy(di, pi, sizeof(PowerDpNodeData));
             break;
         }
         default: break;
@@ -938,13 +969,13 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_confirm){
         XmlUtil::parse_xml_power_appl_data(_power_conf_param.prj_type, msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_snd_vec);
-        _dst_dev_type = eSimDev_power;
+        _dst_dev_type = _power_conf_param.prj_type != ePowerPrj_conf_power ? eSimDev_power : eSimDev_power_appl;
 
         snd_upper_to_comm();
         //rcv_upper_msg_callback(nullptr, 0);
 
         _expect_msg_type = eMessage_confirm;
-        _expect_proc_type = eSubProcedure_session_end;
+        _expect_proc_type = _power_conf_param.prj_type != ePowerPrj_conf_power ? eSubProcedure_session_end :  eSubProcedure_session_begin;
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){
         DataXmlVec vec;

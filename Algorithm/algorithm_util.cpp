@@ -65,3 +65,27 @@ bool AlgorithmUtil::Alth_Calculate_CtrlOrder(const char* sim_data, char* order_r
 
     return true;
 }
+
+bool AlgorithmUtil::Alth_Calculate_Iterator(const char* sim_data, char* order_ret)
+{
+    std::string tmp;
+    StrVec data_vec;
+    std::istringstream istr(sim_data);
+    while(istr >> tmp){
+        data_vec.push_back(tmp);
+    }
+
+    int bus_id = 0;
+    double sim_time = std::stod(data_vec[0]);
+    if(data_vec[1] == "freq"){
+        bus_id = std::stoi(data_vec[2]);
+        double freq = std::stod(data_vec[3]);
+        //
+    }
+    else{
+        //data[1]: id, data[2]: dp
+
+    }
+
+    return true;
+}

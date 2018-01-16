@@ -11,6 +11,7 @@ typedef enum E_PowerPrjType{
     ePowerPrj_undef = -1,
     ePowerPrj_avr_ctrl_39 = 0,
     ePowerPrj_psse_jiangsu = 1,
+    ePowerPrj_conf_power = 2,
 }EPowerPrjType;
 
 typedef enum E_PowerDataType{
@@ -19,6 +20,8 @@ typedef enum E_PowerDataType{
     ePowerData_businfor = 1,
     ePowerData_ctrlorder= 2,
     ePowerData_poweroper = 3,
+    ePowerData_freqinfor = 4,
+    ePowerData_dpnode   = 5,
 }EPowerDataType;
 
 #pragma pack(push)
@@ -70,6 +73,17 @@ typedef struct PowerCtrlOrderData : public PowerSimDwStmData{
     int comm_fault_type;
     double comm_trans_time;
 }PowerCtrlOrderData;
+
+//FreqInfor
+typedef struct PowerFreqInforData : public PowerSimUpStmData{
+    double freq;
+}PowerFreqInforData;
+
+//DpNode
+typedef struct PowerDpNodeData : public PowerSimDwStmData{
+    double dp;
+    double sim_time;
+}PowerDpNodeData;
 
 typedef std::vector<PowerSimUpStmData*> PowerSUDataVec;
 typedef std::vector<PowerSimDwStmData*> PowerSDDataVec;

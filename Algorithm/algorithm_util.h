@@ -13,6 +13,7 @@ public:
 public:
     bool Alth_Calculate_dVg(const char* sim_data, int bus_num,  double* dvg_ret);
     bool Alth_Calculate_CtrlOrder(const char* sim_data, char* order_ret);
+    bool Alth_Calculate_Iterator(const char* sim_data, char* order_ret);
 };
 
 #endif // ALGORITHM_H
