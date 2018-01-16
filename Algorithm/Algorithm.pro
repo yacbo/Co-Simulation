@@ -36,7 +36,11 @@ HEADERS +=\
         algorithm_global.h \
     dVg/dVgCalculation.h \
     dVg/mdarray.h \
-    algorithm_util.h
+    algorithm_util.h \
+    Iterator/client.h \
+    Iterator/ctrl_commu.h \
+    Iterator/discoctrl.h \
+    Iterator/grid_ctrl.h
 
 unix {
     target.path = /usr/lib

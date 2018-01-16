@@ -3,13 +3,14 @@
 #include<string>
 #include<vector>
 #include<sstream>
+#include "./Iterator/client.h"
 
 typedef vector<std::string> StrVec;
 typedef vector<StrVec> Mat;
 
 AlgorithmUtil::AlgorithmUtil()
 {
-
+    initialize_env();
 }
 
 AlgorithmUtil::~AlgorithmUtil()
@@ -83,9 +84,9 @@ bool AlgorithmUtil::Alth_Calculate_Iterator(const char* sim_data, char* order_re
     int bus_id = 0;
     double sim_time = std::stod(data_vec[0]);
     if(data_vec[1] == "freq"){
-        bus_id = std::stoi(data_vec[2]);
-        double freq = std::stod(data_vec[3]);
-        //
+        Bus_Info bs;
+        bs.busno = std::stoi(data_vec[2]);
+        bs.freq = std::stod(data_vec[3]);
     }
     else{
         //data[1]: id, data[2]: dp
