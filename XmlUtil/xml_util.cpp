@@ -1361,6 +1361,12 @@ QDomDocument* XmlUtil::generate_PowerSimConfParam_xml(int ss_id, int ps_id, cons
     var_upstm_num->_var_value = std::to_string(data->upstm_num);
     proc_body->_data_vector.push_back(var_upstm_num);
 
+    VariableMsgDataBody* var_reserve= new VariableMsgDataBody();
+    var_reserve->_var_name = "reserve data";
+    var_reserve->_var_type = eData_string;
+    var_reserve->_var_value = data->reserve_data;
+    proc_body->_data_vector.push_back(var_reserve);
+
     VariableMsgDataBody* var_dwnodes_map= new VariableMsgDataBody();
     var_dwnodes_map->_var_name = "dwnodes_map";
     var_dwnodes_map->_var_type = eData_string;

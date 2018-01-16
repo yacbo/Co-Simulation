@@ -208,6 +208,7 @@ typedef struct PowerConfParam{
     int32_t dwstm_type;    //下行类型，如BusInfor
     int32_t upstm_num;     //上行数据数目， 如39
     int32_t dwstm_num;    //下行数据数目， 如10
+    std::string reserve_data;
     std::string upnodes_map;
     std::string dwnodes_map;
 }PowerConfParam;

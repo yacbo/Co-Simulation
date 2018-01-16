@@ -499,7 +499,7 @@ void application_layer::check_sim_time_event_slots()
     int index = -1;
     for(int i=0; i<_event_time_vec.size(); ++i){
         double diff = _event_time_vec[i] - _cur_sim_time;
-        if(diff > -EPS && diff < 1.0){
+        if(diff > -EPS && diff < 5.0){
             index = i;
             break;
         }
@@ -509,20 +509,18 @@ void application_layer::check_sim_time_event_slots()
         return;
     }
 
-    for(int i=0; i<index; ++i){
+    for(int i=0; i<=index; ++i){
         forward_event_data(_event_data_vec[i]);
     }
 
     QMutexLocker lck (&_mtx);
     DblVec::iterator it_dbl = _event_time_vec.begin();
-    DblVec::iterator it_dbl_end = it_dbl + index + 1;
-    while(it_dbl != it_dbl_end){
+    for(int i=0; i<=index; ++i){
         it_dbl = _event_time_vec.erase(it_dbl);
     }
 
     ByteArrVec::iterator it_byte = _event_data_vec.begin();
-    ByteArrVec::iterator it_byte_end = it_byte + index + 1;
-    while(it_byte != it_byte_end){
+    for(int i=0; i<=index; ++i){
         it_byte = _event_data_vec.erase(it_byte);
     }
 }
@@ -540,8 +538,9 @@ void application_layer::forward_event_data(QByteArray& data)
     char param[1024] = {0};
     memcpy(param, data.data(), data.length());
 
+    uint16_t event_type = 0;
     const int offset_type = sizeof(LocalAddr);
-    uint16_t event_type = data.mid(offset_type, sizeof(uint16_t)).toUShort();
+    memcpy(&event_type, data.data() + offset_type, sizeof(uint16_t));
 
     QDomDocument* doc = nullptr;
     switch(event_type){
