@@ -51,6 +51,11 @@ public:
     void reset_power_input_data();
 
 private:
+    //配电网流化数据解析
+    int parse_config_power_stream_data(const DataXmlVec& vec, UnionSimDatVec& data);
+    void generate_config_power_stream_data(const char* stream, DataXmlVec& vec);
+
+private:
     //从上层发下来.
     void handle_css(EPGRTUIType type,  const char* data, int len);
 

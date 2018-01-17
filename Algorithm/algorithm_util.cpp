@@ -84,7 +84,7 @@ bool AlgorithmUtil::Alth_Calculate_Iterator(const char* sim_data, char* order_re
                 _Bus_Info bus;
                 memcpy(&bus, value, sizeof(_Bus_Info));
 
-                _Bus_Info_Upload bus_upload;
+                _Bus_Info_Commu bus_upload;
                 generate_upload_sample_freq(bus, bus_upload);
 
                 count = 1;
@@ -93,13 +93,13 @@ bool AlgorithmUtil::Alth_Calculate_Iterator(const char* sim_data, char* order_re
 
                 memcpy(order_ret, &type, sizeof(int)); length = 2 * sizeof(int);
                 memcpy(order_ret + length, &count, sizeof(int)); length += sizeof(int);
-                memcpy(order_ret + length, &bus_upload, sizeof(_Bus_Info_Upload)); length += sizeof(_Bus_Info_Upload);
+                memcpy(order_ret + length, &bus_upload, sizeof(_Bus_Info_Commu)); length += sizeof(_Bus_Info_Commu);
                 memcpy(order_ret + sizeof(int), &length, sizeof(int));
                 break;
         }
         case eInteract_download_bus: {
-                _Bus_Info_Download bus;
-                memcpy(&bus, value, sizeof(_Bus_Info_Download));
+                _Bus_Info_Commu bus;
+                memcpy(&bus, value, sizeof(_Bus_Info_Commu));
                 config_param_state(bus);
 
                 Generate_Upload_Iterator_data(order_ret);
@@ -107,10 +107,10 @@ bool AlgorithmUtil::Alth_Calculate_Iterator(const char* sim_data, char* order_re
         }
         case eIneract_comm_to_ctrl: {
                 int offset = 0;
-                vector<_Commu_to_Ctrl> rcv_vec(count);
+                vector<Commu_Ctrl> rcv_vec(count);
                 for(int i=0; i<count; ++i){
-                        memcpy(&rcv_vec[i], value + offset, sizeof(_Commu_to_Ctrl));
-                        offset += sizeof(_Commu_to_Ctrl);
+                        memcpy(&rcv_vec[i], value + offset, sizeof(Commu_Ctrl));
+                        offset += sizeof(Commu_Ctrl);
                 }
 
                 _Ctrl_to_Grid grid[5];
@@ -144,7 +144,7 @@ const char* AlgorithmUtil::Parse_Iterator_data(const char* sim_data, int& type, 
          int length = 0;
          int type = eIneract_ctrl_to_comm;
 
-         vector<_Ctrl_to_Commu>  snd_vec;
+         vector<Commu_Ctrl>  snd_vec;
          generate_upload_dgpacket(snd_vec);
 
          int count = snd_vec.size();
@@ -152,8 +152,8 @@ const char* AlgorithmUtil::Parse_Iterator_data(const char* sim_data, int& type, 
          memcpy(iter_data + length, &count, sizeof(int)); length += sizeof(int);
 
          for(int i=0; i<count; ++i){
-                 memcpy(iter_data + length, &snd_vec[i], sizeof(_Ctrl_to_Commu));
-                 length += sizeof(_Ctrl_to_Commu);
+                 memcpy(iter_data + length, &snd_vec[i], sizeof(Commu_Ctrl));
+                 length += sizeof(Commu_Ctrl);
          }
 
          memcpy(iter_data + sizeof(int), &length, sizeof(int));

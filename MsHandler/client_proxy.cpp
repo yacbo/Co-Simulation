@@ -413,9 +413,10 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
                             _b_first_handle_frequency = false;
                     }
                     else{
-                            _Bus_Info_Download info;
-                            info.PowerSimTime = data[0].sim_time;
+                            _Bus_Info_Commu info;
+                            info.BusNo = d->bus_id;
                             info.PowerFrequency = d->freq;
+                            info.PowerSimTime = data[0].sim_time;
                             info.Startnode_ID = data[0].comm_dat.src_id;
                             info.Destnode_ID = data[0].comm_dat.dst_id;
                             info.ErrorType = data[0].comm_dat.err_type;
@@ -425,7 +426,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
                     }
             }
             else{                                                    //iterator
-                 _Commu_to_Ctrl info;
+                 Commu_Ctrl info;
                  int type = eIneract_comm_to_ctrl;
                  memcpy(input, &type, sizeof(int));  input_len +=  2 * sizeof(int);
                  memcpy(input + input_len, &count, sizeof(int)); input_len += sizeof(int);
@@ -436,10 +437,8 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
                         info.Destnode_ID = d.comm_dat.dst_id;
                         info.ErrorType = d.comm_dat.err_type;
                         info.TimeDelay = d.comm_dat.trans_delay;
-                        info.Startnode_State = d.comm_dat.err_type == 5;
-                        info.Destnode_State = d.comm_dat.err_type == 6;
-                        memcpy(input + input_len, &info, sizeof(_Commu_to_Ctrl));
-                        input_len += sizeof(_Commu_to_Ctrl);
+                        memcpy(input + input_len, &info, sizeof(Commu_Ctrl));
+                        input_len += sizeof(Commu_Ctrl);
                  }
             }
 
@@ -538,6 +537,8 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
         LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
 
+        generate_config_power_stream_data(v_ret, vec);
+        //exchange_comm_node_src_dst_id(data, _power_conf_param.prj_type);
         break;
     }
     default: break;
@@ -557,7 +558,7 @@ bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
         switch(type){
         case ePowerPrj_avr_ctrl_39:  {const PowerBusInforData* d = (const PowerBusInforData*)udi.power_dat; bus_id = d->bus_id; break;}
         case ePowerPrj_psse_jiangsu:  {const PowerCtrlOrderData* d = (const PowerCtrlOrderData*)udi.power_dat; bus_id = d->bus_id; break;}
-        case ePowerPrj_conf_power: {const PowerFreqInforData* d = (const PowerFreqInforData*)udi.power_dat; bus_id = d->bus_id; break;}
+        case ePowerPrj_conf_power: {const PowerDpNodeData* d = (const PowerDpNodeData*)udi.power_dat; bus_id = d->bus_id; break;}
         default: break;
         }
 
@@ -575,6 +576,77 @@ bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
     }
 
     return ret;
+}
+
+int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSimDatVec& data)
+{
+    VariableMsgDataBody* var = (VariableMsgDataBody*)vec[0];
+    QByteArray d_base64 = QByteArray::fromRawData(var->_var_value.c_str(), var->_var_value.length());
+    QByteArray d = QByteArray::fromBase64(d_base64);
+
+    int offset = 0;
+    int  stream_type = 0, stream_len = 0, count = 0;
+    const char* stream_d = d.toStdString().c_str();
+    memcpy(&stream_type, stream_d, sizeof(int)); offset += sizeof(int);
+    memcpy(&stream_len, stream_d + offset, sizeof(int)); offset += sizeof(int);
+    memcpy(&count, stream_d + offset, sizeof(int)); offset += sizeof(int);
+
+    data.clear();
+    switch(stream_type){
+    case eInteract_upload_bus:{
+        _Bus_Info_Commu bus_upload;
+        memcpy(&bus_upload,  stream_d + offset, sizeof(_Bus_Info_Commu));
+
+        data.resize(1);
+        data[0].sim_time = bus_upload.PowerSimTime;
+        data[0].comm_dat.src_id = bus_upload.Startnode_ID;
+        data[0].comm_dat.dst_id = bus_upload.Destnode_ID;
+        data[0].comm_dat.err_type = bus_upload.ErrorType;
+        data[0].comm_dat.trans_delay = bus_upload.TimeDelay;
+
+        PowerFreqInforData fd;
+        fd.bus_id = bus_upload.BusNo;
+        fd.freq = bus_upload.PowerFrequency;
+        fd.cur_sim_time = bus_upload.PowerSimTime;
+
+        memcpy(data[0].power_dat, &fd, sizeof(PowerFreqInforData));
+        break;
+    }
+    case eIneract_ctrl_to_comm: {
+        data.resize(count);
+        for(int i=0; i<count; ++i){
+            Commu_Ctrl comm_ctrl;
+            memcpy(&comm_ctrl,  stream_d + offset, sizeof(Commu_Ctrl));
+            offset += sizeof(Commu_Ctrl);
+
+            data[0].sim_time = comm_ctrl.PowerSimTime;
+            data[0].comm_dat.src_id = comm_ctrl.Startnode_ID;
+            data[0].comm_dat.dst_id = comm_ctrl.Destnode_ID;
+            data[0].comm_dat.err_type = comm_ctrl.ErrorType;
+            data[0].comm_dat.trans_delay = comm_ctrl.TimeDelay;
+            memcpy(data[0].power_dat, comm_ctrl.data, sizeof(comm_ctrl.data));
+        }
+
+        break;
+    }
+    }
+
+    return 0;
+}
+
+void client_proxy::generate_config_power_stream_data(const char* stream, DataXmlVec& vec)
+{
+    int stream_len = 0;
+    memcpy(&stream_len, stream + sizeof(int), sizeof(int));
+
+    QByteArray d = QByteArray::fromRawData(stream, stream_len);
+    QByteArray d_base64 = d.toBase64();
+
+    VariableMsgDataBody* var = new VariableMsgDataBody();
+    var->_var_name = "config power stream data";
+    var->_var_type = eData_string;
+    var->_var_value = d_base64.toStdString();
+    vec.push_back(var);
 }
 
 void client_proxy::reset_power_input_data()

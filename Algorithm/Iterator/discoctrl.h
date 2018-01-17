@@ -122,7 +122,7 @@ extern "C" {
 
 		state.miu_pin=miu_pin;
 	}
-	bool converge(State &state,commu_to_ctrl tRecv){   //判断收敛
+	bool converge(State &state,commu_ctrl tRecv){   //判断收敛
 		bool flag=state.flag_converge;
 		bool flag_tmp=state.flag_converge;
 		double precision = 1.0e-4, delta;
@@ -143,37 +143,15 @@ extern "C" {
 		return flag;
 
 	}
-	void dis_ctrl_DG_node(commu_to_ctrl tRecv,State&state,Para &para) {
+	void dis_ctrl_DG_node(commu_ctrl tRecv,State&state,Para &para) {
 		MIU *miu_hold_step=state.miu_hold_step;
 		MIU *miu_previous_step=state.miu_previous_step;
 		MIU *miu_trans_step=state.miu_trans_step;
 		const double step=para.step;
 		const double beta=para.beta;
 
-		if ((tRecv.Startnode_State == 1) && (tRecv.Destnode_State == 1))     //目的地与始发地均正常
-		{
-			miu_trans_step[tRecv.Destnode_ID-1] =
+		miu_trans_step[tRecv.Destnode_ID-1] =
 				miu_trans_step[tRecv.Destnode_ID-1] - step*beta*(miu_hold_step[tRecv.Destnode_ID-1] - tRecv.data[0]);
-		}
-
-		if ((tRecv.Startnode_State == 0) && (tRecv.Destnode_State== 1))     //始发地不正常，目的地正常
-		{
-			miu_trans_step[tRecv.Destnode_ID-1] =
-				miu_hold_step[tRecv.Destnode_ID-1] - step*beta*(miu_hold_step[tRecv.Destnode_ID-1] - miu_previous_step[tRecv.Startnode_ID-1]);
-		}
-		if ((tRecv.Startnode_State == 1) && (tRecv.Destnode_State== 0))     //始发地正常，目的地不正常
-		{
-			miu_trans_step[tRecv.Destnode_ID-1]= miu_hold_step[tRecv.Destnode_ID-1];
-			miu_hold_step[tRecv.Destnode_ID-1] =
-				miu_hold_step[tRecv.Destnode_ID-1] - step*beta*(miu_hold_step[tRecv.Destnode_ID-1] - tRecv.data[0]);
-		}
-		if ((tRecv.Startnode_State== 0) && (tRecv.Destnode_State == 0))     //始发地和目的地均不正常
-		{
-			miu_trans_step[tRecv.Destnode_ID-1]= miu_hold_step[tRecv.Destnode_ID-1];
-			miu_hold_step[tRecv.Destnode_ID-1] =
-				miu_hold_step[tRecv.Destnode_ID-1] - step*beta*(miu_hold_step[tRecv.Destnode_ID-1] - miu_previous_step[tRecv.Startnode_ID-1]);
-		}
-
 		//更新收敛标志,0表示收敛，1表示不收敛
 		state.flag_converge=converge(state,tRecv);
 

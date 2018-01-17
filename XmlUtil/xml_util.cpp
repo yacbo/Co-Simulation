@@ -1913,4 +1913,3 @@ QDomDocument* XmlUtil::generate_CommSimEventConf_xml(int ss_id, int ps_id)
 
     return doc;
 }
-
