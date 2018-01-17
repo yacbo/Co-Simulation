@@ -97,6 +97,7 @@ private:
 private:
     PowerSUDataVec _upstm_info;
     PowerSDDataVec _dwstm_info;
+    bool  _b_first_handle_frequency;
 
 private:
     EProxyState _proxy_status;                                        //客户代理状态

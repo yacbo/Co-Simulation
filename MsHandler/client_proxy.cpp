@@ -8,10 +8,14 @@
 #include "pg_rtui_def.h"
 #include "hisrecord_mgr.h"
 
+#include "../Algorithm/Iterator/grid_ctrl.h"
+#include "../Algorithm/Iterator/ctrl_commu.h"
+
 client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, quint16 port, ESimDevType type)
 {
     _proxy_status = eProxyState_idle;
     _rcv_comm_data_enabled = false;
+    _b_first_handle_frequency = true;
 
     _quit = false;
     _appl_layer = parent;
@@ -373,31 +377,77 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
 
     sim_time = data[0].sim_time;
     stream = std::to_string(data[0].sim_time) + " ";
-    for(int i=0; i<data.size(); ++i){
-        switch (_power_conf_param.upstm_type) {
-        case ePowerData_businfor:{
-            PowerBusInforData* d = (PowerBusInforData*)data[i].power_dat;
-            stream += std::to_string(d->bus_volt) + " " + std::to_string(d->bus_angle) + " ";
+
+    switch (_power_conf_param.upstm_type) {
+    case ePowerData_businfor:{
+            for(int i=0; i<data.size(); ++i){
+                    PowerBusInforData* d = (PowerBusInforData*)data[i].power_dat;
+                    stream += std::to_string(d->bus_volt) + " " + std::to_string(d->bus_angle) + " ";
+            }
             break;
-        }
-        case ePowerData_poweroper:{
-            PowerOperData* d = (PowerOperData*)data[i].power_dat;
-            stream += _power_conf_param.reserve_data + " " + std::to_string(d->lne1_power) + " " + std::to_string(d->lne2_power) + " ";
-            break;
-        }
-        case ePowerData_freqinfor:{
-            if(data.size() == 1){                                //frequency
-                PowerFreqInforData*d = (PowerFreqInforData*)data[i].power_dat;
-                stream += "freq " + std::to_string(d->bus_id) + " " + std::to_string(d->freq);
+    }
+    case ePowerData_poweroper:{
+             for(int i=0; i<data.size(); ++i){
+                     PowerOperData* d = (PowerOperData*)data[i].power_dat;
+                     stream += _power_conf_param.reserve_data + " " + std::to_string(d->lne1_power) + " " + std::to_string(d->lne2_power) + " ";
+             }
+             break;
+    }
+    case ePowerData_freqinfor:{
+            int input_len = 0;
+            char input[2048] = {0};
+            int count = data.size();
+
+            //encode format: type | length |  count | value
+
+            if(count == 1){                                //frequency
+                    int type = _b_first_handle_frequency ? eInteract_power_bus :  eInteract_download_bus;
+                    memcpy(input, &type, sizeof(int));  input_len +=  2 * sizeof(int);
+                    memcpy(input + input_len, &count, sizeof(int)); input_len += sizeof(int);
+
+                    PowerFreqInforData*d = (PowerFreqInforData*)data[0].power_dat;
+                    if(_b_first_handle_frequency){
+                            _Bus_Info info;
+                            info.busno = d->bus_id;  info.freq = d->freq; info.sampling_time = d->cur_sim_time;
+                            memcpy(input + input_len, &info, sizeof(info)); input_len += sizeof(_Bus_Info);
+                            _b_first_handle_frequency = false;
+                    }
+                    else{
+                            _Bus_Info_Download info;
+                            info.PowerSimTime = data[0].sim_time;
+                            info.PowerFrequency = d->freq;
+                            info.Startnode_ID = data[0].comm_dat.src_id;
+                            info.Destnode_ID = data[0].comm_dat.dst_id;
+                            info.ErrorType = data[0].comm_dat.err_type;
+                            info.TimeDelay = data[0].comm_dat.trans_delay;
+                            memcpy(input + input_len, &info, sizeof(info)); input_len += sizeof(_Bus_Info);
+                            _b_first_handle_frequency = true;
+                    }
             }
             else{                                                    //iterator
-                PowerDpNodeData*d = (PowerDpNodeData*)data[i].power_dat;
-                stream += std::to_string(d->bus_id) + " " + std::to_string(d->dp) + " ";
+                 _Commu_to_Ctrl info;
+                 int type = eIneract_comm_to_ctrl;
+                 memcpy(input, &type, sizeof(int));  input_len +=  2 * sizeof(int);
+                 memcpy(input + input_len, &count, sizeof(int)); input_len += sizeof(int);
+                 for(int i=0; i<data.size(); ++i){
+                        const UnionSimData& d = data[i];
+                        info.PowerSimTime = d.sim_time;
+                        info.Startnode_ID = d.comm_dat.src_id;
+                        info.Destnode_ID = d.comm_dat.dst_id;
+                        info.ErrorType = d.comm_dat.err_type;
+                        info.TimeDelay = d.comm_dat.trans_delay;
+                        info.Startnode_State = d.comm_dat.err_type == 5;
+                        info.Destnode_State = d.comm_dat.err_type == 6;
+                        memcpy(input + input_len, &info, sizeof(_Commu_to_Ctrl));
+                        input_len += sizeof(_Commu_to_Ctrl);
+                 }
             }
+
+            memcpy(input + sizeof(int), &input_len, sizeof(int));
+            stream = std::string(input, input_len);
             break;
-        }
-        default: break;
-        }
+    }
+    default: break;
     }
 
     return stream;
@@ -483,7 +533,7 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         break;
     }
     case ePowerData_freqinfor:{
-        char v_ret[1024] = {0};
+        char v_ret[2048] = {0};
         _decision_alth->execute_event_proc_algorithm(&param, v_ret);
         bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
         LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
