@@ -102,6 +102,8 @@ private:
 private:
     PowerSUDataVec _upstm_info;
     PowerSDDataVec _dwstm_info;
+
+    int _iterator_count;
     bool  _b_first_handle_frequency;
 
 private:

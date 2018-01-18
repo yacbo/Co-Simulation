@@ -172,14 +172,11 @@ static bus_info_commu g_dwload_bus;
 void initialize_env()
 {
         initialize(g_state, g_para);          //初始化算法参数
-        const char* filename="init.txt";  //电力软件导出文件
-        Mat arr=input(filename);
-        int end_line = arr.size();
-
-        for(int n=0;n<5;n++){
-                g_dgnode[n].DG_NO=n+1;
-                g_dgnode[n].simtime=(double)atof(arr[end_line][0].c_str());
-                g_dgnode[n].generation_value=(double)atof(arr[end_line][n+2].c_str());
+        double init_value[5] = {0.006666, 0.011664, 0.006667, 0.011667, 0.011663};
+        for(int i=0;i<5;++i){
+                g_dgnode[i].DG_NO=i+1;
+                g_dgnode[i].simtime=5.0;
+                g_dgnode[i].generation_value=init_value[i];
         }
 }
 

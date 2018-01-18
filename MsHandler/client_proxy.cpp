@@ -15,6 +15,8 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
 {
     _proxy_status = eProxyState_idle;
     _rcv_comm_data_enabled = false;
+
+    _iterator_count = 0;
     _b_first_handle_frequency = true;
 
     _quit = false;
@@ -389,19 +391,19 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
                     if(_b_first_handle_frequency){
                             _Bus_Info info;
                             info.busno = d->bus_id;  info.freq = d->freq; info.sampling_time = d->cur_sim_time;
-                            memcpy(input + input_len, &info, sizeof(info)); input_len += sizeof(_Bus_Info);
+                            memcpy(input + input_len, &info, sizeof(_Bus_Info)); input_len += sizeof(_Bus_Info);
                             _b_first_handle_frequency = false;
                     }
                     else{
                             _Bus_Info_Commu info;
                             info.BusNo = d->bus_id;
                             info.PowerFrequency = d->freq;
-                            info.PowerSimTime = data[0].sim_time;
+                            info.PowerSimTime = d->cur_sim_time;
                             info.Startnode_ID = data[0].comm_dat.src_id;
                             info.Destnode_ID = data[0].comm_dat.dst_id;
                             info.ErrorType = data[0].comm_dat.err_type;
                             info.TimeDelay = data[0].comm_dat.trans_delay;
-                            memcpy(input + input_len, &info, sizeof(info)); input_len += sizeof(_Bus_Info);
+                            memcpy(input + input_len, &info, sizeof(_Bus_Info_Commu)); input_len += sizeof(_Bus_Info_Commu);
                             _b_first_handle_frequency = true;
                     }
             }
@@ -436,7 +438,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
 bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 {
     QString info;
-    if(data.size() != _power_conf_param.upstm_num){
+    if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && data.size() != _power_conf_param.upstm_num){
         UnionSimDatVec his_rec_vec;
         if(!HisRecordMgr::instance()->load_record(_power_conf_param.upstm_type, his_rec_vec)){
             info = LogUtil::Instance()->Output(MACRO_LOCAL, "load history record failed, current data items:", data.size(), "config items:", _power_conf_param.upstm_num);
@@ -568,11 +570,13 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
 
     int ret = 0;
     int offset = 0;
-    int  stream_type = 0, stream_len = 0, count = 0;
-    const char* stream_d = d.toStdString().c_str();
+    int stream_type = 0, stream_len = 0, count = 0;
+    const char* stream_d = d.data();
     memcpy(&stream_type, stream_d, sizeof(int)); offset += sizeof(int);
     memcpy(&stream_len, stream_d + offset, sizeof(int)); offset += sizeof(int);
     memcpy(&count, stream_d + offset, sizeof(int)); offset += sizeof(int);
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, "stream type:", stream_type, "stream length:", stream_len, "data items:", count);
 
     switch(stream_type){
     case eInteract_ctrl_to_power:{
@@ -595,8 +599,13 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
             dp.dp = grid.dP;
             dp.bus_id = grid.DG_node_ID;
             dp.sim_time = grid.PowerUpadateTime;
+            dp.data_type = ePowerData_dpnode;
             memcpy(&data[i].power_dat, &dp, sizeof(PowerDpNodeData));
         }
+
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "[Receive Converge Data]", "items:", count);
+        emit progress_log_signal(info);
+
         ret = 0;
         break;
     }
@@ -615,9 +624,15 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
         fd.bus_id = bus_upload.BusNo;
         fd.freq = bus_upload.PowerFrequency;
         fd.cur_sim_time = bus_upload.PowerSimTime;
+        fd.data_type = ePowerData_freqinfor;
+        fd.data_length = sizeof(PowerFreqInforData);
 
         memcpy(data[0].power_dat, &fd, sizeof(PowerFreqInforData));
+
+        _iterator_count = 0;
         ret = 1;
+
+        LogUtil::Instance()->Output(MACRO_LOCAL, "[Upload Bus Frequency to Communication]");
         break;
     }
     case eIneract_ctrl_to_comm: {
@@ -634,7 +649,13 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
             data[i].comm_dat.trans_delay = comm_ctrl.TimeDelay;
             memcpy(data[i].power_dat, comm_ctrl.data, sizeof(comm_ctrl.data));
         }
+
+        ++_iterator_count;
         ret = 2;
+
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "[Current Iterator Count]:", _iterator_count);
+        emit progress_log_signal(info);
+
         break;
     }
     default: ret = 3; break;
