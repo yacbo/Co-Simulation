@@ -472,8 +472,8 @@ void comm_param_settings::comm_link_para_config_event()
         data.nodeSrcId = ui->lineEdit_5->text().toInt();//uint16_t
         data.nodeDstId = ui->lineEdit_6->text().toInt();//uint16_t
         data.switchNum = ui->lineEdit_7->text().toInt();// int32_t
-        data.switchLoss = ui->lineEdit_8->text().toDouble();//double
-        data.connectorNum = ui->lineEdit_9->text().toInt();//int32_t
+        data.connectorNum = ui->lineEdit_8->text().toInt();//int32_t
+        data.switchLoss = ui->lineEdit_9->text().toDouble();//double
         data.connectorLoss = ui->lineEdit_10->text().toDouble();// double
         data.lossCoefficient = ui->lineEdit_11->text().toDouble();//double
         //data->ber = ui->lineEdit_12->text().toDouble();//double
