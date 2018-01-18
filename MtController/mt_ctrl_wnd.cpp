@@ -248,7 +248,7 @@ void MainWindow::stop_simulation_event(){
     ui->pushButton->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
     ui->pushButton_2->setStyleSheet("QPushButton{border-radius:5px; background:#696969; color:white;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
     ui->pushButton_3->setStyleSheet("QPushButton{border-radius:5px; background:#444240; color:black;border:1px solid black;min-height:20;}" MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-    //_ms_handler->exec_sim_oper_cmd(eSimCmd_stop_sim);
+    _ms_handler->exec_sim_oper_cmd(eSimCmd_stop_sim);
 }
 
 //注册按钮事件.
