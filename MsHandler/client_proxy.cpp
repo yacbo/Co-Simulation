@@ -437,6 +437,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
                         info.Destnode_ID = d.comm_dat.dst_id;
                         info.ErrorType = d.comm_dat.err_type;
                         info.TimeDelay = d.comm_dat.trans_delay;
+                        memcpy(info.data, d.power_dat, sizeof(info.data));
                         memcpy(input + input_len, &info, sizeof(Commu_Ctrl));
                         input_len += sizeof(Commu_Ctrl);
                  }
@@ -580,10 +581,12 @@ bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
 
 int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSimDatVec& data)
 {
+    data.clear();
     VariableMsgDataBody* var = (VariableMsgDataBody*)vec[0];
     QByteArray d_base64 = QByteArray::fromRawData(var->_var_value.c_str(), var->_var_value.length());
     QByteArray d = QByteArray::fromBase64(d_base64);
 
+    int ret = 0;
     int offset = 0;
     int  stream_type = 0, stream_len = 0, count = 0;
     const char* stream_d = d.toStdString().c_str();
@@ -591,8 +594,24 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
     memcpy(&stream_len, stream_d + offset, sizeof(int)); offset += sizeof(int);
     memcpy(&count, stream_d + offset, sizeof(int)); offset += sizeof(int);
 
-    data.clear();
     switch(stream_type){
+    case eInteract_ctrl_to_power:{
+        data.resize(count);
+        for(int i=0; i<count; ++i){
+            _Ctrl_to_Grid grid;
+            memcpy(&grid,  stream_d + offset, sizeof(_Ctrl_to_Grid));
+            offset += sizeof(_Ctrl_to_Grid);
+
+            PowerDpNodeData dp;
+            dp.dp = grid.dP;
+            dp.bus_id = grid.DG_node_ID;
+            dp.sim_time = grid.PowerUpadateTime;
+            memset(&data[i], 0, sizeof(UnionSimData));
+            memcpy(&data[i].power_dat, &dp, sizeof(PowerDpNodeData));
+        }
+        ret = 0;
+        break;
+    }
     case eInteract_upload_bus:{
         _Bus_Info_Commu bus_upload;
         memcpy(&bus_upload,  stream_d + offset, sizeof(_Bus_Info_Commu));
@@ -610,6 +629,7 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
         fd.cur_sim_time = bus_upload.PowerSimTime;
 
         memcpy(data[0].power_dat, &fd, sizeof(PowerFreqInforData));
+        ret = 1;
         break;
     }
     case eIneract_ctrl_to_comm: {
@@ -619,19 +639,20 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
             memcpy(&comm_ctrl,  stream_d + offset, sizeof(Commu_Ctrl));
             offset += sizeof(Commu_Ctrl);
 
-            data[0].sim_time = comm_ctrl.PowerSimTime;
-            data[0].comm_dat.src_id = comm_ctrl.Startnode_ID;
-            data[0].comm_dat.dst_id = comm_ctrl.Destnode_ID;
-            data[0].comm_dat.err_type = comm_ctrl.ErrorType;
-            data[0].comm_dat.trans_delay = comm_ctrl.TimeDelay;
-            memcpy(data[0].power_dat, comm_ctrl.data, sizeof(comm_ctrl.data));
+            data[i].sim_time = comm_ctrl.PowerSimTime;
+            data[i].comm_dat.src_id = comm_ctrl.Startnode_ID;
+            data[i].comm_dat.dst_id = comm_ctrl.Destnode_ID;
+            data[i].comm_dat.err_type = comm_ctrl.ErrorType;
+            data[i].comm_dat.trans_delay = comm_ctrl.TimeDelay;
+            memcpy(data[i].power_dat, comm_ctrl.data, sizeof(comm_ctrl.data));
         }
-
+        ret = 2;
         break;
     }
+    default: ret = 3; break;
     }
 
-    return 0;
+    return ret;
 }
 
 void client_proxy::generate_config_power_stream_data(const char* stream, DataXmlVec& vec)
@@ -1090,8 +1111,14 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
         _expect_proc_type = eSubProcedure_invoke;
     }
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_confirm){
-        XmlUtil::parse_xml_power_appl_data(_power_conf_param.prj_type, msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_snd_vec);
-        _dst_dev_type = _power_conf_param.prj_type != ePowerPrj_conf_power ? eSimDev_power : eSimDev_power_appl;
+        if(_power_conf_param.prj_type == ePowerPrj_conf_power ){
+            int ret = parse_config_power_stream_data(msg->_proc_msg->_func_invoke_body->_data, _union_sim_dat_snd_vec);
+            _dst_dev_type = ret > 0 ? eSimDev_power_appl : eSimDev_power;
+        }
+        else{
+            _dst_dev_type = eSimDev_power;
+            XmlUtil::parse_xml_power_appl_data(_power_conf_param.prj_type, msg->_proc_msg->_func_invoke_body->_data, _dbl_vec, _union_sim_dat_snd_vec);
+        }
 
         snd_upper_to_comm();
         //rcv_upper_msg_callback(nullptr, 0);
