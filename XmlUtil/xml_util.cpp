@@ -1226,7 +1226,6 @@ bool XmlUtil::load_PowerSimConfParam_cfg(const char* cfg_path, PowerConfParam& d
         return false;
     }
 
-    const int map_index = 9;
     data.prj_type = std::stoi(cfg_par_vec[0]);
     data.prj_name = cfg_par_vec[1];
     data.case_name = cfg_par_vec[2];
@@ -1237,10 +1236,11 @@ bool XmlUtil::load_PowerSimConfParam_cfg(const char* cfg_path, PowerConfParam& d
     data.dwstm_num = std::stoi(cfg_par_vec[7]);
     data.upstm_num = std::stoi(cfg_par_vec[8]);
     data.reserve_data = cfg_par_vec[9];
+    const int map_start_index = 10;
 
     string dwnodes_map_tbl, upnodes_map_tbl;
-    int dw_end_index = map_index + data.dwstm_num;
-    for(int i=map_index; i<dw_end_index; ++i){
+    int dw_end_index = map_start_index + data.dwstm_num;
+    for(int i=map_start_index; i<dw_end_index; ++i){
         dwnodes_map_tbl += cfg_par_vec[i] + " ";
     }
 

@@ -10,7 +10,7 @@ typedef vector<StrVec> Mat;
 
 AlgorithmUtil::AlgorithmUtil()
 {
-        initialize_env();
+        _iterator_count = 0;
 }
 
 AlgorithmUtil::~AlgorithmUtil()
@@ -120,6 +120,7 @@ bool AlgorithmUtil::Alth_Calculate_Iterator(const char* sim_data, char* order_re
                 else{
                         Generate_Upload_Iterator_data(order_ret);
                 }
+
                 break;
         }
         default: break;
@@ -157,6 +158,8 @@ const char* AlgorithmUtil::Parse_Iterator_data(const char* sim_data, int& type, 
          }
 
          memcpy(iter_data + sizeof(int), &length, sizeof(int));
+
+         ++_iterator_count;
  }
 
  void AlgorithmUtil::Generate_Iterator_Converge_data(const void* dgfb,  int count, char* converge_data)

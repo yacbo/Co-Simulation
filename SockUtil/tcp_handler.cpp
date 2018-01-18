@@ -148,7 +148,7 @@ void TcpNetHandler::receive_data()
         _rcv_buf.append(bytes);
     }
 
-    LogUtil::Instance()->Output(MACRO_LOCAL, "receive data", "data length::", _rcv_buf.length());
+    LogUtil::Instance()->Output(MACRO_LOCAL, "receive data", "data length:", _rcv_buf.length());
 
     if(_need_rcv_xml_len == 0){
         memcpy(&_need_rcv_xml_len, _rcv_buf.data() + 1, sizeof(_need_rcv_xml_len));

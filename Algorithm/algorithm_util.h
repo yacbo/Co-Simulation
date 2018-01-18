@@ -19,6 +19,9 @@ private:
     const char* Parse_Iterator_data(const char* sim_data, int& type, int& length, int& count);
     void Generate_Upload_Iterator_data(char* iter_data);
     void Generate_Iterator_Converge_data(const void* dgfb, int count, char* converge_data);
+
+private:
+    int _iterator_count;
 };
 
 #endif // ALGORITHM_H
