@@ -60,6 +60,8 @@ bool SocketHandler::InitSocket(const char* server_ip, int server_port, int dev_p
       _b_rcv_pg_rtui = brcv_pg_rtui;
 
       QtConcurrent::run(this, &SocketHandler::RcvThread);
+
+      return true;
 }
 
 void SocketHandler::RegisterRcvCallback(RcvCallback cb)

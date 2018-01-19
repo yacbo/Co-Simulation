@@ -20,8 +20,11 @@ public:
 
 private:
     bool load_businfor_record(UnionSimDatVec& vec, int64_t sim_time);
+    bool load_commctrl_record(UnionSimDatVec& vec, int64_t sim_time);
     bool write_businfor_record(int64_t sim_time, const UnionSimDatVec& vec);
+    bool write_commctrl_record(int64_t sim_time, const UnionSimDatVec& vec);
     bool fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVec& record);
+    bool fill_commctrl_record(const UnionSimDatVec& his, UnionSimDatVec& record);
 
 private:
     bool load_file_list(StrVec& vec);

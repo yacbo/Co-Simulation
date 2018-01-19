@@ -160,6 +160,12 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
     return true;
 }
 
+bool HisRecordMgr::load_commctrl_record(UnionSimDatVec& vec, int64_t sim_time)
+{
+
+        return true;
+}
+
 bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec& vec)
 {
     string file_name = std::to_string(sim_time) + _rec_name_postfix;;
@@ -199,6 +205,46 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
     _file_list_vec.push_back(rec_path);
 
     return true;
+}
+
+bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec& vec)
+{
+        string file_name = std::to_string(sim_time) + _rec_name_postfix;;
+        string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
+        std::ofstream out(rec_path);
+        if(out.fail()){
+            LogUtil::Instance()->Output(MACRO_LOCAL, "open file:", rec_path, "failed");
+            return false;
+        }
+
+        out << "sim time"
+              << std::setw(20) << "power bus id"
+              << std::setw(20) << "comm src id"
+              << std::setw(20) << "ocmm dst id"
+              << std::setw(20) << "comm err type"
+              << std::setw(20) << "comm tr delay"
+              << std::setw(20) << "comm ctrl data"
+              << std::endl;
+
+        for(int i=0; i<vec.size(); ++i){
+            const UnionSimData& dat = vec[i];
+            QByteArray tmp(dat.power_dat, sizeof(dat.power_dat));
+            QByteArray d_base64 = tmp.toBase64();
+
+            out << dat.sim_time
+                  << std::setw(20) << dat.comm_dat.src_id
+                  << std::setw(20) << dat.comm_dat.dst_id
+                  << std::setw(20) << dat.comm_dat.err_type
+                  << std::setw(20) << dat.comm_dat.trans_delay
+                  << std::setw(20) << d_base64.toStdString()
+                  << std::endl;
+        }
+
+        out.close();
+
+        _file_list_vec.push_back(rec_path);
+
+        return true;
 }
 
 bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVec& record)
@@ -248,4 +294,9 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
     }
 
     return true;
+}
+
+bool HisRecordMgr::fill_commctrl_record(const UnionSimDatVec& his, UnionSimDatVec& record)
+{
+        return true;
 }
