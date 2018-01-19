@@ -32,12 +32,12 @@ void MainWindow::paintEvent(QPaintEvent* pEvent)
 }
 MainWindow::~MainWindow()
 {
-    delete ui;
     if(!commUI)
     {
-        commUI->close();
+       commUI->close();
        delete commUI;
     }
+    delete ui;
 }
 void MainWindow::init()
 {
@@ -52,6 +52,7 @@ void MainWindow::init()
     QString ip = _ms_handler->get_local_ip();
     QHostAddress host(ip);
     commUI = new comm_param_settings(host.toIPv4Address(),_ms_handler);
+    commUI->setWindowModality(Qt::WindowModal);
 //    "初始化"按钮事件.
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::config_Init_event, Qt::UniqueConnection);
 //    "开始仿真"按钮事件.

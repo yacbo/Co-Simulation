@@ -38,7 +38,7 @@ private:
 
     int _protocol_type;
 
-    comm_config_dlg comm_dlg;
+    comm_config_dlg *comm_dlg;
 
 private slots:
     void register_device();

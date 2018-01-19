@@ -38,7 +38,7 @@ MidSoftUI::~MidSoftUI()
     if(_ms_handler){
         delete _ms_handler;
     }
-
+    delete comm_dlg;
     delete ui;
     delete model;
 }
@@ -128,7 +128,7 @@ void MidSoftUI::register_device()
     if(_dev_type == eSimDev_communication){
         QString comm_ip; uint16_t comm_port, bss_port; int proto_type;
         QString host_ip; uint16_t host_port;
-        comm_dlg.get_net_info(comm_ip, comm_port, proto_type, bss_port,host_ip,host_port);
+        comm_dlg->get_net_info(comm_ip, comm_port, proto_type, bss_port,host_ip,host_port);
         _ms_handler->config_communication(comm_ip.toStdString().c_str(), comm_port, bss_port, proto_type, host_ip.toStdString().c_str(), host_port);
     }
 
@@ -171,8 +171,8 @@ void MidSoftUI::combox_select_event(int a)
 {
     this->setWindowTitle(ui->comboBox_2->currentText());
     if(ui->comboBox_2->currentIndex() == 1 ){
-        comm_dlg.show();
-
+        comm_dlg = new comm_config_dlg();
+        comm_dlg->show();
     }
 }
 

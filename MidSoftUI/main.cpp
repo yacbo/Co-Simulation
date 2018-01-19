@@ -6,8 +6,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf8"));
-    MidSoftUI w;
-    w.show();
+    MidSoftUI *w = new MidSoftUI();
+    w->show();
 
     return a.exec();
 }
