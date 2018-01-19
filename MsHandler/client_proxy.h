@@ -104,6 +104,7 @@ private:
     PowerSDDataVec _dwstm_info;
 
     int _iterator_count;
+    int _orig_upstm_num;
     bool  _b_first_handle_frequency;
 
 private:

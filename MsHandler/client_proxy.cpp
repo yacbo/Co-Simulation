@@ -17,6 +17,7 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
     _rcv_comm_data_enabled = false;
 
     _iterator_count = 0;
+    _orig_upstm_num = 0;
     _b_first_handle_frequency = true;
 
     _quit = false;
@@ -278,6 +279,7 @@ bool client_proxy::fetch_power_cfg_param(const DataXmlVec& vec)
         return false;
     }
 
+    _orig_upstm_num = _power_conf_param.upstm_num;
     for(int i=0; i<up_ids.size(); i+=3){
        _up_comm_id_tbl[up_ids[i]] = std::make_pair(up_ids[i+1], up_ids[i+2]);
     }
@@ -438,7 +440,7 @@ string client_proxy::stream_power_sim_data(const UnionSimDatVec& data, int64_t& 
 bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
 {
     QString info;
-    if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && data.size() != _power_conf_param.upstm_num){
+    if(_power_conf_param.prj_type != ePowerPrj_psse_jiangsu && data.size() != _power_conf_param.upstm_num){
         UnionSimDatVec his_rec_vec;
         if(!HisRecordMgr::instance()->load_record(_power_conf_param.upstm_type, his_rec_vec)){
             info = LogUtil::Instance()->Output(MACRO_LOCAL, "load history record failed, current data items:", data.size(), "config items:", _power_conf_param.upstm_num);
@@ -666,8 +668,15 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
 
 void client_proxy::generate_config_power_stream_data(const char* stream, DataXmlVec& vec)
 {
-    int stream_len = 0;
-    memcpy(&stream_len, stream + sizeof(int), sizeof(int));
+    int stream_type = 0, stream_len = 0, offset = 0, count = 0;
+    memcpy(&stream_type, stream, sizeof(int)); offset = sizeof(int);
+    memcpy(&stream_len, stream + offset, sizeof(int)); offset += sizeof(int);
+    memcpy(&count, stream + offset, sizeof(int));
+
+    switch(stream_type){
+    case eInteract_download_bus: _power_conf_param.upstm_num = _orig_upstm_num; break;
+    case eIneract_ctrl_to_comm: _power_conf_param.upstm_num = count; break;
+    }
 
     QByteArray d = QByteArray::fromRawData(stream, stream_len);
     QByteArray d_base64 = d.toBase64();

@@ -76,6 +76,7 @@ bool HisRecordMgr::load_record(int power_data_type, UnionSimDatVec& vec, int64_t
     bool ret = false;
     switch(power_data_type){
     case ePowerData_businfor: ret = load_businfor_record(vec, sim_time); break;
+    case ePowerData_freqinfor: ret = load_commctrl_record(vec, sim_time); break;
     default: break;
     }
 
@@ -91,6 +92,7 @@ bool HisRecordMgr::write_record(int64_t sim_time, int power_data_type, const Uni
     bool ret = false;
     switch(power_data_type){
     case ePowerData_businfor: ret = write_businfor_record(sim_time, vec); break;
+    case ePowerData_freqinfor: ret = write_commctrl_record(sim_time, vec); break;
     default: break;
     }
 
@@ -102,6 +104,7 @@ bool HisRecordMgr::fill_record(int power_data_type, const UnionSimDatVec& his, U
     bool ret = false;
     switch(power_data_type){
     case ePowerData_businfor: ret = fill_businfor_record(his, record); break;
+    case ePowerData_freqinfor: ret = fill_commctrl_record(his, record); break;
     default: break;
     }
 
@@ -162,8 +165,53 @@ bool HisRecordMgr::load_businfor_record(UnionSimDatVec& vec, int64_t sim_time)
 
 bool HisRecordMgr::load_commctrl_record(UnionSimDatVec& vec, int64_t sim_time)
 {
+    string file_name;
+    if(sim_time > 0){
+        file_name = std::to_string(sim_time) + _rec_name_postfix;;
+    }
+    else if(!_file_list_vec.empty()){
+        file_name = _file_list_vec.back();
+    }
+    else{
+        LogUtil::Instance()->Output(MACRO_LOCAL, "not exist history record and current simulation time is:", sim_time);
+        return false;
+    }
 
-        return true;
+    string rec_path = file_name;
+    std::ifstream in(rec_path);
+    if(in.fail()){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "open file:", rec_path, "failed");
+        return false;
+    }
+
+    StrVec dat_vec;
+    string line_data, tmp_dat;
+    getline(in, line_data);        //skip header
+
+    while(getline(in, line_data)){
+        std::istringstream istr(line_data);
+        while(istr >> tmp_dat){
+            dat_vec.push_back(tmp_dat);
+        }
+
+        UnionSimData dat;
+        dat.sim_time = std::stod(dat_vec[0]);
+        dat.comm_dat.src_id = std::stoul(dat_vec[1]);
+        dat.comm_dat.dst_id = std::stoul(dat_vec[2]);
+        dat.comm_dat.err_type  = (EErrorType)std::stoi(dat_vec[3]);
+        dat.comm_dat.trans_delay = std::stol(dat_vec[4]);
+
+        QByteArray d_base64(dat_vec[5].c_str(), dat_vec[5].length());
+        QByteArray d = QByteArray::fromBase64(d_base64);
+        memcpy(dat.power_dat, d.data(), sizeof(dat.power_dat));
+
+        vec.push_back(dat);
+        dat_vec.clear();
+    }
+
+    in.close();
+
+    return true;
 }
 
 bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec& vec)
@@ -218,7 +266,6 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
         }
 
         out << "sim time"
-              << std::setw(20) << "power bus id"
               << std::setw(20) << "comm src id"
               << std::setw(20) << "ocmm dst id"
               << std::setw(20) << "comm err type"
@@ -298,5 +345,51 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
 
 bool HisRecordMgr::fill_commctrl_record(const UnionSimDatVec& his, UnionSimDatVec& record)
 {
-        return true;
+    StrIntMap his_map;
+    SimpleStrSet his_set, rec_set;
+
+    //记录历史数据编号集
+    for(int i=0; i<his.size(); ++i){
+        char ids[32] = {0};
+        const UnionSimData& dat = his[i];
+        sprintf_s(ids, "%u:%u", dat.comm_dat.src_id, dat.comm_dat.dst_id);
+        his_map[ids] = i;
+        his_set.insert(ids);
+    }
+
+    //记录当前数据编号集
+    string cur_comm_id = "current record comm id: ";
+    UnionSimDatVec tmp_vec(his.size());
+    for(int i=0; i<record.size(); ++i){
+        char ids[32] = {0};
+        const UnionSimData& dat = record[i];
+        sprintf_s(ids, "%u:%u", dat.comm_dat.src_id, dat.comm_dat.dst_id);
+        memcpy(&tmp_vec[i], &record[i], sizeof(UnionSimData));
+        cur_comm_id += std::string(ids) + " ";
+        rec_set.insert(ids);
+    }
+
+    //与历史母线集对比查询当前母线集缺少的母线编号
+    StrVec diff_vec(his.size() > record.size() ? his.size() : record.size());
+    StrVec::iterator diff_end = std::set_difference(his_set.begin(), his_set.end(), rec_set.begin(), rec_set.end(), diff_vec.begin());
+    int diff_num = diff_end - diff_vec.begin();
+
+    //借助历史数据补全当前数据集
+    string need_comm_id = "insert history record bus id: ";
+    for(int i=0, j=record.size(); i<diff_num; ++i, ++j){
+        need_comm_id += diff_vec[i] + " ";
+        int index = his_map[diff_vec[i]];
+        memcpy(&tmp_vec[j], &his[index], sizeof(UnionSimData));
+    }
+
+    LogUtil::Instance()->Output(MACRO_LOCAL, cur_comm_id, need_comm_id);
+
+    //设置当前数据
+    record.clear();
+    record.resize(tmp_vec.size());
+    for(int i=0; i<tmp_vec.size(); ++i){
+        memcpy(&record[i], &tmp_vec[i], sizeof(UnionSimData));
+    }
+
+    return true;
 }

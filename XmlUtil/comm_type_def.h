@@ -264,11 +264,13 @@ typedef vector<std::string> StrVec;
 typedef pair<int, int> IntPair;
 typedef vector<IntPair> PairVec;
 typedef set<int> SimpleIntSet;
+typedef set<std::string> SimpleStrSet;
 typedef unordered_set<int> IntSet;
 typedef unordered_set<std::string> StrSet;
 typedef unordered_map<int, int> IntMap;
 typedef unordered_map<int, std::string> IntStrMap;
 typedef unordered_map<std::string, int> StrIntMap;
+typedef unordered_map<std::string, std::string> StrStrMap;
 typedef unordered_map<int, IntPair> IntPairMap;
 typedef vector<UnionSimData> UnionSimDatVec;
 
