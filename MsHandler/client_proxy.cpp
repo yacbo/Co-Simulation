@@ -28,6 +28,7 @@ client_proxy::client_proxy(application_layer* parent, const QString& sbs_ip, qui
 
     _dev_type = type;
     _dst_dev_type = eSimDev_undef;
+    _b_enable_simulation = false;
 
     _sock_util_ptr = nullptr;
     _sock_remote_ptr = nullptr;
@@ -842,8 +843,7 @@ void client_proxy::handle_power(ApplMessage* msg)
         emit snd_lower_signal(doc, QString::fromStdString(_sbs_ip), _sbs_port);
 
         if(ret < 0){
-            _power_handler->ExitHandler();
-            info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute Over, power software has closed");
+            info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute over");
             emit progress_log_signal(info);
         }
         else{
@@ -918,8 +918,7 @@ void client_proxy::handle_power(ApplMessage* msg)
                _expect_proc_type = eSubProcedure_session_begin;
            }
            else if(ret < 0){
-               _power_handler->ExitHandler();
-               info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute Over, power software has closed");
+               info  = LogUtil::Instance()->Output(MACRO_LOCAL, "power simulation execute over");
                emit progress_log_signal(info);
            }
         }
@@ -1174,6 +1173,11 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
 
 void client_proxy::handle_interoper(ApplMessage* msg)
 {
+    if(!_b_enable_simulation){
+        LogUtil::Instance()->Output(MACRO_LOCAL, "current simulation enable flag: false", "[simulation stop]");
+        return;
+    }
+
     switch(_dev_type){
     case eSimDev_power: handle_power(msg); break;
     case eSimDev_power_appl: handle_power_appl(msg); break;
@@ -1183,9 +1187,10 @@ void client_proxy::handle_interoper(ApplMessage* msg)
 
 void client_proxy::handle_sim_cmd(ApplMessage* msg)
 {
-    LogUtil::Instance()->Output(MACRO_LOCAL);
+    _b_enable_simulation = msg->_proc_msg->_msg_type == eSimCmd_start_sim;
+    LogUtil::Instance()->Output(MACRO_LOCAL, "ready execute sim cmd:", parse_type(msg->_proc_msg->_msg_type));
 
-    switch( msg->_proc_msg->_msg_type){
+    switch(msg->_proc_msg->_msg_type){
     case eSimCmd_start_sim:{
         switch(_dev_type){
         case eSimDev_power: handle_power(msg); break;

@@ -109,6 +109,7 @@ private:
 
 private:
     EProxyState _proxy_status;                                        //客户代理状态
+    bool _b_enable_simulation;
 
 private:
     SockUtil* _sock_util_ptr;
