@@ -1794,6 +1794,10 @@ void XmlUtil::parse_xml_power_appl_data(int type, const DataXmlVec& vec, DblVec&
         parse_xml_power_sim_data(xml_vec, us_data);
         break;
     }
+    case ePowerPrj_conf_power:{
+        parse_xml_power_sim_data(xml_vec, us_data);
+        break;
+    }
     default: break;
     }
 }
