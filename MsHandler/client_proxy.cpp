@@ -518,11 +518,13 @@ bool client_proxy::calc_power_appl_data(UnionSimDatVec& data, DataXmlVec& vec)
         break;
     }
     case ePowerData_freqinfor:{
+        if(data.size() > 1){
+            bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
+            LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
+        }
+
         char v_ret[2048] = {0};
         _decision_alth->execute_event_proc_algorithm(&param, v_ret);
-        bool ret = HisRecordMgr::instance()->write_record(sim_time, _power_conf_param.upstm_type, data);
-        LogUtil::Instance()->Output(MACRO_LOCAL, "write poweroper record, items:", data.size(), MACRO_SUCFAIL(ret));
-
         generate_config_power_stream_data(v_ret, vec);
         //exchange_comm_node_src_dst_id(data, _power_conf_param.prj_type);
         break;

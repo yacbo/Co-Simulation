@@ -259,7 +259,7 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
 {
         string file_name = std::to_string(sim_time) + _rec_name_postfix;;
         string rec_path = _rec_base_dir + _rec_name_prefix + file_name;
-        std::ofstream out(rec_path);
+        std::ofstream out(rec_path, std::ios::trunc);
         if(out.fail()){
             LogUtil::Instance()->Output(MACRO_LOCAL, "open file:", rec_path, "failed");
             return false;
@@ -270,7 +270,7 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
               << std::setw(20) << "ocmm dst id"
               << std::setw(20) << "comm err type"
               << std::setw(20) << "comm tr delay"
-              << std::setw(20) << "comm ctrl data"
+              << std::setw(384) << "comm ctrl data"
               << std::endl;
 
         for(int i=0; i<vec.size(); ++i){
@@ -283,7 +283,7 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
                   << std::setw(20) << dat.comm_dat.dst_id
                   << std::setw(20) << dat.comm_dat.err_type
                   << std::setw(20) << dat.comm_dat.trans_delay
-                  << std::setw(20) << d_base64.toStdString()
+                  << std::setw(384) << d_base64.toStdString()
                   << std::endl;
         }
 
