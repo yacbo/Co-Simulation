@@ -687,6 +687,7 @@ void client_proxy::generate_config_power_stream_data(const char* stream, DataXml
     switch(stream_type){
     case eInteract_download_bus: _power_conf_param.upstm_num = _orig_upstm_num; break;
     case eIneract_ctrl_to_comm: _power_conf_param.upstm_num = count; break;
+    case eInteract_ctrl_to_power: _power_conf_param.upstm_num = _orig_upstm_num; break;
     }
 
     QByteArray d = QByteArray::fromRawData(stream, stream_len);
