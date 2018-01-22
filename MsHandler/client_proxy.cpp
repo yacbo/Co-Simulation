@@ -584,6 +584,8 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
     switch(stream_type){
     case eInteract_ctrl_to_power:{
         data.resize(count);
+
+        DblVec sim_time_vec(count);
         for(int i=0; i<count; ++i){
             _Ctrl_to_Grid grid;
             memcpy(&grid,  stream_d + offset, sizeof(_Ctrl_to_Grid));
@@ -604,9 +606,15 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
             dp.sim_time = grid.PowerUpadateTime;
             dp.data_type = ePowerData_dpnode;
             memcpy(&data[i].power_dat, &dp, sizeof(PowerDpNodeData));
+            sim_time_vec.push_back(grid.PowerUpadateTime);
         }
 
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "[Receive Converge Data]", "items:", count);
+        QString sim_time;
+        for(int i=0; i<sim_time_vec.size(); ++i){
+                sim_time += QString().arg(sim_time_vec[i]) + " ";
+        }
+
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "[Receive Converge Data]", "items:", count, "sim time:", sim_time.toStdString());
         emit progress_log_signal(info);
 
         ret = 0;
