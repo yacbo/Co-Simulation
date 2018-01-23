@@ -7,6 +7,7 @@
 #include "log_util.h"
 
 #define EPS 1e-7
+#define ERR_PER 0.05            //误差精度.
 
 application_layer::application_layer()
 {
@@ -497,11 +498,12 @@ void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& 
 void application_layer::check_sim_time_event_slots()
 {
     int index = -1;
+    QMutexLocker lck (&_mtx);
+
     for(int i=0; i<_event_time_vec.size(); ++i){
         double diff = _event_time_vec[i] - _cur_sim_time;
-        if(diff > -EPS && diff < 5.0){
+        if(diff > -ERR_PER && diff < ERR_PER){        //查找最后一个满足条件的事件下标.
             index = i;
-            break;
         }
     }
 
@@ -513,7 +515,6 @@ void application_layer::check_sim_time_event_slots()
         forward_event_data(_event_data_vec[i]);
     }
 
-    QMutexLocker lck (&_mtx);
     DblVec::iterator it_dbl = _event_time_vec.begin();
     for(int i=0; i<=index; ++i){
         it_dbl = _event_time_vec.erase(it_dbl);
