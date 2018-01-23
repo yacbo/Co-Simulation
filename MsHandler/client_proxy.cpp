@@ -605,10 +605,10 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
             PowerDpNodeData dp;
             dp.dp = grid.dP;
             dp.bus_id = grid.DG_node_ID;
-            dp.sim_time = grid.PowerUpadateTime;
+            dp.sim_time = grid.PowerUpadateTime / 1e9;                //将事件发生时间由ns转换为s
             dp.data_type = ePowerData_dpnode;
             memcpy(&data[i].power_dat, &dp, sizeof(PowerDpNodeData));
-            sim_time_vec.push_back(grid.PowerUpadateTime);
+            sim_time_vec.push_back(dp.sim_time);
         }
 
         QString sim_time;
