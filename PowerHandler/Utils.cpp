@@ -32,7 +32,7 @@ ApiFixture::ApiFixture()
 
   int error(0);
   api::Value cmd("rcom/show");
-  instance->GetApplication()->Execute("ExecuteCmd", &cmd, &error);//显示软件界面
+  instance->GetApplication()->Execute("ExecuteCmd", &cmd, &error);//鏄剧ず杞欢鐣岄潰
   if (error > 0)
   {
 	  std::cout << "GUI window shows error." << std::endl;
