@@ -270,7 +270,7 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
               << std::setw(20) << "ocmm dst id"
               << std::setw(20) << "comm err type"
               << std::setw(20) << "comm tr delay"
-              << std::setw(384) << "comm ctrl data"
+              << std::setw(320) << "comm ctrl data"
               << std::endl;
 
         for(int i=0; i<vec.size(); ++i){
@@ -283,7 +283,7 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
                   << std::setw(20) << dat.comm_dat.dst_id
                   << std::setw(20) << dat.comm_dat.err_type
                   << std::setw(20) << dat.comm_dat.trans_delay
-                  << std::setw(384) << d_base64.toStdString()
+                  << std::setw(320) << d_base64.toStdString()
                   << std::endl;
         }
 
