@@ -605,7 +605,7 @@ int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSim
             PowerDpNodeData dp;
             dp.dp = grid.dP;
             dp.bus_id = grid.DG_node_ID;
-            dp.sim_time = grid.PowerUpadateTime / 1e9;                //将事件发生时间由ns转换为s
+            dp.sim_time = grid.PowerUpadateTime;
             dp.data_type = ePowerData_dpnode;
             memcpy(&data[i].power_dat, &dp, sizeof(PowerDpNodeData));
             sim_time_vec.push_back(dp.sim_time);
@@ -1125,7 +1125,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
         XmlUtil::generate_xml_power_sim_data(_union_sim_dat_rcv_vec, vec);
         doc = XmlUtil::generate_snd_data_xml(ss_id, ps_id, appl_name, 1, vec, eMessage_request);
         tips += QString("send data, request, items: %1").arg(_union_sim_dat_rcv_vec.size());
-        tips += "send data, request";
+        tips += " send data, request";
 
         _expect_msg_type = eMessage_confirm;
         _expect_proc_type = eSubProcedure_data_send;

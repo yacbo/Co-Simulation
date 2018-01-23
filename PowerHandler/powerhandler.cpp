@@ -502,7 +502,7 @@ int PowerHandler::SetConfPowerEvents(Application* app, int sd_num, EPowerDataTyp
     double etime = 0;
     for (int i = 0; i <sd_num; ++i){
         const PowerDpNodeData* dp_node = (const PowerDpNodeData*)sd_data[i];
-        etime=dp_node->sim_time;
+        etime=dp_node->sim_time / 1e9 + simtime;
         loadevent[i]->SetAttributeDouble("hrtime", 0, &error);                //这边时间为当前仿真时刻+通信时延
         loadevent[i]->SetAttributeDouble("mtime", 0, &error);                 //这边时间为当前仿真时刻+通信时延
         loadevent[i]->SetAttributeDouble("time", etime, &error);              //这边时间为当前仿真时刻+通信时延
