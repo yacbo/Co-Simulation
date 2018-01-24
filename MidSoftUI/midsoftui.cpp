@@ -210,7 +210,7 @@ void MidSoftUI::login_singal_slots(QString dev_name, QString dev_ip, uint16_t de
         if(ui->unregisterButton->isEnabled() && !login)
         {
            //操作日志
-           QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "[unregister]"," deviceType:",ui->comboBox_2->currentText().toStdString()," deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
+           QString log_s = LogUtil::Instance()->Output(MACRO_LOCAL, "[unregister]", " deviceType:", DevNamesSet[_dev_type], " deviceIp:",_dev_ip.toStdString()," devicePort:",_listen_port);
            progress_log_slots(log_s);
 
            ui->registerButton->setEnabled(true);  //注册按钮启用.

@@ -329,6 +329,8 @@ bool HisRecordMgr::fill_businfor_record(const UnionSimDatVec& his, UnionSimDatVe
         need_bus_id += std::to_string(diff_vec[i]) + " ";
         int index = his_map[diff_vec[i]];
         memcpy(&tmp_vec[index], &his[index], sizeof(UnionSimData));
+        PowerBusInforData* pbid = (PowerBusInforData*)his[index].power_dat;
+        pbid->bus_angle = 0.0; pbid->bus_volt = 0.0;
     }
 
     LogUtil::Instance()->Output(MACRO_LOCAL, cur_bus_id, need_bus_id);
@@ -380,6 +382,8 @@ bool HisRecordMgr::fill_commctrl_record(const UnionSimDatVec& his, UnionSimDatVe
         need_comm_id += diff_vec[i] + " ";
         int index = his_map[diff_vec[i]];
         memcpy(&tmp_vec[j], &his[index], sizeof(UnionSimData));
+        tmp_vec[j].comm_dat.err_type = 0;
+        tmp_vec[j].comm_dat.trans_delay = 0;
     }
 
     LogUtil::Instance()->Output(MACRO_LOCAL, cur_comm_id, need_comm_id);
