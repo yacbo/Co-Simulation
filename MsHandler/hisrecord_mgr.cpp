@@ -382,8 +382,6 @@ bool HisRecordMgr::fill_commctrl_record(const UnionSimDatVec& his, UnionSimDatVe
         need_comm_id += diff_vec[i] + " ";
         int index = his_map[diff_vec[i]];
         memcpy(&tmp_vec[j], &his[index], sizeof(UnionSimData));
-        tmp_vec[j].comm_dat.err_type = 0;
-        tmp_vec[j].comm_dat.trans_delay = 0;
     }
 
     LogUtil::Instance()->Output(MACRO_LOCAL, cur_comm_id, need_comm_id);

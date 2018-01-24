@@ -569,8 +569,8 @@ bool client_proxy::exchange_comm_node_src_dst_id(UnionSimDatVec& data, int type)
 int client_proxy::parse_config_power_stream_data(const DataXmlVec& vec, UnionSimDatVec& data)
 {
    if(vec.empty()){
-           LogUtil::Instance()->Output(MACRO_LOCAL, "[can't parse power stream data], current data ittems: ", vec.size());
-           return -1;
+       LogUtil::Instance()->Output(MACRO_LOCAL, "[can't parse power stream data], current data ittems: ", vec.size());
+       return -1;
    }
 
     data.clear();
