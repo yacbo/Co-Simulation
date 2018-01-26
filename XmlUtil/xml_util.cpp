@@ -1826,6 +1826,7 @@ void XmlUtil::generate_xml_power_appl_data(int type, const DblVec& data, const U
         break;
     }
     case ePowerPrj_psse_jiangsu: break;
+    case ePowerPrj_conf_power: break;
     default: break;
     }
 }

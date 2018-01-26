@@ -55,7 +55,7 @@ double DownloadSamplingFreq(Para &para,bus_info_commu *bus2){
 	para.time=bus2->PowerSimTime+bus2->TimeDelay;
     printf("牵引节点获得母线信息频率：\n");
 	printf("Simulation Time : %0.6f s",para.time);
-	printf("    Power Frequency: %0.6f Hz \n",bus2->PowerFrequency);
+    printf("Power Frequency: %0.6f Hz \n",bus2->PowerFrequency);
 
 	double freq=bus2->PowerFrequency;
 	return freq;
@@ -69,7 +69,6 @@ int packet_prase(commu_ctrl tRecv,State &state,Para &para){
 	{
 		return 1;
 	}
-
 
 	else if (tRecv.Destnode_ID == 6)  //目的地为牵引节点
 	{
