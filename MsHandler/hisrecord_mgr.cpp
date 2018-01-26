@@ -227,7 +227,7 @@ bool HisRecordMgr::write_businfor_record(int64_t sim_time, const UnionSimDatVec&
     out << "sim time"
           << std::setw(20) << "power bus id"
           << std::setw(20) << "comm src id"
-          << std::setw(20) << "ocmm dst id"
+          << std::setw(20) << "comm dst id"
           << std::setw(20) << "comm err type"
           << std::setw(20) << "comm tr delay"
           << std::setw(20) << "power voltage"
@@ -267,7 +267,7 @@ bool HisRecordMgr::write_commctrl_record(int64_t sim_time, const UnionSimDatVec&
 
         out << "sim time"
               << std::setw(20) << "comm src id"
-              << std::setw(20) << "ocmm dst id"
+              << std::setw(20) << "comm dst id"
               << std::setw(20) << "comm err type"
               << std::setw(20) << "comm tr delay"
               << std::setw(320) << "comm ctrl data"

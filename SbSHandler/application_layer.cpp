@@ -475,7 +475,7 @@ void application_layer::handle_comm_sim_event(ApplMessage* msg)
 
 void application_layer::insert_event_data(const DblVec& time, const ByteArrVec& data)
 {
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "event data items:", data.size());
+    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "receive config event data, items:", data.size());
     emit progress_log_signal(info);
 
     QMutexLocker lck(&_mtx);
