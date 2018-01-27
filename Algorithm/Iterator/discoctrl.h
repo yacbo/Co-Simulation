@@ -156,14 +156,13 @@ extern "C" {
 		state.flag_converge=converge(state,tRecv);
 
 	}
-	int ExportIterationResult(State state, FILE *fp) {
+	int ExportIterationResult(State state,Para para, FILE*fp) {
 		char c = '\n';
+		fprintf(fp, "T(s):%0.6f ", para.time);
 		for (int i = 0; i < NODE_NUM ; i++) {
-			//fprintf(fp, "%0.9f ", state.miu_trans_step[i]);
-			printf("%0.9f ", state.miu_trans_step[i]);
+			fprintf(fp, "%0.6f ", state.miu_trans_step[i]);
 		}
 		fprintf(fp, "%c", c);
-		printf("%c",c);
 		return 0;
 	}
 

@@ -1,4 +1,4 @@
-/**************节点间双向通信********************/
+ /**************节点间双向通信********************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
@@ -55,7 +55,7 @@ double DownloadSamplingFreq(Para &para,bus_info_commu *bus2){
 	para.time=bus2->PowerSimTime+bus2->TimeDelay;
     printf("牵引节点获得母线信息频率：\n");
 	printf("Simulation Time : %0.6f s",para.time);
-    printf("Power Frequency: %0.6f Hz \n",bus2->PowerFrequency);
+	printf("    Power Frequency: %0.6f Hz \n",bus2->PowerFrequency);
 
 	double freq=bus2->PowerFrequency;
 	return freq;
@@ -69,6 +69,7 @@ int packet_prase(commu_ctrl tRecv,State &state,Para &para){
 	{
 		return 1;
 	}
+
 
 	else if (tRecv.Destnode_ID == 6)  //目的地为牵引节点
 	{
@@ -118,6 +119,15 @@ void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 	for(int i=0;i<len;i++){
 		packet_prase(tRecvDG[i],state,para);   //解析数据包
 	}
+	dis_ctrl_pin_node(state,para);
+
+	//迭代数据记录
+	FILE *fp;
+    const char *filename="power_application_iterator_data.txt";
+	fopen_s(&fp,filename,"a");
+	ExportIterationResult(state,para,fp);   //记录迭代数据
+	fclose(fp);
+
 }
 //电力应用返回电力软件控制指令
 static void api_struct_feedback(State state,Para para,DG_Node dg_node[],Ctrl_to_Grid pct[]){
@@ -193,7 +203,7 @@ void config_param_state(const bus_info_commu& dwload_bus_infor)
 
 void generate_upload_dgpacket(vector<commu_ctrl>& tSendDG)
 {
-        for(int i=0;i<6;i++){
+        for(int i=1;i<=6;i++){
                 UploadDGPacket(g_state, g_para, i, tSendDG);
         }
 }
@@ -235,7 +245,7 @@ bool iterator_calculate(vector<commu_ctrl>& tRecvDG, Ctrl_to_Grid* dg_feedback)
 //}
 //void test(Bus_Info &bus,DG_Node dg_node[],Ctrl_to_Grid dg_feedback[]){
 //	Para para;
-//	State state;
+//	State state;a
 
 //	initialize(state,para);  //初始化算法参数
 
@@ -247,7 +257,7 @@ bool iterator_calculate(vector<commu_ctrl>& tRecvDG, Ctrl_to_Grid* dg_feedback)
 //	bus_info_commu bus2;          //通信软件下发至电力应用的母线数据
 
 //	getDemand(state,para,bus1,bus2);
-//	for(int i=0;i<6;i++){
+//	for(int i=1;i<=6;i++){
 //		UploadDGPacket(state,para,i,tSendDG);
 //	}
 //	Interact(state,para,tRecvDG,dg_node,dg_feedback); //一次迭代交互
