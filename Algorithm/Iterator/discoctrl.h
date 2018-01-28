@@ -158,11 +158,17 @@ extern "C" {
 	}
 	int ExportIterationResult(State state,Para para, FILE*fp) {
 		char c = '\n';
-		fprintf(fp, "T(s):%0.6f ", para.time);
+		fprintf(fp, "T(s):%0.6f  ", para.time);
+		fprintf(fp, "Frequency(Hz):%0.6f  ", para.Freq);
+		fprintf(fp, "ActivePower Demand(MW):%0.6f  ", para.P_Demand);
+		fprintf(fp,"Converge_Flag:%d  ",state.flag_converge);
+		fprintf(fp,"miu_DG(1-5): ");
 		for (int i = 0; i < NODE_NUM ; i++) {
 			fprintf(fp, "%0.6f ", state.miu_trans_step[i]);
 		}
+		fprintf(fp, " miu_pin:%0.6f  ", state.miu_pin);
 		fprintf(fp, "%c", c);
+
 		return 0;
 	}
 

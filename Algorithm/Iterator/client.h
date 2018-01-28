@@ -52,11 +52,7 @@ void UploadSamplingFreq(Bus_Info bus,bus_info_commu *bus1)
 
 double DownloadSamplingFreq(Para &para,bus_info_commu *bus2){
 	//-----bus2由通信软件下发
-	para.time=bus2->PowerSimTime+bus2->TimeDelay;
-    printf("牵引节点获得母线信息频率：\n");
-	printf("Simulation Time : %0.6f s",para.time);
-	printf("    Power Frequency: %0.6f Hz \n",bus2->PowerFrequency);
-
+	para.time=bus2->PowerSimTime + bus2->TimeDelay;
 	double freq=bus2->PowerFrequency;
 	return freq;
 };
@@ -97,6 +93,7 @@ void UploadDGPacket(State &state,Para &para,int node_id,vector<commu_ctrl>&tSend
 		for( i = 1; i <=NODE_NUM; i++) {
 			if (para.D[i-1] != 0) {
 			a.Destnode_ID = i;     //与牵引节点相连节点
+			a.data[0]=state.miu_pin;
 			tSendDG.push_back(a);
 			}
 		}
@@ -116,6 +113,8 @@ void UploadDGPacket(State &state,Para &para,int node_id,vector<commu_ctrl>&tSend
 void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 	//---先要获得数据包tRecvDG
 	int len=tRecvDG.size();
+	state.flag_converge=0;
+
 	for(int i=0;i<len;i++){
 		packet_prase(tRecvDG[i],state,para);   //解析数据包
 	}
@@ -214,7 +213,7 @@ bool iterator_calculate(vector<commu_ctrl>& tRecvDG, Ctrl_to_Grid* dg_feedback)
         tRecvDG.clear();
         if(g_state.flag_converge == 0){  //迭代收敛
                 memcpy(g_state.miu_this_time, g_state.miu_trans_step, sizeof(g_state.miu_trans_step));
-                api_struct_feedback(g_state, g_para, g_dgnode, dg_feedback);     //向电力软件程序返回控制指令【
+                api_struct_feedback(g_state, g_para, g_dgnode, dg_feedback);     //向电力软件程序返回控制指令
                 memcpy(g_state.miu_previous_time, g_state.miu_trans_step, sizeof(g_state.miu_trans_step));
                 //保存此次仿真结果，用于下次计算功率调节量
         }
