@@ -65,6 +65,7 @@ int packet_prase(commu_ctrl tRecv,State &state,Para &para){
 	{
 		return 1;
 	}
+
 	else 
 	{
 		dis_ctrl_DG_node(tRecv,state,para);
@@ -113,15 +114,13 @@ void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 		packet_prase(tRecvDG[i],state,para);   //解析数据包
 	}
 
+	dis_ctrl_pin_node(state,para);
 	memcpy(state.miu_previous_step,state.miu_hold_step,sizeof(state.miu_previous_step));
 	memcpy(state.miu_hold_step,state.miu_trans_step,sizeof(state.miu_trans_step));
 
-	dis_ctrl_pin_node(state,para);
-
 	//迭代数据记录
 	FILE *fp;
-    const char *filename="power_application_iterator_data.txt";
-	fopen_s(&fp,filename,"a");
+    fopen_s(&fp,"power_application_iterator_data.txt","a");
 	ExportIterationResult(state,para,fp);   //记录迭代数据
 	fclose(fp);
 
