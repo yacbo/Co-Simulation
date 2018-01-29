@@ -65,12 +65,6 @@ int packet_prase(commu_ctrl tRecv,State &state,Para &para){
 	{
 		return 1;
 	}
-
-
-	else if (tRecv.Destnode_ID == 6)  //目的地为牵引节点
-	{
-		dis_ctrl_pin_node(state,para); //更新牵引率
-	}
 	else 
 	{
 		dis_ctrl_DG_node(tRecv,state,para);
@@ -118,6 +112,10 @@ void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 	for(int i=0;i<len;i++){
 		packet_prase(tRecvDG[i],state,para);   //解析数据包
 	}
+
+	memcpy(state.miu_previous_step,state.miu_hold_step,sizeof(state.miu_previous_step));
+	memcpy(state.miu_hold_step,state.miu_trans_step,sizeof(state.miu_trans_step));
+
 	dis_ctrl_pin_node(state,para);
 
 	//迭代数据记录
