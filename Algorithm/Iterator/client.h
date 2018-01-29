@@ -118,12 +118,6 @@ void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 	memcpy(state.miu_previous_step,state.miu_hold_step,sizeof(state.miu_previous_step));
 	memcpy(state.miu_hold_step,state.miu_trans_step,sizeof(state.miu_trans_step));
 
-	//迭代数据记录
-	FILE *fp;
-    fopen_s(&fp,"power_application_iterator_data.txt","a");
-	ExportIterationResult(state,para,fp);   //记录迭代数据
-	fclose(fp);
-
 }
 //电力应用返回电力软件控制指令
 static void api_struct_feedback(State state,Para para,DG_Node dg_node[],Ctrl_to_Grid pct[]){
