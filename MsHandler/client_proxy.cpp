@@ -709,9 +709,25 @@ void client_proxy::reset_power_input_data()
 {
     int dat_size = _union_sim_dat_rcv_vec.size();
     if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && _dbl_vec.size() != dat_size){
-        for(int i=dat_size; i<_power_conf_param.dwstm_num; ++i){
+        IntSet bus_id_set;
+        for(int i = 0; i<dat_size; ++i){
+             PowerBusInforData* bi = (PowerBusInforData*)_union_sim_dat_rcv_vec[i].power_dat;
+             bus_id_set.insert(bi->bus_id);
+        }
+
+        //查找丢失数据包.
+        IntVec bus_id_vec;
+        for(int i=0; i<_power_conf_param.dwstm_num; ++i){
                 PowerDGInforData* d =  (PowerDGInforData*)_dwstm_info[i];
-                d->bus_id = 0; d->dv = d->time_diff = 0.0;
+                if(bus_id_set.find(d->bus_id) == bus_id_set.end()){
+                        bus_id_vec.push_back(d->bus_id);
+                }
+        }
+
+        //重置丢失数据包.
+        for(int i=0; i<bus_id_vec.size(); ++i){
+                PowerDGInforData* d =  (PowerDGInforData*)_dwstm_info[i + dat_size];
+                d->bus_id = bus_id_vec[i]; d->dv = d->time_diff = 0.0;
         }
 
         QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv double data items:", _dbl_vec.size(), "rcv sim data items:", dat_size, "not equal", "reset the surplus data to zero");
@@ -741,6 +757,19 @@ void client_proxy::reset_power_input_data()
             break;
         }
         default: break;
+        }
+    }
+
+    //对数据包按bus_id升序排列
+    if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && _dbl_vec.size() != dat_size){
+        for(int i=0; i<_power_conf_param.dwstm_num - 1; ++i){
+             for(int j=i+1; j<_power_conf_param.dwstm_num; ++j){
+                if(_dwstm_info[i]->bus_id > _dwstm_info[j]->bus_id){
+                    PowerSimDwStmData* tmp = _dwstm_info[i];
+                    _dwstm_info[i] = _dwstm_info[j];
+                    _dwstm_info[j] = tmp;
+                }
+            }
         }
     }
 }
