@@ -59,7 +59,7 @@ double DownloadSamplingFreq(Para &para,bus_info_commu *bus2){
 
 //解析数据包结构体
 int packet_prase(commu_ctrl tRecv,State &state,Para &para){ 
-	state.flag_converge=tRecv.Converge_Flag;
+
 	para.time=tRecv.PowerSimTime+tRecv.TimeDelay;
 	if (tRecv.Destnode_ID == tRecv.Startnode_ID)  //目的节点和源节点相同表示收敛返回
 	{
@@ -102,12 +102,12 @@ void UploadDGPacket(State &state,Para &para,int node_id,vector<commu_ctrl>&tSend
 				tSendDG.push_back(a);
 			}
 		}
-	}
+    }
 }
 //接收通信软件下发至算法的各节点数据，tRecvDG为数据包结构体数组
 void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 	//---先要获得数据包tRecvDG
-	int len=tRecvDG.size();
+    int len=tRecvDG.size();
 	state.flag_converge=0;
 
 	for(int i=0;i<len;i++){
@@ -117,6 +117,12 @@ void DownloadDGPacket(State &state,Para &para,vector<commu_ctrl>&tRecvDG){
 	dis_ctrl_pin_node(state,para);
 	memcpy(state.miu_previous_step,state.miu_hold_step,sizeof(state.miu_previous_step));
 	memcpy(state.miu_hold_step,state.miu_trans_step,sizeof(state.miu_trans_step));
+
+    FILE *fp;
+        fopen_s(&fp,"power_application_iterator_data.txt","a");
+        ExportIterationResult(state,para,fp);   //记录迭代数据
+        fclose(fp);
+
 
 }
 //电力应用返回电力软件控制指令
@@ -189,6 +195,7 @@ void config_param_state(const bus_info_commu& dwload_bus_infor)
 {
         memcpy(&g_dwload_bus, &dwload_bus_infor, sizeof(bus_info_commu));
         getDemand(g_state, g_para, g_upload_bus, g_dwload_bus);
+        dis_ctrl_pin_node(g_state,g_para);
 }
 
 void generate_upload_dgpacket(vector<commu_ctrl>& tSendDG)

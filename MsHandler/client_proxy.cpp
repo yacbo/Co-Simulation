@@ -707,10 +707,15 @@ void client_proxy::generate_config_power_stream_data(const char* stream, DataXml
 
 void client_proxy::reset_power_input_data()
 {
-    if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && _dbl_vec.size() != _union_sim_dat_rcv_vec.size()){
-        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "double data items:", _dbl_vec.size(), "rcv sim data items:", _union_sim_dat_rcv_vec.size(), "not equal");
+    int dat_size = _union_sim_dat_rcv_vec.size();
+    if(_power_conf_param.prj_type == ePowerPrj_avr_ctrl_39 && _dbl_vec.size() != dat_size){
+        for(int i=dat_size; i<_power_conf_param.dwstm_num; ++i){
+                PowerDGInforData* d =  (PowerDGInforData*)_dwstm_info[i];
+                d->bus_id = 0; d->dv = d->time_diff = 0.0;
+        }
+
+        QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv double data items:", _dbl_vec.size(), "rcv sim data items:", dat_size, "not equal", "reset the surplus data to zero");
         emit progress_log_signal(info);
-        return;
     }
 
     for(int i=0; i<_union_sim_dat_rcv_vec.size(); ++i){

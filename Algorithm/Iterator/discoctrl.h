@@ -125,7 +125,7 @@ extern "C" {
 	bool converge(State &state,commu_ctrl tRecv){   //判断收敛
 		bool flag=state.flag_converge;
 		bool flag_tmp=state.flag_converge;
-		double precision = 1.0e-4, delta;
+        double precision = 5*(10e-3), delta;
 		if (state.miu_trans_step[tRecv.Destnode_ID-1]==0)
 		{
 			delta=0;
