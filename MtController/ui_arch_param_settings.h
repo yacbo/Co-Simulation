@@ -114,6 +114,7 @@ public:
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         label_3 = new QLabel(arch_param_settings);
         label_3->setObjectName(QStringLiteral("label_3"));
+        label_3->setWordWrap(false);
 
         verticalLayout->addWidget(label_3);
 

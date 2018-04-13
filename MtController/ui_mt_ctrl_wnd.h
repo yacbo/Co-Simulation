@@ -217,12 +217,7 @@ public:
 
         pushButton_4 = new QPushButton(groupBox_4);
         pushButton_4->setObjectName(QStringLiteral("pushButton_4"));
-        pushButton_4->setStyleSheet(QLatin1String("QPushButton:hover{\n"
-"    background-color:#CCCCCC;\n"
-"}\n"
-"QPushButton:pressed{\n"
-"    background-color:#888888;\n"
-"}"));
+        pushButton_4->setStyleSheet(QStringLiteral(""));
 
         horizontalLayout_11->addWidget(pushButton_4);
 
@@ -232,12 +227,7 @@ public:
 
         pushButton_5 = new QPushButton(groupBox_4);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
-        pushButton_5->setStyleSheet(QLatin1String("QPushButton:hover{\n"
-"    background-color:#CCCCCC\n"
-"}\n"
-"QPushButton:pressed{\n"
-"    background-color:#888888\n"
-"}"));
+        pushButton_5->setStyleSheet(QStringLiteral(""));
 
         horizontalLayout_11->addWidget(pushButton_5);
 
@@ -498,7 +488,7 @@ public:
         MainWindow->setStatusBar(statusBar);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1117, 22));
+        menuBar->setGeometry(QRect(0, 0, 1117, 23));
         menu_2 = new QMenu(menuBar);
         menu_2->setObjectName(QStringLiteral("menu_2"));
         MainWindow->setMenuBar(menuBar);

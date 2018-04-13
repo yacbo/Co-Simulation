@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'sbssoftui.ui'
 **
-** Created by: Qt User Interface Compiler version 5.9.2
+** Created by: Qt User Interface Compiler version 5.8.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -78,6 +78,8 @@ public:
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         groupBox_3 = new QGroupBox(SbsSoftUI);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        groupBox_3->setStyleSheet(QStringLiteral(""));
+        groupBox_3->setFlat(true);
         horizontalLayout_6 = new QHBoxLayout(groupBox_3);
         horizontalLayout_6->setSpacing(6);
         horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
@@ -197,6 +199,12 @@ public:
 
         pushButton = new QPushButton(SbsSoftUI);
         pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setStyleSheet(QLatin1String("QPushButton:hover{\n"
+"    background-color:#CCCCCC\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    background-color:#888888\n"
+"}"));
 
         horizontalLayout_7->addWidget(pushButton);
 
@@ -206,6 +214,12 @@ public:
 
         pushButton_2 = new QPushButton(SbsSoftUI);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        pushButton_2->setStyleSheet(QLatin1String("QPushButton:hover{\n"
+"    background-color:#CCCCCC\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    background-color:#888888\n"
+"}"));
 
         horizontalLayout_7->addWidget(pushButton_2);
 

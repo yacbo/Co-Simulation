@@ -9,7 +9,7 @@ comm_config_dlg::comm_config_dlg(QWidget *parent) :
 {
     //this->setStyleSheet("background-image: url(:/bac.jpg)");
      this->setFixedSize( 360,325);
-    this->setStyleSheet("background-color:#444240;color:white");
+    //this->setStyleSheet("background-color:#444240;color:white");
     ui->setupUi(this);
     init();
 }
@@ -20,13 +20,13 @@ comm_config_dlg::~comm_config_dlg()
 }
 void comm_config_dlg::paintEvent(QPaintEvent* pEvent)
 {
-//    QPixmap _pBg;
-//    _pBg.load(":/bac.jpg");
-//    QPainter painter;
-//    painter.begin(this);
-//    QSize s =this->geometry().size();
-//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
-//    painter.end();
+     QPixmap _pBg;
+     _pBg.load(":/bac.jpg");
+     QPainter painter;
+     painter.begin(this);
+     QSize s =this->geometry().size();
+     painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+     painter.end();
 }
 void comm_config_dlg::init()
 {
@@ -51,10 +51,10 @@ void comm_config_dlg::init()
     ui->lineEdit_4->setText("192.168.31.35");
     ui->lineEdit_5->setText("12321");
 
-    ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
-    ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
+   // ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
+    //ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
 //QDalogButtonBox{border-radius:5px; color:white;border:1px solid black;min-height:20;}
-    ui->buttonBox->setStyleSheet("color:white;border:1px solid black;");
+    //ui->buttonBox->setStyleSheet("color:white;border:1px solid black;");
 }
 
 void comm_config_dlg::get_net_info(QString& ip, uint16_t& port, int& proto_type,uint16_t&port_business,QString& host_ip,uint16_t &host_port)

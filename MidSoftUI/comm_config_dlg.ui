@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>通信软件连接配置</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="minsoft.qrc">
+    <normaloff>:/power_32.png</normaloff>:/power_32.png</iconset>
+  </property>
   <widget class="QToolButton" name="toolButton">
    <property name="geometry">
     <rect>
@@ -39,7 +43,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="styleSheet">
-       <string notr="true">QGroupBox{color:white;border:1px solid black;}</string>
+       <string notr="true"/>
       </property>
       <property name="title">
        <string>通信软件网络配置</string>
@@ -129,8 +133,11 @@
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_2">
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="styleSheet">
-       <string notr="true">QGroupBox{color:white;border:1px solid black;}</string>
+       <string notr="true"/>
       </property>
       <property name="title">
        <string>远程主机网络配置</string>
@@ -192,7 +199,9 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="minsoft.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

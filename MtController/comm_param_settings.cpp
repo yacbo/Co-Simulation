@@ -26,7 +26,7 @@ comm_param_settings::comm_param_settings(unsigned int ip , MsHandler* msHandler,
     _ip = ip;
     _msHandler = msHandler;
     //this->setStyleSheet("background-image: url(:/bac.jpg)");
-    this->setStyleSheet("background-color:#444240;");
+    //this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
     init();
 }
@@ -36,13 +36,13 @@ comm_param_settings::~comm_param_settings()
 }
 void comm_param_settings::paintEvent(QPaintEvent* pEvent)
 {
-//    QPixmap _pBg;
-//    _pBg.load(":/bac.jpg");
-//    QPainter painter;
-//    painter.begin(this);
-//    QSize s =this->geometry().size();
-//    painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
-//    painter.end();
+     QPixmap _pBg;
+     _pBg.load(":/bac.jpg");
+     QPainter painter;
+     painter.begin(this);
+     QSize s =this->geometry().size();
+     painter.drawPixmap(0,0,s.width(),s.height(),_pBg);
+     painter.end();
 }
 void comm_param_settings::init()
 {
@@ -196,49 +196,55 @@ void comm_param_settings::init()
    model_t->setHeaderData(2,Qt::Horizontal,"信息");
    ui->tableView->setModel(model_t);
 
-   ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_3->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_4->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_5->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_6->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_7->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_8->setStyleSheet("color:white;border:1px solid black;");
-   ui->groupBox_9->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_2->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_3->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_4->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_5->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_6->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_7->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_8->setStyleSheet("color:white;border:1px solid black;");
+//   ui->groupBox_9->setStyleSheet("color:white;border:1px solid black;");
 
-   ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
-   ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
+   //ui->tableView->horizontalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;border:1px solid #5c5c5c;}");
+   //ui->tableView->verticalHeader()->setStyleSheet("QHeaderView {background-color:#444240 } QHeaderView::section {background-color:#444240;color:white;padding-left: 4px;border:1px solid #2c2c2c;}");
    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   QPalette pll_1 = ui->tableView->palette();
+   pll_1.setBrush(QPalette::Base,QBrush(QColor(255,255,255,0)));
+   ui->tableView->setPalette(pll_1);
 
-   ui->pushButton_15->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_16->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_13->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_14->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_2->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_3->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_4->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_5->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_6->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_25->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_7->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_8->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_9->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_26->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_10->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_11->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_12->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_27->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_22->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_23->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_24->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_28->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_19->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_20->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_21->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_29->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_30->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
-   ui->pushButton_17->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+   QPalette pll_2 = ui->listView->palette();
+   pll_2.setBrush(QPalette::Base,QBrush(QColor(255,255,255,0)));
+   ui->listView->setPalette(pll_2);
+//   ui->pushButton_15->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_16->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_13->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_14->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_2->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_3->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_4->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_5->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_6->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_25->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_7->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_8->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_9->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_26->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_10->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_11->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_12->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_27->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_22->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_23->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_24->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_28->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_19->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_20->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_21->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_29->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_30->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
+//   ui->pushButton_17->setStyleSheet(MACRO_CSS_BUTTON_ORI MACRO_CSS_BUTTON_HOVER MACRO_CSS_BUTTON_PRESS);
 }
 
 /************业务配置.***********************/
@@ -1350,7 +1356,7 @@ void comm_param_settings::data_tamper_button29_event()
 
         data.nodeId = ui->lineEdit_45->text().toInt();
         data.powernodeId =ui->lineEdit_20->text().toInt();
-        data.datatype =ui->comboBox_4->currentIndex()+1;
+        data.datatype =ui->comboBox_4->currentIndex();
         data.dataPlace =ui->lineEdit_22->text().toInt();
         string stu1 = ui->lineEdit_23->text().toStdString();
         strcpy(data.dataDev,stu1.data());

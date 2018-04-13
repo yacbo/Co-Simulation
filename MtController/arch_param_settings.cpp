@@ -7,7 +7,7 @@ arch_param_settings::arch_param_settings(QWidget *parent) :
     ui(new Ui::arch_param_settings)
 {
     //this->setStyleSheet("background-image: url(:/bac.jpg)");
-    this->setStyleSheet("background-color:#444240;");
+    //this->setStyleSheet("background-color:#444240;");
     ui->setupUi(this);
     setSbsSoftOffLine();  //SBS离线设置.
     setElecSoftOffLine();  //电力离线设置.

@@ -14,7 +14,7 @@
    <string>软总线服务器</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="sbs.qrc">
+   <iconset resource="../MidSoftUI/minsoft.qrc">
     <normaloff>:/power_32.png</normaloff>:/power_32.png</iconset>
   </property>
   <property name="autoFillBackground">
@@ -228,7 +228,7 @@ QPushButton:pressed{
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="sbs.qrc"/>
+  <include location="../MidSoftUI/minsoft.qrc"/>
  </resources>
  <connections/>
 </ui>
