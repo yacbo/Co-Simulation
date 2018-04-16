@@ -731,9 +731,10 @@ void comm_param_settings::data_tamper_confirm_event()
 
     data.nodeId = ui->lineEdit_45->text().toInt();
     data.powernodeId =ui->lineEdit_20->text().toInt();
-    data.datatype =ui->comboBox_4->currentIndex()+1;
+    data.datatype =ui->comboBox_4->currentIndex();
     data.dataPlace =ui->lineEdit_22->text().toInt();
     string stu1 = ui->lineEdit_23->text().toStdString();
+    memset(data.dataDev, 0, sizeof(data.dataDev));
     strcpy(data.dataDev,stu1.data());
     data.preset_time = ui->lineEdit_46->text().toFloat();
     data.tamper_time= ui->lineEdit_47->text().toFloat();
@@ -749,9 +750,10 @@ void comm_param_settings::data_tamper_confirm_event()
 
     data1.nodeId = ui->lineEdit_45->text().toInt();
     data1.powernodeId =ui->lineEdit_20->text().toInt();
-    data1.datatype =ui->comboBox_4->currentIndex()+1;
+    data1.datatype =ui->comboBox_4->currentIndex();
     data1.dataPlace =ui->lineEdit_22->text().toInt();
     string stu2 = ui->lineEdit_23->text().toStdString();
+    memset(data1.dataDev, 0, sizeof(data1.dataDev));
     strcpy(data1.dataDev,stu2.data());
     data1.preset_time = ui->lineEdit_46->text().toFloat();
     data1.tamper_time= ui->lineEdit_47->text().toFloat();
@@ -1359,6 +1361,7 @@ void comm_param_settings::data_tamper_button29_event()
         data.datatype =ui->comboBox_4->currentIndex();
         data.dataPlace =ui->lineEdit_22->text().toInt();
         string stu1 = ui->lineEdit_23->text().toStdString();
+        memset(data.dataDev, 0, sizeof(data.dataDev));
         strcpy(data.dataDev,stu1.data());
         data.preset_time = ui->lineEdit_46->text().toFloat();
         data.tamper_time= ui->lineEdit_47->text().toFloat();
