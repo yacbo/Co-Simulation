@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
 
     //sock_tcp_test(false);
     //sock_udp_test(true);
-    Xml2Attr();
+    //Xml2Attr();
 
     //mshandler_test();
 

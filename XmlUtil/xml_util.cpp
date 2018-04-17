@@ -1788,6 +1788,19 @@ void XmlUtil::parse_xml_power_appl_data(int type, const DataXmlVec& vec, DblVec&
             data.push_back(dvg);
         }
 
+        if(data.size() < us_data.size()){
+            return;
+        }
+
+        PowerDGInforData di;
+        for(int i=0; i<us_data.size(); ++i){
+            PowerBusInforData* bi = (PowerBusInforData*)us_data[i].power_dat;
+            di.dv = data[i];
+            di.bus_id = bi->bus_id;
+            di.time_diff = us_data[i].comm_dat.trans_delay;
+            memcpy(us_data[i].power_dat, &di, sizeof(PowerDGInforData));
+        }
+
         break;
     }
     case ePowerPrj_psse_jiangsu:{

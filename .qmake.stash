@@ -10,3 +10,34 @@ QMAKE_DEFAULT_LIBDIRS = \
     D:/Qt/Qt5.8.0/Tools/mingw530_32/lib/gcc \
     D:/Qt/Qt5.8.0/Tools/mingw530_32/i686-w64-mingw32/lib \
     D:/Qt/Qt5.8.0/Tools/mingw530_32/lib
+QMAKE_CXX.INCDIRS = \
+    "D:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\INCLUDE" \
+    "D:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\ATLMFC\\INCLUDE" \
+    "C:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.10150.0\\ucrt" \
+    "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6\\include\\um" \
+    "C:\\Program Files (x86)\\Windows Kits\\8.1\\include\\shared" \
+    "C:\\Program Files (x86)\\Windows Kits\\8.1\\include\\um" \
+    "C:\\Program Files (x86)\\Windows Kits\\8.1\\include\\winrt" \
+    "D:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\include" \
+    "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\include" \
+    "D:\\Program Files\\OPNET\\14.5.A\\sys\\include" \
+    "D:\\Program Files\\OPNET\\14.5.A\\models\\std\\include" \
+    "D:\\Program Files\\OPNET\\14.5.A\\sys\\include\\include_certi"
+QMAKE_CXX.LIBDIRS = \
+    "D:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\LIB" \
+    "D:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\ATLMFC\\LIB" \
+    "C:\\Program Files (x86)\\Windows Kits\\10\\lib\\10.0.10150.0\\ucrt\\x86" \
+    "C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.6\\lib\\um\\x86" \
+    "C:\\Program Files (x86)\\Windows Kits\\8.1\\lib\\winv6.3\\um\\x86" \
+    "D:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\lib" \
+    "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v7.0A\\lib" \
+    "D:\\Program Files\\OPNET\\14.5.A\\sys\\lib" \
+    "D:\\Program Files\\OPNET\\14.5.A\\sys\\pc_intel_win32\\lib" \
+    "D:\\Program Files\\OPNET\\14.5.A\\sys\\lib\\lib_certi"
+QMAKE_CXX.QT_COMPILER_STDCXX = 199711L
+QMAKE_CXX.QMAKE_MSC_VER = 1900
+QMAKE_CXX.QMAKE_MSC_FULL_VER = 190023026
+QMAKE_CXX.COMPILER_MACROS = \
+    QT_COMPILER_STDCXX \
+    QMAKE_MSC_VER \
+    QMAKE_MSC_FULL_VER
