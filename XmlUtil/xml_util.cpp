@@ -1795,9 +1795,7 @@ void XmlUtil::parse_xml_power_appl_data(int type, const DataXmlVec& vec, DblVec&
         PowerDGInforData di;
         for(int i=0; i<us_data.size(); ++i){
             PowerBusInforData* bi = (PowerBusInforData*)us_data[i].power_dat;
-            di.dv = data[i];
-            di.bus_id = bi->bus_id;
-            di.time_diff = us_data[i].comm_dat.trans_delay;
+            di.bus_id = bi->bus_id; di.dv = data[i];
             memcpy(us_data[i].power_dat, &di, sizeof(PowerDGInforData));
         }
 
@@ -1822,14 +1820,19 @@ void XmlUtil::generate_xml_power_appl_data(int type, const DblVec& data, const U
 
     switch(type){
     case ePowerPrj_avr_ctrl_39:{
+        DblVec dv_data = data;
+        for(int i=0; i<us_data.size(); ++i){
+            dv_data[i] = ((PowerDGInforData*)us_data[i].power_dat)->dv;
+        }
+
         char dvg[1024 * 100] = {0};
         const int db_size = sizeof(double);
 
-        for(int i=0; i<data.size(); ++i){
-            memcpy(dvg + i *db_size, &data[i], db_size);
+        for(int i=0; i<dv_data.size(); ++i){
+            memcpy(dvg + i *db_size, &dv_data[i], db_size);
         }
 
-        int dvg_size = db_size * data.size();
+        int dvg_size = db_size * dv_data.size();
         QByteArray d = QByteArray::fromRawData(dvg, dvg_size);
         VariableMsgDataBody* var = new VariableMsgDataBody();
         var->_var_name = "dvg";
