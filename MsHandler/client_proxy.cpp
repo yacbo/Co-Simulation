@@ -1195,6 +1195,7 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){
         DataXmlVec vec;
+        set_datatamper_value(_union_sim_dat_rcv_vec, _dbl_vec);
         XmlUtil::generate_xml_power_appl_data(_power_conf_param.prj_type, _dbl_vec, _union_sim_dat_rcv_vec, vec);
 
         IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
@@ -1272,6 +1273,18 @@ void client_proxy::handle_sim_cmd(ApplMessage* msg)
     }
     default: break;
     }
+}
+
+void client_proxy::set_datatamper_value(const UnionSimDatVec& data, DblVec& dvg)
+{
+        if(dvg.size() > data.size()){
+                LogUtil::Instance()->Output(MACRO_LOCAL, "UnionSimData count(", data.size(), ") less than dv count(", dvg.size(), ")");
+                return;
+        }
+
+        for(int i=0; i<data.size(); ++i){
+            dvg[i] = ((PowerDGInforData*)data[i].power_dat)->dv;
+        }
 }
 
 int client_proxy::parse_comm_cfg_param(ApplMessage* msg, char* value)

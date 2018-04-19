@@ -69,10 +69,13 @@ private:
 
     void handle_sim_cmd(ApplMessage* msg);
     void handle_comm_cfg_param(ApplMessage* msg);
-    int parse_comm_cfg_param(ApplMessage* msg, char* data);
     void handle_power_cfg_param(ApplMessage* msg);
 
     void handle_msg(ApplMessage* msg);
+
+private:
+    int parse_comm_cfg_param(ApplMessage* msg, char* data);
+    void set_datatamper_value(const UnionSimDatVec& data, DblVec& dvg);
 
 private:
     bool _quit;
