@@ -103,90 +103,90 @@ void client_proxy::register_lower_layer(const network_layer* net_layer_ptr)
     connect(this, &client_proxy::snd_lower_signal, net_layer_ptr, &network_layer::rcv_upper_slots, Qt::UniqueConnection);
 }
 
-//void client_proxy::rcv_upper_msg_callback(const char* data, int len)
-//{
-//    _union_sim_dat_rcv_vec = _union_sim_dat_snd_vec;
-
-//    ESubProcedureType proc_type = eSubProcedure_undef;
-//    switch(_dst_dev_type){
-//    case eSimDev_power:proc_type = eSubProcedure_session_end; break;
-//    case eSimDev_power_appl: proc_type = eSubProcedure_session_begin; break;
-//    default: break;
-//    }
-
-//    QString info;
-//    IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
-//    int ss_id = dev_type_id_tbl[eSimDev_communication];
-//    int ps_id = dev_type_id_tbl[eSimDev_power_appl];
-
-//    if(proc_type != eSubProcedure_undef){
-//        QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], proc_type, eMessage_request);
-//        emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
-//        info = LogUtil::Instance()->Output(MACRO_LOCAL, "analog rcv communication sim data items:", _union_sim_dat_rcv_vec.size());
-//    }
-//    else{
-//        info = LogUtil::Instance()->Output(MACRO_LOCAL, "not set dst device type when forward the analog received communication sim data");
-//    }
-
-//    emit progress_log_signal(info);
-//}
-
 void client_proxy::rcv_upper_msg_callback(const char* data, int len)
 {
-    if(!data){
-        LogUtil::Instance()->Output(MACRO_LOCAL, "Invalid Input Arguments");
-        return;
+    _union_sim_dat_rcv_vec = _union_sim_dat_snd_vec;
+
+    ESubProcedureType proc_type = eSubProcedure_undef;
+    switch(_dst_dev_type){
+    case eSimDev_power:proc_type = eSubProcedure_session_end; break;
+    case eSimDev_power_appl: proc_type = eSubProcedure_session_begin; break;
+    default: break;
     }
 
-    const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
-    long type = header->type;
+    QString info;
+    IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
+    int ss_id = dev_type_id_tbl[eSimDev_communication];
+    int ps_id = dev_type_id_tbl[eSimDev_power_appl];
 
-    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv communication sim data", "PG_RTUI type:", type, "data len", len);
-    emit progress_log_signal(info);
-
-    if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
-        _rcv_comm_data_enabled = type == eCommCmd_start_send_data;
-        if(type == eCommCmd_stop_send_data){
-            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
-
-            ESubProcedureType proc_type = eSubProcedure_undef;
-            int ss_id = dev_type_id_tbl[eSimDev_communication];
-            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
-
-            switch(_dst_dev_type){
-            case eSimDev_power:proc_type = eSubProcedure_session_end; break;
-            case eSimDev_power_appl: proc_type = eSubProcedure_session_begin; break;
-            default: break;
-            }
-
-            if(proc_type != eSubProcedure_undef){
-                QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], proc_type, eMessage_request);
-                emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
-                info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv communication sim data items:", _union_sim_dat_rcv_vec.size());
-            }
-            else{
-                info = LogUtil::Instance()->Output(MACRO_LOCAL, "not set dst device type when forward the received communication sim data");
-            }
-
-            emit progress_log_signal(info);
-        }
-        else{
-            _union_sim_dat_rcv_vec.clear();
-        }
-
-        return;
-    }
-
-    if(type == ePG_sim_interoper_data){
-        if(_rcv_comm_data_enabled){
-            const UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
-            _union_sim_dat_rcv_vec.push_back(*dat);
-        }
+    if(proc_type != eSubProcedure_undef){
+        QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], proc_type, eMessage_request);
+        emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+        info = LogUtil::Instance()->Output(MACRO_LOCAL, "analog rcv communication sim data items:", _union_sim_dat_rcv_vec.size());
     }
     else{
-        handle_css((EPGRTUIType)header->type, data, header->length);
+        info = LogUtil::Instance()->Output(MACRO_LOCAL, "not set dst device type when forward the analog received communication sim data");
     }
+
+    emit progress_log_signal(info);
 }
+
+//void client_proxy::rcv_upper_msg_callback(const char* data, int len)
+//{
+//    if(!data){
+//        LogUtil::Instance()->Output(MACRO_LOCAL, "Invalid Input Arguments");
+//        return;
+//    }
+
+//    const PG_RTUI_Base* header = (PG_RTUI_Base*)data;
+//    long type = header->type;
+
+//    QString info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv communication sim data", "PG_RTUI type:", type, "data len", len);
+//    emit progress_log_signal(info);
+
+//    if(type == eCommCmd_start_send_data || type == eCommCmd_stop_send_data){
+//        _rcv_comm_data_enabled = type == eCommCmd_start_send_data;
+//        if(type == eCommCmd_stop_send_data){
+//            IntMap dev_type_id_tbl = _appl_layer->get_dev_id_map();
+
+//            ESubProcedureType proc_type = eSubProcedure_undef;
+//            int ss_id = dev_type_id_tbl[eSimDev_communication];
+//            int ps_id = dev_type_id_tbl[eSimDev_power_appl];
+
+//            switch(_dst_dev_type){
+//            case eSimDev_power:proc_type = eSubProcedure_session_end; break;
+//            case eSimDev_power_appl: proc_type = eSubProcedure_session_begin; break;
+//            default: break;
+//            }
+
+//            if(proc_type != eSubProcedure_undef){
+//                QDomDocument* doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power_appl], proc_type, eMessage_request);
+//                emit snd_lower_signal(doc, _sbs_ip.c_str(), _sbs_port);
+//                info = LogUtil::Instance()->Output(MACRO_LOCAL, "rcv communication sim data items:", _union_sim_dat_rcv_vec.size());
+//            }
+//            else{
+//                info = LogUtil::Instance()->Output(MACRO_LOCAL, "not set dst device type when forward the received communication sim data");
+//            }
+
+//            emit progress_log_signal(info);
+//        }
+//        else{
+//            _union_sim_dat_rcv_vec.clear();
+//        }
+
+//        return;
+//    }
+
+//    if(type == ePG_sim_interoper_data){
+//        if(_rcv_comm_data_enabled){
+//            const UnionSimData* dat = (UnionSimData*)(data + sizeof(PG_RTUI_Base));
+//            _union_sim_dat_rcv_vec.push_back(*dat);
+//        }
+//    }
+//    else{
+//        handle_css((EPGRTUIType)header->type, data, header->length);
+//    }
+//}
 
 void client_proxy::snd_upper_to_comm()
 {
@@ -1102,8 +1102,8 @@ void client_proxy::handle_comm_power(ApplMessage* msg)
     else if(proc_type == eSubProcedure_invoke && msg_type == eMessage_request){
         _dst_dev_type = eSimDev_power_appl;
 
-        snd_upper_to_comm();
-        //rcv_upper_msg_callback(nullptr, 0);
+        //snd_upper_to_comm();
+        rcv_upper_msg_callback(nullptr, 0);
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_request){
        doc = XmlUtil::generate_session_xml(ss_id, ps_id, DevNamesSet[eSimDev_power], eSubProcedure_session_end, eMessage_confirm);
@@ -1189,8 +1189,8 @@ void client_proxy::handle_comm_power_appl(ApplMessage* msg)
             _expect_proc_type = eSubProcedure_session_end;
         }
 
-        snd_upper_to_comm();
-        //rcv_upper_msg_callback(nullptr, 0);
+        //snd_upper_to_comm();
+        rcv_upper_msg_callback(nullptr, 0);
         _expect_msg_type = eMessage_confirm;
     }
     else if(proc_type == eSubProcedure_session_end && msg_type == eMessage_confirm){

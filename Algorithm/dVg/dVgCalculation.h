@@ -462,8 +462,7 @@ int CalculateDVG(BusInfor *businfo_ptr, int Bus_Num, double* dvg_ret)
 	businfor_PBus_Ref[5].busno = PilotBusNo[5];
 	businfor_PBus_Ref[5].Volt = 1.044789;
 
-    int i=0;
-    for (i=0;i<Bus_Num;i++)
+    for (int i=0;i<Bus_Num;i++)
 	{
 		memcpy((char*)&(businfor_t[i].Businfor), (char *)&(businfo_ptr[i]), sizeof(BusInfor));
 	}
@@ -471,7 +470,7 @@ int CalculateDVG(BusInfor *businfo_ptr, int Bus_Num, double* dvg_ret)
 	int cnt_M = 0;
 	int cnt_PBus = 0;
 	int cnt_Normal = 0;
-    for (i = 0; i<Bus_Num; i++)
+    for (int i = 0; i<Bus_Num; i++)
     {
 		for (int k = 0; k<NUM_M; k++)
 		{
