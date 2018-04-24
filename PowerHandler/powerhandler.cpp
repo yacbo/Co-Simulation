@@ -121,13 +121,6 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
         return -1;
     }
 
-    switch(_prj_type){
-    case ePowerPrj_avr_ctrl_39: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
-    case ePowerPrj_psse_jiangsu: _cur_time = _sim_count == 0 ? _sim_period : (_sim_time * _sim_count); ++_sim_count; break;
-    case ePowerPrj_conf_power: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
-    default: break;
-    }
-
     if(_cur_time > _sim_time){  //exit simulation
         return -2;
     }
@@ -203,7 +196,12 @@ int PowerHandler::Execute(int sd_num, EPowerDataType sd_type, const PowerSDDataV
     default: break;
     }
 
-    //std::cout << "Execute, success: Execute" << std::endl;
+    switch(_prj_type){
+    case ePowerPrj_avr_ctrl_39: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
+    case ePowerPrj_psse_jiangsu: _cur_time = _sim_count == 0 ? _sim_period : (_sim_time * _sim_count); ++_sim_count; break;
+    case ePowerPrj_conf_power: _cur_time = _sim_period * _sim_count; ++_sim_count; break;
+    default: break;
+    }
 
     return 0;
 }
